@@ -9,7 +9,8 @@ __pycache__/
 build/
 dist/
 
-# Local documentation notes and generated documentation sites.
+# Private manuscript, source papers, and local documentation details.
+references/
 docs/_build/
 docs/private/
 notes/

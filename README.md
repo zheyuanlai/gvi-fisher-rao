@@ -120,7 +120,6 @@ src/fr_gvi/       algorithms, targets, diagnostics, experiments, and plotting
 configs/          smoke and generated full-tier experiment configurations
 scripts/          environment, campaign, resume, figure, and audit entry points
 tests/            unit, integration, and regression validation
-references/       manuscript and algorithmic source material
 results/          tracked headline artifacts and local campaign outputs
 reports/          implementation, audit, campaign, and reproduction notes
 ```
@@ -131,7 +130,3 @@ reports/          implementation, audit, campaign, and reproduction notes
 - [Implementation notes](reports/IMPLEMENTATION_NOTES.md)
 - [Numerical audit](reports/NUMERICAL_AUDIT.md)
 - [Campaign summary](reports/OVERNIGHT_SUMMARY.md)
-- [Reference sources](references/SOURCES.md)
-
-The manuscript source and `references/2304.05398.pdf` are the algorithmic sources
-of truth for this implementation.
