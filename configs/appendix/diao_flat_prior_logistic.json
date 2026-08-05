@@ -3,16 +3,26 @@
   "experiment": "L",
   "tier": "appendix",
   "master_seed": 2026080801,
-  "target": {"kind": "logistic", "dimension": 2, "samples": 50, "test_samples": 200, "feature_condition": 1.0, "prior_precision": 0.0},
-  "update_points": 512,
-  "evaluation_points": 2048,
+  "note": "Reproduction of the synthetic logistic example of Diao et al. Their prior is improper and flat, so the potential is convex but not strongly convex: alpha = 0 and every optimizer-whitened constant of Assumption 2.1 is undefined. A negligible ridge of 1e-8 is used instead, which keeps those constants finite while changing the posterior by far less than the quadrature error of this cell. Stepsizes are given explicitly rather than as multiples of a certified scale, because no positive step is certified at that alpha.",
+  "target": {
+    "kind": "logistic",
+    "dimension": 2,
+    "samples": 50,
+    "test_samples": 200,
+    "feature_condition": 1.0,
+    "prior_precision": 1e-8
+  },
+  "update_points": 4096,
+  "evaluation_points": 4096,
   "reference_points": 4096,
-  "iterations": 100,
+  "iterations": 300,
   "methods": [
-    {"name": "S--FB--GVI", "step_size": 0.01, "batch_size": 1, "seeds": 5},
-    {"name": "FR--R--STL", "step_size": 0.01, "batch_size": 1, "seeds": 5},
-    {"name": "FR--KL--STL", "step_size": 0.01, "batch_size": 1, "seeds": 5},
+    {"name": "FR--R", "step_size": 0.05},
+    {"name": "FR--KL", "step_size": 0.05},
+    {"name": "FB--GVI", "step_size": 0.05},
+    {"name": "S--FB--GVI", "step_size": 0.01, "batch_size": 1, "seeds": 10},
+    {"name": "FR--R--STL", "step_size": 0.01, "batch_size": 1, "seeds": 10},
+    {"name": "FR--KL--STL", "step_size": 0.01, "batch_size": 1, "seeds": 10},
     {"name": "Laplace"}
   ]
 }
-
