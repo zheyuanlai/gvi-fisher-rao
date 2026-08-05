@@ -68,6 +68,18 @@ def audit_figure_pair(png: Path, expected_width_inches: float, tolerance: float 
                 errors.append(f"font is not embedded: {' '.join(row[:2])}")
     else:
         warnings.append("pdffonts unavailable; font embedding not checked")
+    if shutil.which("pdftotext"):
+        extracted_text = _command("pdftotext", "-layout", str(pdf), "-")
+        double_dash_tokens = sorted(set(re.findall(r"\S*--\S*", extracted_text)))
+        if double_dash_tokens:
+            errors.append(
+                "PDF contains double-dash figure text: " + ", ".join(double_dash_tokens)
+            )
+    else:
+        warnings.append("pdftotext unavailable; single-dash figure text not checked")
+    caption = png.with_suffix(".md")
+    if caption.exists() and "--" in caption.read_text(encoding="utf-8"):
+        errors.append("caption draft contains double-dash text")
     return findings
 
 

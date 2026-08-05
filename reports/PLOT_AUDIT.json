@@ -7,16 +7,16 @@
       "font_count": 5,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_A.pdf",
       "pdf_points": [
-        481.379,
+        478.379,
         176.38
       ],
       "png": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_A.png",
       "png_pixels": [
-        2672,
+        2656,
         979
       ],
       "warnings": [],
-      "width_inches": 6.6858
+      "width_inches": 6.6442
     },
     {
       "errors": [],

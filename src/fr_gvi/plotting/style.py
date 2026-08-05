@@ -12,6 +12,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.text import Text
 import numpy as np
 import pandas as pd
 
@@ -129,7 +130,25 @@ def display_label(row: pd.Series | dict) -> str:
         method += "+QR"
     if "-raw" in variant:
         method += " (raw score)"
-    return method
+    return figure_text(method)
+
+
+def figure_text(value: object) -> str:
+    """Return manuscript-visible text with single-hyphen compound names.
+
+    Experiment data and plotting styles deliberately retain their established
+    double-hyphen method identifiers. Normalising only display text keeps those
+    identifiers stable while enforcing the manuscript typographic convention.
+    """
+
+    return str(value).replace("--", "-")
+
+
+def normalize_figure_text(figure: plt.Figure) -> None:
+    """Apply the display-text convention to every text artist in the figure."""
+
+    for artist in figure.findobj(match=Text):
+        artist.set_text(figure_text(artist.get_text()))
 
 
 def positive(values) -> np.ndarray:
@@ -147,6 +166,8 @@ def save_figure(figure: plt.Figure, name: str, caption: str, data: pd.DataFrame 
     FIGURES.mkdir(parents=True, exist_ok=True)
     PROCESSED.mkdir(parents=True, exist_ok=True)
     base = FIGURES / name
+    normalize_figure_text(figure)
+    caption = figure_text(caption)
     figure.savefig(base.with_suffix(".pdf"), metadata={"Creator": "fr-gvi"})
     figure.savefig(base.with_suffix(".png"))
     plt.close(figure)
@@ -186,7 +207,7 @@ def terminal_rows(frame: pd.DataFrame) -> pd.DataFrame:
 
 
 def panel_letter(axis: plt.Axes, letter: str, title: str) -> None:
-    axis.set_title(f"({letter}) {title}", loc="left", fontsize=9.0)
+    axis.set_title(figure_text(f"({letter}) {title}"), loc="left", fontsize=9.0)
 
 
 def tidy_log_axes(*axes: plt.Axes) -> None:
