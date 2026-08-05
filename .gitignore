@@ -23,3 +23,13 @@ results/figures/*.pdf
 !results/figures/main_figure_*.png
 !results/figures/main_figure_*.pdf
 
+
+# Full-tier manifests are provenance for gitignored raw data; keeping 16k of them
+# in the index also made every new manifest embed a huge `git status` listing.
+results/manifests/full/
+results/manifests/appendix/
+results/manifests/core/
+results/manifests/state_shards/
+results/manifests/reference_*.json
+results/tables/*.csv
+results/tables/*.tex
