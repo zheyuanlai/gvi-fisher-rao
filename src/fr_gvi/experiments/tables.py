@@ -228,6 +228,11 @@ def reference_quality_table() -> None:
     records = []
     for path in sorted((ROOT / "results" / "manifests").glob("reference_*.json")):
         payload = json.loads(path.read_text(encoding="utf-8"))
+        # Superseded smoke- and core-tier references linger on disk; the table
+        # certifies the full and appendix tiers that the figures are drawn from.
+        job = str(payload.get("job_id", ""))
+        if job.endswith("_core") or job.endswith("_smoke") or job.endswith("_blocked"):
+            continue
         metadata = payload.get("metadata", {})
         records.append(
             {

@@ -1,26 +1,26 @@
 {
   "errors": [],
   "figure_png_count": 17,
-  "manifest_count": 17230,
+  "manifest_count": 17770,
   "manifest_statuses": {
-    "completed": 15182,
-    "failed": 2045,
+    "completed": 15725,
+    "failed": 2042,
     "skipped": 3
   },
   "pathwise_covariance_bands": {
     "minimum_lower_slack": {
-      "FR--KL--STL": 0.00012393319074044395,
-      "FR--R--STL": 0.1797938585485436
+      "FR--KL--STL": 0.0001239331907386676,
+      "FR--R--STL": 0.17979527640450982
     },
     "minimum_upper_slack": {
-      "FR--KL--STL": 0.1454636493720194,
-      "FR--R--STL": 0.14473371690057624
+      "FR--KL--STL": 0.14546364937201828,
+      "FR--R--STL": 0.14473371690057424
     },
     "runs_checked": 4260
   },
-  "raw_csv_count": 17227,
-  "roundoff_scale_covariance_repairs": 3,
+  "raw_csv_count": 17767,
+  "roundoff_scale_covariance_repairs": 2,
   "warnings": [
-    "3 covariance eigenvalues at or below roundoff scale; each is a logged repair bounded by 100 * eps * matrix scale"
+    "2 covariance eigenvalues at or below roundoff scale; each is a logged repair bounded by 100 * eps * matrix scale"
   ]
 }

@@ -89,8 +89,16 @@ optimizer there.
 ## Expectation backends
 
 - Exact analytic expectations for Gaussian targets.
-- Dimension-wise Gauss--Hermite integration (order 48 for updates, 120 for
-  evaluation) for affine images of separable log-cosh targets.
+- Panelled Gauss--Legendre integration against the Gaussian density for affine
+  images of separable log-cosh targets. Gauss--Hermite was tried first and is
+  **wrong** here: the integrands carry a unit-width `tanh`/`sech^2` transition
+  while the marginal standard deviation reaches 7 and more in the small-curvature
+  coordinates, and a rule whose nodes are spaced proportionally to the marginal
+  width never resolves that peak. It was still wrong by `5e-4` at order 200 on the
+  widest cell, and raising the order moved the answer instead of converging it.
+  The panelled rule splits the domain at the edges of the transition window and
+  holds `1e-13` relative accuracy against an adaptive integrator across five
+  orders of magnitude in the variance; a doubling test pins that down.
 - One fixed scrambled Sobol design per cell for non-separable targets, **shared**
   between the deterministic updates, the objective evaluation and the reference
   solve.
@@ -115,17 +123,31 @@ is certified afterwards by **both** the Fisher--Rao and the Bures--Wasserstein
 residual, which are at the `1e-27` level on the shared design.
 
 On a finite quadrature design the Bonnet and Price identities hold only up to the
-design error, so this point is not exactly the argmin of the reparameterized
-surrogate objective. The surrogate is therefore also minimized directly by
-L-BFGS on a Cholesky parameterization, the smaller of the two objective values is
-used as the reference objective so every reported gap stays non-negative, and the
-difference is recorded as that cell's **quadrature resolution floor**. Design
-sizes were chosen from a scaling study so that the reference's residual against an
-independent four-times-larger design stays near `1e-6`; both quantities appear in
-`results/tables/reference_quality.csv`.
+design error, so this point is **not** the argmin of the reparameterized surrogate
+objective. The surrogate is therefore also minimized directly by L-BFGS on a
+Cholesky parameterization, and the difference between the two objective values is
+recorded as that cell's **quadrature resolution floor**: it reaches `0.12` at
+`d = 100` with 2048 points and falls to `4e-6` at `d = 10`.
+
+The consequence for interpretation is worth stating plainly. The reported
+objective gap is measured with one functional throughout -- the same evaluation
+engine is applied to the iterates and to the reference -- so it is the objective
+difference from the fixed-design stationary point that every deterministic method
+converges to, not a distance to a minimum. It reaches `1e-10` on the `d = 100`
+cells, which is the statement that the methods reach that point; it may be
+slightly negative for a method that passes marginally below it. How far that point
+sits from the surrogate argmin is the separate floor quantity above. Both, plus
+the reference's residual against an independent four-times-larger design, appear
+in `results/tables/reference_quality.csv`.
+
+The damped Newton solve backtracks on the residual rather than taking full steps.
+Undamped, it diverged on the near-separable logistic cells -- one full step threw
+the mean out to `3e3` and the iteration then cycled -- leaving four references
+with residuals between `1e5` and `1e7`. If it still stalls, the directly minimized
+surrogate is used instead and the switch is recorded in the manifest.
 
 Gaussian references are exact. Log-cosh references solve the one-dimensional
-Gaussian first-order conditions at high Gauss--Hermite order and transform the
+Gaussian first-order conditions with the same panelled rule and transform the
 result affinely, which is exact because the optimal Gaussian for a separable
 target is separable.
 
