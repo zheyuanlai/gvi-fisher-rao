@@ -9,6 +9,42 @@ __pycache__/
 build/
 dist/
 
+# Local documentation notes and generated documentation sites.
+docs/_build/
+docs/private/
+notes/
+site/
+*.draft.md
+*.notes.md
+*.draft.tex
+*.notes.tex
+
+# LaTeX build byproducts; manuscript sources and reference PDFs remain trackable.
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdv
+_minted-*/
+
+# Editor and operating-system noise.
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
 # Core/full campaigns can be regenerated; keep smoke artifacts and manifests.
 results/raw/core/
 results/raw/full/
@@ -23,9 +59,8 @@ results/figures/*.pdf
 !results/figures/main_figure_*.png
 !results/figures/main_figure_*.pdf
 
-
-# Full-tier manifests are provenance for gitignored raw data; keeping 16k of them
-# in the index also made every new manifest embed a huge `git status` listing.
+# Full-tier manifests are provenance for gitignored raw data; keeping thousands
+# of them in the index also makes every new manifest embed a huge status listing.
 results/manifests/full/
 results/manifests/appendix/
 results/manifests/core/

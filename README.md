@@ -1,57 +1,60 @@
-# Gaussian variational inference via Fisher--Rao gradient flows: numerical experiments
+# Gaussian Variational Inference via Fisher-Rao Gradient Flows
 
-A float64 NumPy/SciPy reference implementation and reproducible experiment
-campaign for the manuscript *Gaussian variational inference via Fisher--Rao
-gradient flows*. It implements exactly the methods admitted by the scientific
-protocol:
+A reproducible NumPy/SciPy reference implementation for the numerical experiments
+in the manuscript *Gaussian variational inference via Fisher-Rao gradient flows*.
+The repository includes deterministic and stochastic Gaussian variational-inference
+algorithms, resumable experiment campaigns, numerical validation, and
+publication-ready figures.
 
-- deterministic Fisher--Rao Riemannian retraction (FR--R) and KL/Bregman (FR--KL);
-- stochastic Price/Hessian--STL variants (FR--R--STL, FR--KL--STL);
-- deterministic FB--GVI and minibatch S--FB--GVI of Diao, Balasubramanian, Chewi
-  and Salim, implemented from Algorithm 1 of arXiv:2304.05398;
-- Laplace only as a non-iterative logistic-regression approximation baseline;
-- the general affine-invariant metric family of manuscript Section 5, as a
-  classification-verification tool kept out of the main comparison.
+![Application experiments](results/figures/main_figure_4.png)
 
-It contains no BWGD, no BW--SGD, no covariance-projected Fisher--Rao scheme and no
-mixed geometry; an audit gate fails the build if one of those names appears in
-`src/` or `configs/`. Invalid covariance updates are recorded as failures. Only
-logged roundoff-scale repairs bounded by `100 * eps * matrix_scale` are permitted,
-and no run is ever silently stabilized by clipping eigenvalues or shrinking a
-step.
+## Highlights
 
-## What the experiments test
+- Float64 numerical implementation with symmetric eigendecompositions for SPD
+  matrix functions.
+- Resumable, hash-validated campaigns that retain completed and failed seeds.
+- Per-method stepsize sweeps based on optimizer-whitened curvature constants.
+- Matching PDF and PNG figures on exact 6.5-inch manuscript-width canvases, with
+  embedded fonts and colorblind-safe method encodings.
+- Unit, integration, regression, numerical-results, and plot-audit gates.
 
-| Experiment | Mechanism | Manuscript result |
-|---|---|---|
-| A | covariance burn-in in whitened coordinates | Theorem 2.9 |
-| B | affine equivariance of the iterates | Proposition 2.3 |
-| C | anisotropic Gaussian benchmark, `kappa = 1e9`, `kappa_star = 1` | Section 2 |
-| D | strongly log-concave non-Gaussian grid | Theorems 2.14, 2.19 |
-| F | exact Gaussian local region and sharp threshold | Lemma 2.24, Corollary 2.26 |
-| G | near-Gaussian local spectral rate | Proposition 3.5, Theorem 3.7 |
-| H | Gaussian STL pathwise cancellation | Corollary 4.20 |
-| I | raw-score against STL estimator variance | Lemma 4.7 |
-| J | minibatch residual floors against `B` | Theorems 4.16, 4.17 |
-| K | decreasing-stepsize schedule | Theorem 4.21 |
-| L | Bayesian logistic regression | applications |
-| M | modal rates of the affine-invariant metric family | Section 5 |
+## Implemented methods
 
-Experiment E (fixed-step sharpness) is deliberately not run: the manuscript defers
-the bump-train lower-bound construction to an appendix that does not yet exist,
-and no surrogate was invented. See [blocked experiments](reports/BLOCKED_EXPERIMENTS.md).
+| Method | Role |
+|---|---|
+| FR-R, FR-KL | Deterministic Fisher-Rao Riemannian-retraction and KL/Bregman schemes |
+| FR-R-STL, FR-KL-STL | Stochastic Price/Hessian sticking-the-landing variants |
+| FB-GVI, S-FB-GVI | Deterministic and minibatch Bures-Wasserstein baselines from [Diao et al.](https://arxiv.org/abs/2304.05398) |
+| Laplace | Non-iterative logistic-regression approximation baseline |
+| Affine-invariant metric family | Section 5 classification-verification tool, excluded from the main comparison |
 
-## Stepsize fairness
+The Bures-Wasserstein comparison is deliberately restricted to FB-GVI and
+S-FB-GVI. Invalid covariance updates are recorded as failures; algorithms are
+never stabilized by covariance eigenvalue clipping or silent stepsize reduction.
 
-Each method is swept over multiples of its **own** certified step, computed from
-the closed-form optimizer-whitened curvature constants of that cell, never over a
-shared numerical grid. Every comparison therefore reports the largest step at
-which a method still makes progress and its best result at a fixed oracle budget,
-rather than a single hand-picked step. The multiplier range extends past the
-certified scale until the stability boundary is located; divergent runs are
-recorded as failures and shown on the figures.
+## Experiments
+
+| Experiment | Mechanism |
+|---|---|
+| A | Covariance burn-in in whitened coordinates |
+| B | Affine equivariance of the iterates |
+| C | Anisotropic Gaussian benchmark with `kappa = 1e9` and `kappa_star = 1` |
+| D | Strongly log-concave non-Gaussian grid |
+| F | Exact Gaussian local region and sharp threshold |
+| G | Near-Gaussian local spectral rate |
+| H | Gaussian STL pathwise cancellation |
+| I | Raw-score versus STL estimator variance |
+| J | Minibatch residual floors versus batch size |
+| K | Decreasing-stepsize schedule |
+| L | Bayesian logistic regression |
+| M | Modal rates of the affine-invariant metric family |
 
 ## Quick start
+
+Requirements: Linux or macOS, Python 3.11-3.13, and approximately 8 GB of RAM
+for the full campaign. No GPU is required.
+
+From the repository root:
 
 ```bash
 ./scripts/bootstrap_env.sh
@@ -59,40 +62,76 @@ make test
 make smoke
 ```
 
-## Campaign commands
+The bootstrap script creates `.venv`, installs the package and development
+dependencies, and checks the environment. The smoke tier exercises the experiment,
+plotting, table, and audit paths end to end.
+
+## Running the campaign
 
 ```bash
-make configs                                   # regenerate the full-tier grids
+make configs
 CAMPAIGN_JOBS=64 OVERNIGHT_BUDGET_HOURS=8 make full
-CAMPAIGN_JOBS=64 make resume                   # resume; skips matching completed jobs
-make figures                                   # figures and tables from saved results only
-make audit
+CAMPAIGN_JOBS=64 make resume
+make figures
+./scripts/audit_results.sh --allow-failed
 ```
 
-Every run stores its config, config hash, numerical source hash, git state,
+- `make configs` regenerates the committed full-tier grids.
+- `make full` runs the campaign with config-level parallelism.
+- `make resume` skips jobs whose config and numerical-source hashes still match.
+- `make figures` regenerates figures and tables from locally saved results without
+  rerunning experiments.
+- The retained-failure audit mode accepts deliberately unstable sweep points while
+  continuing to check covariance positivity, method exclusions, provenance, and
+  pathwise covariance bands.
+
+Set `CAMPAIGN_JOBS` to a suitable value for the available CPU and memory. The run
+scripts already restrict BLAS libraries to one thread per worker.
+
+## Results and reproducibility
+
+The five manuscript composites are available as
+`results/figures/main_figure_1.{pdf,png}` through
+`results/figures/main_figure_5.{pdf,png}`. Their processed inputs are stored in
+`results/processed/main_figure_*.csv`; detailed local campaigns also produce one
+figure and caption draft per experiment.
+
+Every run manifest records the configuration and source hashes, git state,
 platform and package versions, BLAS configuration, seeds, curvature constants,
-operation accounting, status and output paths under `results/manifests/`. Raw
-trajectories retain individual seeds; failed seeds are never dropped.
+operation accounting, status, failure reason, and output paths. Raw trajectories
+retain individual seeds. Large full-tier trajectories and manifests are ignored by
+git because they are resumable and regenerable.
 
-## Numerical policy
+## Numerical safeguards
 
-All SPD functions use symmetric eigendecompositions; solves use Cholesky factors.
-Deterministic methods within a cell share one fixed expectation design, which is
-also the design on which the reference is solved, so deterministic objective gaps
-are exact for the problem the algorithms actually solve. The quadrature
-resolution floor of each cell and the reference's residual against an independent
-four-times-larger design are recorded in
-`results/tables/reference_quality.csv`.
+- Numerical work is performed in float64.
+- SPD matrix functions use symmetric eigendecompositions; linear solves use
+  Cholesky factors where appropriate.
+- Deterministic methods in a cell share one fixed expectation design with the
+  reference solve.
+- Unstable steps are retained as failed runs rather than repaired by algorithmic
+  clipping.
+- The validation suite must pass before an expensive campaign is launched.
+
+## Repository layout
+
+```text
+src/fr_gvi/       algorithms, targets, diagnostics, experiments, and plotting
+configs/          smoke and generated full-tier experiment configurations
+scripts/          environment, campaign, resume, figure, and audit entry points
+tests/            unit, integration, and regression validation
+references/       manuscript and algorithmic source material
+results/          tracked headline artifacts and local campaign outputs
+reports/          implementation, audit, campaign, and reproduction notes
+```
 
 ## Documentation
 
-- [implementation notes](reports/IMPLEMENTATION_NOTES.md)
-- [numerical audit](reports/NUMERICAL_AUDIT.md)
-- [campaign summary](reports/OVERNIGHT_SUMMARY.md)
-- [blocked experiments](reports/BLOCKED_EXPERIMENTS.md)
-- [reproduction guide](reports/REPRODUCIBILITY.md)
+- [Reproduction guide](reports/REPRODUCIBILITY.md)
+- [Implementation notes](reports/IMPLEMENTATION_NOTES.md)
+- [Numerical audit](reports/NUMERICAL_AUDIT.md)
+- [Campaign summary](reports/OVERNIGHT_SUMMARY.md)
+- [Reference sources](references/SOURCES.md)
 
-Manuscript figures are `results/figures/main_figure_1.{pdf,png}` through
-`main_figure_5.{pdf,png}`; per-experiment figures are
-`results/figures/experiment_*.{pdf,png}`. Each figure ships with the exact
-processed CSV that produced it and a caption draft.
+The manuscript source and `references/2304.05398.pdf` are the algorithmic sources
+of truth for this implementation.
