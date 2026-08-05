@@ -98,7 +98,7 @@ the retraction and vanishes under step refinement.
 **Log-cosh application.** Over the 27 cells of the
 `d x kappa_base x rho` grid, with each method at its own best swept step and the
 same 400 gradient--Hessian pairs, the better of the two Fisher--Rao schemes reaches
-machine zero in 20 cells and FB--GVI in none; FB--GVI's best gap is larger in 26 of
+machine zero in all 27 cells and FB--GVI in 3; FB--GVI's best gap is larger in 25 of
 27 cells. The median largest stable step, as a multiple of each method's own
 certified step, is 32 for FR--R, 16 for FR--KL and 2 for FB--GVI, so the certified
 Fisher--Rao steps are conservative by one to two orders of magnitude. Per-cell

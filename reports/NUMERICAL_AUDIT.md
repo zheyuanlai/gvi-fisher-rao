@@ -48,8 +48,8 @@ The suite must pass before any campaign runs. It contains:
 
 ## Corrections made during the campaign
 
-Four design errors were found and fixed by inspecting intermediate results rather
-than by accepting the first output.
+Five defects were found and fixed by inspecting intermediate results rather than
+by accepting the first output.
 
 1. **Experiment F was testing the wrong quantity.** Corollary 2.26 is a uniform
    bound on an energy sublevel, not an asymptotic rate, so comparing a fitted
@@ -64,7 +64,25 @@ than by accepting the first output.
 3. **Experiment G was measured before the asymptotic regime.** The slowest and
    fastest linearized modes differ by only a few percent, so the earlier horizon
    mixed them. The horizon was extended to the largest value float64 permits.
-4. **The stochastic logistic comparison used an unfair step rule.** Placing all
+4. **The separable quadrature was silently wrong on the ill-conditioned cells.**
+   The log-cosh integrands carry a unit-width `tanh`/`sech^2` transition inside a
+   marginal whose standard deviation reaches 7 and more in the small-curvature
+   coordinates. Gauss--Hermite spaces its nodes proportionally to the marginal
+   width and never resolved that peak: on the widest cell it was still wrong by
+   `5e-4` at order 200, and raising the order moved the answer instead of
+   converging it. That shifted the fixed point of the deterministic schemes, so
+   five of the 27 log-cosh cells appeared to stall at a residual of `0.03` --
+   which reads as slow convergence rather than as a quadrature failure. The rule
+   is now panelled Gauss--Legendre against the Gaussian density, verified at
+   `1e-13` against an adaptive integrator over five orders of magnitude in the
+   variance. After the fix every log-cosh reference certifies at `1.4e-13` or
+   better, and all 27 cells reach machine zero.
+5. **The reference's Newton solve diverged on near-separable logistic cells.**
+   The undamped fixed-point iteration threw the mean out to `3e3` and then cycled,
+   leaving four references with residuals between `1e5` and `1e7`. It is now
+   damped by a residual-decrease condition with backtracking, and falls back to
+   the directly minimized surrogate if it still stalls.
+6. **The stochastic logistic comparison used an unfair step rule.** Placing all
    three methods at the same multiple of their own certified step put S--FB--GVI
    about 32 times beyond its stable range, because the Fisher--Rao certified steps
    are conservative by one to two orders of magnitude and FB--GVI's is not. It made
