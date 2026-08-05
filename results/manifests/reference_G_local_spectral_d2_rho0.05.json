@@ -1,0 +1,25 @@
+{
+  "bures_wasserstein_residual_squared": 8.181783069553272e-30,
+  "covariance": [
+    [
+      0.972364574652595,
+      -6.590134825212272e-17
+    ],
+    [
+      -6.590134825212272e-17,
+      0.9723645746525943
+    ]
+  ],
+  "fisher_rao_residual_squared": 4.402415733905541e-30,
+  "instance": 0,
+  "job_id": "G_local_spectral_d2_rho0.05",
+  "mean": [
+    0.4272612845956393,
+    -0.052272179212896605
+  ],
+  "metadata": {
+    "backend": "gauss_hermite_foc",
+    "order": 128
+  },
+  "objective": 1.0443289813765564
+}

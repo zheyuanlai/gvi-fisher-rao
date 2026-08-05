@@ -134,6 +134,7 @@ def _qmc_reference(
     engine: FixedNormalExpectation,
     *,
     seed: int,
+    certify: bool = True,
 ) -> tuple[GaussianState, dict[str, float | int | str | bool]]:
     """Minimize the fixed-design Gaussian VI objective to high accuracy."""
 
@@ -169,10 +170,22 @@ def _qmc_reference(
     # objective, which keeps every reported gap non-negative.  The difference is
     # recorded as the quadrature resolution floor of the cell.
     newton_state = _foc_newton(target, engine, initial)
+    if not certify:
+        # Curvature constants only need the reference state, so the surrogate
+        # minimization used for the resolution floor is skipped.
+        return newton_state, {
+            "backend": "fixed_qmc_foc_newton",
+            "points": points,
+            "certified": False,
+        }
+    # The Newton point is already stationary, so a single polish from it is
+    # normally enough; the extra starts exist only as a guard when it stalls.
     candidates: list[FloatArray] = [_state_to_parameter(newton_state)]
-    if isinstance(target, LogisticRegressionTarget):
-        candidates.append(_state_to_parameter(laplace_approximation(target)))
-    candidates.append(_state_to_parameter(initial))
+    _, newton_gradient = value_gradient(candidates[0])
+    if float(np.linalg.norm(newton_gradient)) > 1.0e-3:
+        if isinstance(target, LogisticRegressionTarget):
+            candidates.append(_state_to_parameter(laplace_approximation(target)))
+        candidates.append(_state_to_parameter(initial))
 
     best = None
     for candidate in candidates:
@@ -181,7 +194,7 @@ def _qmc_reference(
             candidate,
             method="L-BFGS-B",
             jac=True,
-            options={"maxiter": 5000, "ftol": 1e-16, "gtol": 1e-12, "maxls": 60},
+            options={"maxiter": 2000, "ftol": 1e-16, "gtol": 1e-12, "maxls": 60},
         )
         if best is None or result.fun < best.fun:
             best = result
@@ -211,6 +224,7 @@ def solve_reference(
     points: int,
     seed: int,
     engine: FixedNormalExpectation | None = None,
+    certify: bool = True,
 ) -> ReferenceSolution:
     if isinstance(target, GaussianTarget):
         state = GaussianState(target.mean, target.covariance)
@@ -218,9 +232,9 @@ def solve_reference(
         objective_value, _ = objective(target, state, exact)
         return ReferenceSolution(state, objective_value, 0.0, 0.0, {"backend": "exact"})
     if isinstance(target, ShiftedLogCoshTarget):
-        order = max(48, min(120, points // 8))
+        order = max(80, min(160, points // 8))
         state = _logcosh_reference(target, order)
-        quadrature = GaussHermiteLogCoshExpectation(order=min(160, 2 * order))
+        quadrature = GaussHermiteLogCoshExpectation(order=min(200, 2 * order))
         objective_value, expectation = objective(target, state, quadrature)
         certificate = residuals(state, expectation)
         return ReferenceSolution(
@@ -239,9 +253,17 @@ def solve_reference(
     # the honest quadrature-transfer error.
     if engine is None:
         engine = FixedNormalExpectation.qmc(target.dimension, points, seed)
-    state, metadata = _qmc_reference(target, initial, engine, seed=seed)
-    _, expectation = objective(target, state, engine)
+    state, metadata = _qmc_reference(target, initial, engine, seed=seed, certify=certify)
+    surrogate_objective, expectation = objective(target, state, engine)
     certificate = residuals(state, expectation)
+    if not certify:
+        return ReferenceSolution(
+            state,
+            surrogate_objective,
+            certificate.fisher_rao_squared,
+            certificate.bures_wasserstein_squared,
+            metadata,
+        )
     # Non-negative gaps: measure against the smaller of the FOC objective and
     # the directly minimized surrogate objective.
     objective_value = float(min(metadata["foc_objective"], metadata["surrogate_objective"]))

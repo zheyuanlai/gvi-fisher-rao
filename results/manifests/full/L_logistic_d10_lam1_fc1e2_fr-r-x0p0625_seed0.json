@@ -1,0 +1,418 @@
+{
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/full --jobs 120 --budget-hours 8",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.04751597961778906,
+      "FR--KL": 0.03147643755276611,
+      "FR--KL--STL": 0.003934554694095764,
+      "FR--R": 0.015738218776383053,
+      "FR--R--STL": 0.031476437552766114,
+      "S--FB--GVI": 0.04751597961778906
+    },
+    "curvature": {
+      "alpha": 1.0,
+      "alpha_star": 0.06552929176290419,
+      "beta": 21.04555158167505,
+      "beta_star": 2.0818522316273227,
+      "certified_step_sizes": {
+        "FB--GVI": 0.04751597961778906,
+        "FR--KL": 0.03147643755276611,
+        "FR--KL--STL": 0.003934554694095764,
+        "FR--R": 0.015738218776383053,
+        "FR--R--STL": 0.031476437552766114,
+        "S--FB--GVI": 0.04751597961778906
+      },
+      "condition": 21.04555158167505,
+      "exact": true,
+      "kappa_star": 31.769796004507544,
+      "lambda_0_star": 1.151312070636794,
+      "lambda_0_star_max": 15.260351105550859,
+      "lambda_max_star": 15.260351105550864,
+      "source": "logistic_interval_exact"
+    },
+    "evaluation_points": 8192,
+    "experiment": "L",
+    "grid": {
+      "dimension": 10,
+      "feature_condition": 100.0,
+      "prior_precision": 1.0
+    },
+    "id": "L_logistic_d10_lam1_fc1e2",
+    "iterations": 200,
+    "master_seed": 20261812,
+    "methods": [
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0009836386735239408,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 0.125,
+        "step_size": 0.0019672773470478817,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 0.25,
+        "step_size": 0.003934554694095763,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 0.5,
+        "step_size": 0.007869109388191527,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 1.0,
+        "step_size": 0.015738218776383053,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 2.0,
+        "step_size": 0.03147643755276611,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 4.0,
+        "step_size": 0.06295287510553221,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 8.0,
+        "step_size": 0.12590575021106443,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 16.0,
+        "step_size": 0.25181150042212885,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 32.0,
+        "step_size": 0.5036230008442577,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 64.0,
+        "step_size": 1.0072460016885154,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 128.0,
+        "step_size": 2.014492003377031,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.015738218776383053,
+        "name": "FR--R",
+        "normalized_step_size": 256.0,
+        "step_size": 4.028984006754062,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0019672773470478817,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 0.125,
+        "step_size": 0.003934554694095763,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 0.25,
+        "step_size": 0.007869109388191527,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 0.5,
+        "step_size": 0.015738218776383053,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 1.0,
+        "step_size": 0.03147643755276611,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 2.0,
+        "step_size": 0.06295287510553221,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 4.0,
+        "step_size": 0.12590575021106443,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 8.0,
+        "step_size": 0.25181150042212885,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 16.0,
+        "step_size": 0.5036230008442577,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 32.0,
+        "step_size": 1.0072460016885154,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 64.0,
+        "step_size": 2.014492003377031,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.03147643755276611,
+        "name": "FR--KL",
+        "normalized_step_size": 128.0,
+        "step_size": 4.028984006754062,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0029697487261118164,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.125,
+        "step_size": 0.005939497452223633,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.25,
+        "step_size": 0.011878994904447266,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.5,
+        "step_size": 0.02375798980889453,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 1.0,
+        "step_size": 0.04751597961778906,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 2.0,
+        "step_size": 0.09503195923557813,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 4.0,
+        "step_size": 0.19006391847115625,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 8.0,
+        "step_size": 0.3801278369423125,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 16.0,
+        "step_size": 0.760255673884625,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 32.0,
+        "step_size": 1.52051134776925,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 64.0,
+        "step_size": 3.0410226955385,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.04751597961778906,
+        "name": "FB--GVI",
+        "normalized_step_size": 128.0,
+        "step_size": 6.082045391077,
+        "tag": "x128"
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.031476437552766114,
+        "name": "FR--R--STL",
+        "normalized_step_size": 7.942449001126885,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.003934554694095764,
+        "name": "FR--KL--STL",
+        "normalized_step_size": 63.53959200901508,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.04751597961778906,
+        "name": "S--FB--GVI",
+        "normalized_step_size": 5.261387895418762,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "name": "Laplace"
+      }
+    ],
+    "record_every": 1,
+    "reference_points": 8192,
+    "target": {
+      "dimension": 10,
+      "feature_condition": 100.0,
+      "kind": "logistic",
+      "prior_precision": 1.0,
+      "samples": 100,
+      "test_samples": 500
+    },
+    "tier": "full",
+    "update_points": 8192
+  },
+  "config_hash": "2ac0e5867872d1bdbf73e7fd9e8dbdc533b743a9776ba0b70235aa3792b1067d",
+  "config_path": "configs/full/L_logistic_d10_lam1_fc1e2.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.06552930877150191,
+    "beta": 21.04555158167505,
+    "beta_star": 2.0819446891663134,
+    "certified_step_sizes": {
+      "FB--GVI": 0.04751597961778906,
+      "FR--KL": 0.03147504787830951,
+      "FR--KL--STL": 0.0039343809847886884,
+      "FR--R": 0.015737523939154754,
+      "FR--R--STL": 0.03147504787830951,
+      "S--FB--GVI": 0.04751597961778906
+    },
+    "condition": 21.04555158167505,
+    "exact": true,
+    "kappa_star": 31.77119869257238,
+    "lambda_0_star": 1.1513036665060774,
+    "lambda_0_star_max": 15.26034714461824,
+    "lambda_max_star": 15.260347144618297,
+    "source": "logistic_interval_exact"
+  },
+  "git_commit": "c673080290eda458034628a8dde85410a112dca8",
+  "git_dirty": true,
+  "git_status": "M Makefile\n D configs/full/A_burnin_d20_extreme.json\n D configs/full/B_affine_k1e8.json\n D configs/full/D_logcosh_d50.json\n D configs/full/J_floor_d32_b32.json\n D configs/full/L_logistic_d50.json\n M pyproject.toml\n M reports/IMPLEMENTATION_NOTES.md\n M reports/REPRODUCIBILITY.md\n M requirements-lock.txt\n M results/figures/experiment_A.md\n M results/figures/experiment_A.pdf\n M results/figures/experiment_A.png\n M results/figures/experiment_B.md\n M results/figures/experiment_B.pdf\n M results/figures/experiment_B.png\n M results/figures/experiment_C.md\n M results/figures/experiment_C.pdf\n M results/figures/experiment_C.png\n M results/figures/experiment_D.md\n M results/figures/experiment_D.pdf\n M results/figures/experiment_D.png\n M results/figures/experiment_F.md\n M results/figures/experiment_F.pdf\n M results/figures/experiment_F.png\n M results/figures/experiment_G.md\n M results/figures/experiment_G.pdf\n M results/figures/experiment_G.png\n M results/figures/experiment_H.md\n M results/figures/experiment_H.pdf\n M results/figures/experiment_H.png\n D results/figures/experiment_I.md\n D results/figures/experiment_I.pdf\n D results/figures/experiment_I.png\n M results/figures/experiment_J.md\n M results/figures/experiment_J.pdf\n M results/figures/experiment_J.png\n M results/figures/experiment_K.md\n M results/figures/experiment_K.pdf\n M results/figures/experiment_K.png\n D results/figures/experiment_L.md\n D results/figures/experiment_L.pdf\n D results/figures/experiment_L.png\n D results/figures/main_figure_1.md\n D results/figures/main_figure_1.pdf\n D results/figures/main_figure_1.png\n D results/figures/main_figure_2.md\n D results/figures/main_figure_2.pdf\n D results/figures/main_figure_2.png\n D results/figures/main_figure_3.md\n D results/figures/main_figure_3.pdf\n D results/figures/main_figure_3.png\n D results/figures/main_figure_4.md\n D results/figures/main_figure_4.pdf\n D results/figures/main_figure_4.png\n D results/figures/main_figure_5.md\n D results/figures/main_figure_5.pdf\n D results/figures/main_figure_5.png\n D results/manifests/campaign_state.json\n M results/processed/experiment_A.csv\n M results/processed/experiment_B.csv\n M results/processed/experiment_C.csv\n M results/processed/experiment_D.csv\n M results/processed/experiment_F.csv\n M results/processed/experiment_G.csv\n M results/processed/experiment_H.csv\n D results/processed/experiment_I.csv\n M results/processed/experiment_J.csv\n M results/processed/experiment_K.csv\n D results/processed/experiment_L.csv\n D results/processed/main_figure_1.csv\n D results/processed/main_figure_2.csv\n D results/processed/main_figure_3.csv\n D results/processed/main_figure_4.csv\n D results/processed/main_figure_5.csv\n D results/tables/terminal_summary.csv\n D results/tables/terminal_summary.tex\n M scripts/generate_full_configs.sh\n M scripts/make_all_figures.sh\n M scripts/resume_campaign.sh\n M src/fr_gvi/diagnostics/core.py\n M src/fr_gvi/diagnostics/local_operator.py\n M src/fr_gvi/experiments/audit.py\n M src/fr_gvi/experiments/campaign.py\n M src/fr_gvi/experiments/grids.py\n M src/fr_gvi/experiments/reference.py\n M src/fr_gvi/experiments/tables.py\n D src/fr_gvi/plotting/aggregation.py\n M src/fr_gvi/plotting/audit.py\n M src/fr_gvi/plotting/figures.py\n M src/fr_gvi/plotting/main_figures.py\n D src/fr_gvi/plotting/main_processed.py\n M tests/unit/test_diagnostics.py\n D tests/unit/test_plot_aggregation.py\n?? configs/full/A_burnin_d20_k1000_lam1e-10.json\n?? configs/full/A_burnin_d20_k1000_lam1e-12.json\n?? configs/full/A_burnin_d20_k1000_lam1e-2.json\n?? configs/full/A_burnin_d20_k1000_lam1e-4.json\n?? configs/full/A_burnin_d20_k1000_lam1e-6.json\n?? configs/full/A_burnin_d20_k1000_lam1e-8.json\n?? configs/full/A_burnin_d20_k100_lam1e-10.json\n?? configs/full/A_burnin_d20_k100_lam1e-12.json\n?? configs/full/A_burnin_d20_k100_lam1e-2.json\n?? configs/full/A_burnin_d20_k100_lam1e-4.json\n?? configs/full/A_burnin_d20_k100_lam1e-6.json\n?? configs/full/A_burnin_d20_k100_lam1e-8.json\n?? configs/full/A_burnin_d20_k10_lam1e-10.json\n?? configs/full/A_burnin_d20_k10_lam1e-12.json\n?? configs/full/A_burnin_d20_k10_lam1e-2.json\n?? configs/full/A_burnin_d20_k10_lam1e-4.json\n?? configs/full/A_burnin_d20_k10_lam1e-6.json\n?? configs/full/A_burnin_d20_k10_lam1e-8.json\n?? configs/full/B_affine_K1e0.json\n?? configs/full/B_affine_K1e2.json\n?? configs/full/B_affine_K1e4.json\n?? configs/full/B_affine_K1e6.json\n?? configs/full/B_affine_K1e8.json\n?? configs/full/C_diao_gaussian_d10.json\n?? configs/full/D_logcosh_d10_k100_rho0.1.json\n?? configs/full/D_logcosh_d10_k100_rho1.json\n?? configs/full/D_logcosh_d10_k100_rho5.json\n?? configs/full/D_logcosh_d10_k10_rho0.1.json\n?? configs/full/D_logcosh_d10_k10_rho1.json\n?? configs/full/D_logcosh_d10_k10_rho5.json\n?? configs/full/D_logcosh_d10_k1_rho0.1.json\n?? configs/full/D_logcosh_d10_k1_rho1.json\n?? configs/full/D_logcosh_d10_k1_rho5.json\n?? configs/full/D_logcosh_d2_k100_rho0.1.json\n?? configs/full/D_logcosh_d2_k100_rho1.json\n?? configs/full/D_logcosh_d2_k100_rho5.json\n?? configs/full/D_logcosh_d2_k10_rho0.1.json\n?? configs/full/D_logcosh_d2_k10_rho1.json\n?? configs/full/D_logcosh_d2_k10_rho5.json\n?? configs/full/D_logcosh_d2_k1_rho0.1.json\n?? configs/full/D_logcosh_d2_k1_rho1.json\n?? configs/full/D_logcosh_d2_k1_rho5.json\n?? configs/full/D_logcosh_d50_k100_rho0.1.json\n?? configs/full/D_logcosh_d50_k100_rho1.json\n?? configs/full/D_logcosh_d50_k100_rho5.json\n?? configs/full/D_logcosh_d50_k10_rho0.1.json\n?? configs/full/D_logcosh_d50_k10_rho1.json\n?? configs/full/D_logcosh_d50_k10_rho5.json\n?? configs/full/D_logcosh_d50_k1_rho0.1.json\n?? configs/full/D_logcosh_d50_k1_rho1.json\n?? configs/full/D_logcosh_d50_k1_rho5.json\n?? configs/full/F_gaussian_local_d100_rate0.25.json\n?? configs/full/F_gaussian_local_d100_rate0.5.json\n?? configs/full/F_gaussian_local_d100_rate1.5.json\n?? configs/full/F_gaussian_local_d100_rate1.json\n?? configs/full/F_gaussian_local_d10_rate0.25.json\n?? configs/full/F_gaussian_local_d10_rate0.5.json\n?? configs/full/F_gaussian_local_d10_rate1.5.json\n?? configs/full/F_gaussian_local_d10_rate1.json\n?? configs/full/F_gaussian_local_d2_rate0.25.json\n?? configs/full/F_gaussian_local_d2_rate0.5.json\n?? configs/full/F_gaussian_local_d2_rate1.5.json\n?? configs/full/F_gaussian_local_d2_rate1.json\n?? configs/full/G_local_spectral_d2_rho0.001.json\n?? configs/full/G_local_spectral_d2_rho0.01.json\n?? configs/full/G_local_spectral_d2_rho0.05.json\n?? configs/full/G_local_spectral_d2_rho0.1.json\n?? configs/full/G_local_spectral_d2_rho0.5.json\n?? configs/full/G_local_spectral_d2_rho1.json\n?? configs/full/G_local_spectral_d2_rho2.json\n?? configs/full/G_local_spectral_d3_rho0.001.json\n?? configs/full/G_local_spectral_d3_rho0.01.json\n?? configs/full/G_local_spectral_d3_rho0.05.json\n?? configs/full/G_local_spectral_d3_rho0.1.json\n?? configs/full/G_local_spectral_d3_rho0.5.json\n?? configs/full/G_local_spectral_d3_rho1.json\n?? configs/full/G_local_spectral_d3_rho2.json\n?? configs/full/G_local_spectral_d5_rho0.001.json\n?? configs/full/G_local_spectral_d5_rho0.01.json\n?? configs/full/G_local_spectral_d5_rho0.05.json\n?? configs/full/G_local_spectral_d5_rho0.1.json\n?? configs/full/G_local_spectral_d5_rho0.5.json\n?? configs/full/G_local_spectral_d5_rho1.json\n?? configs/full/G_local_spectral_d5_rho2.json\n?? configs/full/H_stl_cancellation_d10.json\n?? configs/full/H_stl_cancellation_d2.json\n?? configs/full/H_stl_cancellation_d50.json\n?? configs/full/I_variance_gaussian_d8_B1.json\n?? configs/full/I_variance_gaussian_d8_B16.json\n?? configs/full/I_variance_gaussian_d8_B4.json\n?? configs/full/I_variance_logcosh_d8_B1.json\n?? configs/full/I_variance_logcosh_d8_B16.json\n?? configs/full/I_variance_logcosh_d8_B4.json\n?? configs/full/J_floor_d32_k100_rho0.5_B1.json\n?? configs/full/J_floor_d32_k100_rho0.5_B16.json\n?? configs/full/J_floor_d32_k100_rho0.5_B2.json\n?? configs/full/J_floor_d32_k100_rho0.5_B32.json\n?? configs/full/J_floor_d32_k100_rho0.5_B4.json\n?? configs/full/J_floor_d32_k100_rho0.5_B64.json\n?? configs/full/J_floor_d32_k100_rho0.5_B8.json\n?? configs/full/J_floor_d32_k100_rho1_B1.json\n?? configs/full/J_floor_d32_k100_rho1_B16.json\n?? configs/full/J_floor_d32_k100_rho1_B2.json\n?? configs/full/J_floor_d32_k100_rho1_B32.json\n?? configs/full/J_floor_d32_k100_rho1_B4.json\n?? configs/full/J_floor_d32_k100_rho1_B64.json\n?? configs/full/J_floor_d32_k100_rho1_B8.json\n?? configs/full/J_floor_d32_k10_rho0.5_B1.json\n?? configs/full/J_floor_d32_k10_rho0.5_B16.json\n?? configs/full/J_floor_d32_k10_rho0.5_B2.json\n?? configs/full/J_floor_d32_k10_rho0.5_B32.json\n?? configs/full/J_floor_d32_k10_rho0.5_B4.json\n?? configs/full/J_floor_d32_k10_rho0.5_B64.json\n?? configs/full/J_floor_d32_k10_rho0.5_B8.json\n?? configs/full/J_floor_d32_k10_rho1_B1.json\n?? configs/full/J_floor_d32_k10_rho1_B16.json\n?? configs/full/J_floor_d32_k10_rho1_B2.json\n?? configs/full/J_floor_d32_k10_rho1_B32.json\n?? configs/full/J_floor_d32_k10_rho1_B4.json\n?? configs/full/J_floor_d32_k10_rho1_B64.json\n?? configs/full/J_floor_d32_k10_rho1_B8.json\n?? configs/full/J_floor_d8_k100_rho0.5_B1.json\n?? configs/full/J_floor_d8_k100_rho0.5_B16.json\n?? configs/full/J_floor_d8_k100_rho0.5_B2.json\n?? configs/full/J_floor_d8_k100_rho0.5_B32.json\n?? configs/full/J_floor_d8_k100_rho0.5_B4.json\n?? configs/full/J_floor_d8_k100_rho0.5_B64.json\n?? configs/full/J_floor_d8_k100_rho0.5_B8.json\n?? configs/full/J_floor_d8_k100_rho1_B1.json\n?? configs/full/J_floor_d8_k100_rho1_B16.json\n?? configs/full/J_floor_d8_k100_rho1_B2.json\n?? configs/full/J_floor_d8_k100_rho1_B32.json\n?? configs/full/J_floor_d8_k100_rho1_B4.json\n?? configs/full/J_floor_d8_k100_rho1_B64.json\n?? configs/full/J_floor_d8_k100_rho1_B8.json\n?? configs/full/J_floor_d8_k10_rho0.5_B1.json\n?? configs/full/J_floor_d8_k10_rho0.5_B16.json\n?? configs/full/J_floor_d8_k10_rho0.5_B2.json\n?? configs/full/J_floor_d8_k10_rho0.5_B32.json\n?? configs/full/J_floor_d8_k10_rho0.5_B4.json\n?? configs/full/J_floor_d8_k10_rho0.5_B64.json\n?? configs/full/J_floor_d8_k10_rho0.5_B8.json\n?? configs/full/J_floor_d8_k10_rho1_B1.json\n?? configs/full/J_floor_d8_k10_rho1_B16.json\n?? configs/full/J_floor_d8_k10_rho1_B2.json\n?? configs/full/J_floor_d8_k10_rho1_B32.json\n?? configs/full/J_floor_d8_k10_rho1_B4.json\n?? configs/full/J_floor_d8_k10_rho1_B64.json\n?? configs/full/J_floor_d8_k10_rho1_B8.json\n?? configs/full/K_decreasing_d4_rho0.3_B1.json\n?? configs/full/K_decreasing_d4_rho0.3_B8.json\n?? configs/full/K_decreasing_d4_rho1_B1.json\n?? configs/full/K_decreasing_d4_rho1_B8.json\n?? configs/full/K_decreasing_d8_rho0.3_B1.json\n?? configs/full/K_decreasing_d8_rho0.3_B8.json\n?? configs/full/K_decreasing_d8_rho1_B1.json\n?? configs/full/K_decreasing_d8_rho1_B8.json\n?? configs/full/L_logistic_d100_lam0.1_fc1e0.json\n?? configs/full/L_logistic_d100_lam0.1_fc1e2.json\n?? configs/full/L_logistic_d100_lam0.1_fc1e4.json\n?? configs/full/L_logistic_d100_lam1_fc1e0.json\n?? configs/full/L_logistic_d100_lam1_fc1e2.json\n?? configs/full/L_logistic_d100_lam1_fc1e4.json\n?? configs/full/L_logistic_d10_lam0.1_fc1e0.json\n?? configs/full/L_logistic_d10_lam0.1_fc1e2.json\n?? configs/full/L_logistic_d10_lam0.1_fc1e4.json\n?? configs/full/L_logistic_d10_lam1_fc1e0.json\n?? configs/full/L_logistic_d10_lam1_fc1e2.json\n?? configs/full/L_logistic_d10_lam1_fc1e4.json\n?? configs/full/L_logistic_d50_lam0.1_fc1e0.json\n?? configs/full/L_logistic_d50_lam0.1_fc1e2.json\n?? configs/full/L_logistic_d50_lam0.1_fc1e4.json\n?? configs/full/L_logistic_d50_lam1_fc1e0.json\n?? configs/full/L_logistic_d50_lam1_fc1e2.json\n?? configs/full/L_logistic_d50_lam1_fc1e4.json\n?? configs/full/M_affine_metric_d10_h0.005.json\n?? configs/full/M_affine_metric_d10_h0.01.json\n?? configs/full/M_affine_metric_d10_h0.02.json\n?? configs/full/M_affine_metric_d10_h0.04.json\n?? configs/full/M_affine_metric_d2_h0.005.json\n?? configs/full/M_affine_metric_d2_h0.01.json\n?? configs/full/M_affine_metric_d2_h0.02.json\n?? configs/full/M_affine_metric_d2_h0.04.json\n?? configs/full/M_affine_metric_d5_h0.005.json\n?? configs/full/M_affine_metric_d5_h0.01.json\n?? configs/full/M_affine_metric_d5_h0.02.json\n?? configs/full/M_affine_metric_d5_h0.04.json\n?? results/figures/experiment_M.md\n?? results/manifests/full/\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-10.json\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-12.json\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-2.json\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-4.json\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-6.json\n?? results/manifests/reference_A_burnin_d20_k1000_lam1e-8.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-10.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-12.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-2.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-4.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-6.json\n?? results/manifests/reference_A_burnin_d20_k100_lam1e-8.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-10.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-12.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-2.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-4.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-6.json\n?? results/manifests/reference_A_burnin_d20_k10_lam1e-8.json\n?? results/manifests/reference_B_affine_K1e0.json\n?? results/manifests/reference_B_affine_K1e2.json\n?? results/manifests/reference_B_affine_K1e4.json\n?? results/manifests/reference_B_affine_K1e6.json\n?? results/manifests/reference_B_affine_K1e8.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance0.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance1.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance2.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance3.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance4.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance5.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance6.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance7.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance8.json\n?? results/manifests/reference_C_diao_gaussian_d10_instance9.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k100_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k10_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d10_k1_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k100_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k10_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d2_k1_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k100_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k10_rho5_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho0.1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho0.1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho0.1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho0.1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho0.1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho1_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho1_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho1_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho1_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho1_instance4.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho5_instance0.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho5_instance1.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho5_instance2.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho5_instance3.json\n?? results/manifests/reference_D_logcosh_d50_k1_rho5_instance4.json\n?? results/manifests/reference_F_gaussian_local_d100_rate0.25.json\n?? results/manifests/reference_F_gaussian_local_d100_rate0.5.json\n?? results/manifests/reference_F_gaussian_local_d100_rate1.5.json\n?? results/manifests/reference_F_gaussian_local_d100_rate1.json\n?? results/manifests/reference_F_gaussian_local_d10_rate0.25.json\n?? results/manifests/reference_F_gaussian_local_d10_rate0.5.json\n?? results/manifests/reference_F_gaussian_local_d10_rate1.5.json\n?? results/manifests/reference_F_gaussian_local_d10_rate1.json\n?? results/manifests/reference_F_gaussian_local_d2_rate0.25.json\n?? results/manifests/reference_F_gaussian_local_d2_rate0.5.json\n?? results/manifests/reference_F_gaussian_local_d2_rate1.5.json\n?? results/manifests/reference_F_gaussian_local_d2_rate1.json\n?? results/manifests/reference_G_local_spectral_d2_rho0.001.json\n?? results/manifests/reference_G_local_spectral_d2_rho0.01.json\n?? results/manifests/reference_G_local_spectral_d2_rho0.05.json\n?? results/manifests/reference_G_local_spectral_d2_rho0.1.json\n?? results/manifests/reference_G_local_spectral_d2_rho0.5.json\n?? results/manifests/reference_G_local_spectral_d2_rho1.json\n?? results/manifests/reference_G_local_spectral_d2_rho2.json\n?? results/manifests/reference_G_local_spectral_d3_rho0.001.json\n?? results/manifests/reference_G_local_spectral_d3_rho0.01.json\n?? results/manifests/reference_G_local_spectral_d3_rho0.05.json\n?? results/manifests/reference_G_local_spectral_d3_rho0.1.json\n?? results/manifests/reference_G_local_spectral_d3_rho0.5.json\n?? results/manifests/reference_G_local_spectral_d3_rho1.json\n?? results/manifests/reference_G_local_spectral_d3_rho2.json\n?? results/manifests/reference_G_local_spectral_d5_rho0.001.json\n?? results/manifests/reference_G_local_spectral_d5_rho0.01.json\n?? results/manifests/reference_G_local_spectral_d5_rho0.05.json\n?? results/manifests/reference_G_local_spectral_d5_rho0.1.json\n?? results/manifests/reference_G_local_spectral_d5_rho0.5.json\n?? results/manifests/reference_G_local_spectral_d5_rho1.json\n?? results/manifests/reference_G_local_spectral_d5_rho2.json\n?? results/manifests/reference_H_stl_cancellation_d10.json\n?? results/manifests/reference_H_stl_cancellation_d2.json\n?? results/manifests/reference_H_stl_cancellation_d50.json\n?? results/manifests/reference_I_variance_gaussian_d8_B1.json\n?? results/manifests/reference_I_variance_gaussian_d8_B16.json\n?? results/manifests/reference_I_variance_gaussian_d8_B4.json\n?? results/manifests/reference_I_variance_logcosh_d8_B1.json\n?? results/manifests/reference_I_variance_logcosh_d8_B16.json\n?? results/manifests/reference_I_variance_logcosh_d8_B4.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B1.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B16.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B2.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B32.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B4.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B64.json\n?? results/manifests/reference_J_floor_d32_k100_rho0.5_B8.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B1.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B16.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B2.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B32.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B4.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B64.json\n?? results/manifests/reference_J_floor_d32_k100_rho1_B8.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B1.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B16.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B2.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B32.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B4.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B64.json\n?? results/manifests/reference_J_floor_d32_k10_rho0.5_B8.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B1.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B16.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B2.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B32.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B4.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B64.json\n?? results/manifests/reference_J_floor_d32_k10_rho1_B8.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B1.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B16.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B2.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B32.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B4.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B64.json\n?? results/manifests/reference_J_floor_d8_k100_rho0.5_B8.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B1.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B16.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B2.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B32.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B4.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B64.json\n?? results/manifests/reference_J_floor_d8_k100_rho1_B8.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B1.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B16.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B2.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B32.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B4.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B64.json\n?? results/manifests/reference_J_floor_d8_k10_rho0.5_B8.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B1.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B16.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B2.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B32.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B4.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B64.json\n?? results/manifests/reference_J_floor_d8_k10_rho1_B8.json\n?? results/manifests/reference_K_decreasing_d4_rho0.3_B1.json\n?? results/manifests/reference_K_decreasing_d4_rho0.3_B8.json\n?? results/manifests/reference_K_decreasing_d4_rho1_B1.json\n?? results/manifests/reference_K_decreasing_d4_rho1_B8.json\n?? results/manifests/reference_K_decreasing_d8_rho0.3_B1.json\n?? results/manifests/reference_K_decreasing_d8_rho0.3_B8.json\n?? results/manifests/reference_K_decreasing_d8_rho1_B1.json\n?? results/manifests/reference_K_decreasing_d8_rho1_B8.json\n?? results/manifests/reference_L_logistic_d100_lam0.1_fc1e0.json\n?? results/manifests/reference_L_logistic_d100_lam0.1_fc1e2.json\n?? results/manifests/reference_L_logistic_d100_lam0.1_fc1e4.json\n?? results/manifests/reference_L_logistic_d100_lam1_fc1e0.json\n?? results/manifests/reference_L_logistic_d100_lam1_fc1e2.json\n?? results/manifests/reference_L_logistic_d100_lam1_fc1e4.json\n?? results/manifests/reference_L_logistic_d10_lam0.1_fc1e0.json\n?? results/manifests/reference_L_logistic_d10_lam0.1_fc1e2.json\n?? results/manifests/reference_L_logistic_d10_lam0.1_fc1e4.json\n?? results/manifests/reference_L_logistic_d10_lam1_fc1e0.json\n?? results/manifests/reference_L_logistic_d10_lam1_fc1e2.json\n?? results/manifests/reference_L_logistic_d10_lam1_fc1e4.json\n?? results/manifests/reference_L_logistic_d50_lam0.1_fc1e0.json\n?? results/manifests/reference_L_logistic_d50_lam0.1_fc1e2.json\n?? results/manifests/reference_L_logistic_d50_lam0.1_fc1e4.json\n?? results/manifests/reference_L_logistic_d50_lam1_fc1e0.json\n?? results/manifests/reference_L_logistic_d50_lam1_fc1e2.json\n?? results/manifests/reference_L_logistic_d50_lam1_fc1e4.json\n?? results/manifests/reference_M_affine_metric_d10_h0.005.json\n?? results/manifests/reference_M_affine_metric_d10_h0.01.json\n?? results/manifests/reference_M_affine_metric_d10_h0.02.json\n?? results/manifests/reference_M_affine_metric_d10_h0.04.json\n?? results/manifests/reference_M_affine_metric_d2_h0.005.json\n?? results/manifests/reference_M_affine_metric_d2_h0.01.json\n?? results/manifests/reference_M_affine_metric_d2_h0.02.json\n?? results/manifests/reference_M_affine_metric_d2_h0.04.json\n?? results/manifests/reference_M_affine_metric_d5.json\n?? results/manifests/reference_M_affine_metric_d5_h0.005.json\n?? results/manifests/reference_M_affine_metric_d5_h0.01.json\n?? results/manifests/reference_M_affine_metric_d5_h0.02.json\n?? results/manifests/reference_M_affine_metric_d5_h0.04.json\n?? results/manifests/state_shards/\n?? src/fr_gvi/plotting/style.py",
+  "method_specification": {
+    "certified_step_size": 0.015738218776383053,
+    "name": "FR--R",
+    "normalized_step_size": 0.0625,
+    "step_size": 0.0009836386735239408,
+    "tag": "x0p0625"
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/full/L/L_logistic_d10_lam1_fc1e2/fr-r-x0p0625_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "feature_condition": 100.0,
+    "prior_precision": 1.0,
+    "samples": 100,
+    "true_parameter_norm": 1.132481234847544
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 3.7637969453473266e-28,
+    "fisher_rao_residual_squared": 5.065315069617851e-29,
+    "objective": 66.06181927775592,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_L_logistic_d10_lam1_fc1e2.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 4021700341,
+  "schema_version": 1,
+  "start_utc": "2026-08-05T08:56:43.089337+00:00",
+  "status": "running",
+  "target_seed": 475699164
+}

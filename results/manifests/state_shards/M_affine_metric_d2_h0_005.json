@@ -1,0 +1,17 @@
+{
+  "runs": {
+    "M_affine_metric_d2_h0.005:affine-metric-family:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "2ecb7c5fca2b22567243e986b953ed7ea933d673c6dc1030386d61ac51157029",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/M_affine_metric_d2_h0.005_affine-metric-family_seed0.json",
+      "status": "completed"
+    },
+    "M_affine_metric_d2_h0.005:affine-metric-family:seed1": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "2ecb7c5fca2b22567243e986b953ed7ea933d673c6dc1030386d61ac51157029",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/M_affine_metric_d2_h0.005_affine-metric-family_seed1.json",
+      "status": "running"
+    }
+  },
+  "version": 1
+}

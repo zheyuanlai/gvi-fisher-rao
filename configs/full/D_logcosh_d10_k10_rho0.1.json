@@ -1,0 +1,317 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 1.340560936267826,
+    "FR--KL": 0.5,
+    "FR--KL--STL": 0.0625,
+    "FR--R": 0.25,
+    "FR--R--STL": 0.5,
+    "S--FB--GVI": 1.340560936267826
+  },
+  "curvature": {
+    "alpha": 0.0022878106763297113,
+    "alpha_star": 0.7883911177580343,
+    "beta": 0.7459563925411993,
+    "beta_star": 1.5767822355160686,
+    "certified_step_sizes": {
+      "FB--GVI": 1.340560936267826,
+      "FR--KL": 0.5,
+      "FR--KL--STL": 0.0625,
+      "FR--R": 0.25,
+      "FR--R--STL": 0.5,
+      "S--FB--GVI": 1.340560936267826
+    },
+    "condition": 326.0568718640312,
+    "exact": true,
+    "kappa_star": 2.0,
+    "lambda_0_star": 0.00134430934921544,
+    "lambda_0_star_max": 0.3499077431681238,
+    "lambda_max_star": 1.2684059694174672,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "D",
+  "grid": {
+    "condition": 10.0,
+    "dimension": 10,
+    "rho": 0.1
+  },
+  "id": "D_logcosh_d10_k10_rho0.1",
+  "instance_per_seed": true,
+  "iterations": 400,
+  "master_seed": 20262010,
+  "methods": [
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 0.0625,
+      "seeds": 5,
+      "step_size": 0.015625,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 0.125,
+      "seeds": 5,
+      "step_size": 0.03125,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 0.25,
+      "seeds": 5,
+      "step_size": 0.0625,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_size": 0.125,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 1.0,
+      "seeds": 5,
+      "step_size": 0.25,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "seeds": 5,
+      "step_size": 0.5,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 4.0,
+      "seeds": 5,
+      "step_size": 1.0,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 8.0,
+      "seeds": 5,
+      "step_size": 2.0,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 16.0,
+      "seeds": 5,
+      "step_size": 4.0,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 32.0,
+      "seeds": 5,
+      "step_size": 8.0,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 64.0,
+      "seeds": 5,
+      "step_size": 16.0,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 128.0,
+      "seeds": 5,
+      "step_size": 32.0,
+      "tag": "x128"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 0.0625,
+      "seeds": 5,
+      "step_size": 0.03125,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 0.125,
+      "seeds": 5,
+      "step_size": 0.0625,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 0.25,
+      "seeds": 5,
+      "step_size": 0.125,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_size": 0.25,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 1.0,
+      "seeds": 5,
+      "step_size": 0.5,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "seeds": 5,
+      "step_size": 1.0,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 4.0,
+      "seeds": 5,
+      "step_size": 2.0,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 8.0,
+      "seeds": 5,
+      "step_size": 4.0,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 16.0,
+      "seeds": 5,
+      "step_size": 8.0,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 32.0,
+      "seeds": 5,
+      "step_size": 16.0,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 64.0,
+      "seeds": 5,
+      "step_size": 32.0,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.0625,
+      "seeds": 5,
+      "step_size": 0.08378505851673912,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.125,
+      "seeds": 5,
+      "step_size": 0.16757011703347824,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.25,
+      "seeds": 5,
+      "step_size": 0.3351402340669565,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_size": 0.670280468133913,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "seeds": 5,
+      "step_size": 1.340560936267826,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 2.0,
+      "seeds": 5,
+      "step_size": 2.681121872535652,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 4.0,
+      "seeds": 5,
+      "step_size": 5.362243745071304,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 8.0,
+      "seeds": 5,
+      "step_size": 10.724487490142607,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 16.0,
+      "seeds": 5,
+      "step_size": 21.448974980285215,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 1.340560936267826,
+      "name": "FB--GVI",
+      "normalized_step_size": 32.0,
+      "seeds": 5,
+      "step_size": 42.89794996057043,
+      "tag": "x32"
+    }
+  ],
+  "record_every": 1,
+  "target": {
+    "affine_condition": 10.0,
+    "condition": 10.0,
+    "dimension": 10,
+    "initial_covariance_scale": 0.5,
+    "kind": "logcosh",
+    "rho": 0.1
+  },
+  "tier": "full"
+}

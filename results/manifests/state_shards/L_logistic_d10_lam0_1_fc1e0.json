@@ -1,0 +1,11 @@
+{
+  "runs": {
+    "L_logistic_d10_lam0.1_fc1e0:fr-r-x0p0625:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "d949be742f3e97322cf59b1ea761269302089900666e41232acf361ee8e4a5ee",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d10_lam0.1_fc1e0_fr-r-x0p0625_seed0.json",
+      "status": "running"
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,53 @@
+{
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.5884692566454504,
+    "beta": 2.0000000000000018,
+    "beta_star": 1.196022815614854,
+    "certified_step_sizes": {
+      "FB--GVI": 0.49999999999999956,
+      "FR--KL": 0.4920217649384295,
+      "FR--KL--STL": 0.0615027206173037,
+      "FR--R": 0.24601088246921474,
+      "FR--R--STL": 0.4920217649384296,
+      "S--FB--GVI": 0.49999999999999956
+    },
+    "condition": 2.0000000000000018,
+    "exact": true,
+    "kappa_star": 2.032430415197461,
+    "lambda_0_star": 1.5049880123521324,
+    "lambda_0_star_max": 1.5293917054060233,
+    "lambda_max_star": 1.6993241171178035,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "G",
+  "grid": {
+    "dimension": 3,
+    "rho": 1.0
+  },
+  "id": "G_local_spectral_d3_rho1",
+  "iterations": 200,
+  "local_operator_points": 8192,
+  "master_seed": 20261260,
+  "methods": [
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.05,
+      "step_size": 0.05
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.05,
+      "step_size": 0.05
+    }
+  ],
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 1.0,
+    "dimension": 3,
+    "initial_covariance_scale": 0.9,
+    "kind": "logcosh",
+    "rho": 1.0
+  },
+  "tier": "full"
+}

@@ -32,7 +32,9 @@ ROOT = Path(__file__).resolve().parents[3]
 CONFIG_ROOT = ROOT / "configs"
 
 # Multipliers of each method's certified stepsize used by the sweep experiments.
-STEP_MULTIPLIERS = (0.0625, 0.125, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0)
+# The range extends well past the certified scale so that the stability boundary
+# is actually located rather than censored at the top of the grid.
+STEP_MULTIPLIERS = tuple(float(2.0**exponent) for exponent in range(-4, 11))
 
 STOCHASTIC_SEEDS = 30
 
@@ -57,6 +59,7 @@ def cell_constants(
         problem.initial_state,
         points=reference_points,
         seed=_seed_for(master_seed, 3, 0),
+        certify=False,
     )
     constants = curvature_constants(problem.target, reference.state)
     whitened = whitened_initialization(
@@ -78,15 +81,30 @@ def swept_methods(
     names: Iterable[str],
     certified: dict[str, float],
     *,
-    multipliers: Iterable[float] = STEP_MULTIPLIERS,
+    multipliers: Iterable[float] | None = STEP_MULTIPLIERS,
+    absolute_cap: float | None = None,
     seeds: int | None = None,
     extra: dict[str, Any] | None = None,
     per_method_extra: dict[str, dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
+    """Emit one method entry per (method, step) pair.
+
+    With ``absolute_cap`` the multiplier grid is extended per method until the
+    absolute step reaches the cap.  This matters when the certified step is very
+    small -- for the logistic cells it is around ``1e-5`` because the whitened
+    initial covariance ceiling ``lambda_max_star`` is large -- so that the sweep
+    still brackets the practically useful range instead of stopping far below it.
+    """
+
     methods: list[dict[str, Any]] = []
     for name in names:
         base = certified[name]
-        for multiplier in multipliers:
+        if absolute_cap is not None:
+            top = max(1, int(np.ceil(np.log2(absolute_cap / base)))) if base > 0 else 10
+            grid = [float(2.0**exponent) for exponent in range(-4, top + 1)]
+        else:
+            grid = list(multipliers or STEP_MULTIPLIERS)
+        for multiplier in grid:
             specification: dict[str, Any] = {
                 "name": name,
                 "step_size": float(base * multiplier),
@@ -193,7 +211,9 @@ def experiment_c() -> list[dict[str, Any]]:
         "initial_covariance_scale": 1.0,
     }
     certified = cell_constants(target, master_seed, "C")["certified_step_sizes"]
-    methods = swept_methods(("FR--R", "FR--KL", "FB--GVI"), certified, seeds=10)
+    methods = swept_methods(
+        ("FR--R", "FR--KL", "FB--GVI"), certified, absolute_cap=32.0, seeds=10
+    )
     methods += [
         {
             "name": "FR--R",
@@ -262,7 +282,8 @@ def experiment_d() -> list[dict[str, Any]]:
                         "curvature": constants,
                         "certified_step_sizes": certified,
                         "methods": swept_methods(
-                            ("FR--R", "FR--KL", "FB--GVI"), certified, seeds=5
+                            ("FR--R", "FR--KL", "FB--GVI"), certified,
+                            absolute_cap=32.0, seeds=5,
                         ),
                     }
                 )
@@ -536,8 +557,10 @@ def experiment_k() -> list[dict[str, Any]]:
                         "master_seed": master_seed,
                         "grid": {"dimension": dimension, "rho": rho, "batch_size": batch},
                         "target": target,
-                        "iterations": 4000,
-                        "record_every": 4,
+                        # Long horizon so the asymptotic O(1/N) regime of
+                        # Theorem 4.21 is actually reached and its slope measurable.
+                        "iterations": 20000,
+                        "record_every": 20,
                         "curvature": constants,
                         "methods": [
                             {
@@ -584,20 +607,27 @@ def experiment_l() -> list[dict[str, Any]]:
                     "feature_condition": feature_condition,
                     "prior_precision": prior,
                 }
-                update_points = 256 if dimension <= 50 else 128
+                # One shared quadrature design per cell.  Sizes are chosen so the
+                # residual of the reference against an independent 4x design stays
+                # near 1e-6, which is far below every gap the figures resolve.
+                update_points = {10: 8192, 50: 4096, 100: 2048}[dimension]
                 constants = cell_constants(
-                    target, master_seed, "L", reference_points=2048
+                    target, master_seed, "L", reference_points=update_points
                 )
                 certified = constants["certified_step_sizes"]
                 deterministic = swept_methods(
-                    ("FR--R", "FR--KL", "FB--GVI"),
-                    certified,
-                    multipliers=(0.125, 0.5, 1.0, 2.0, 8.0),
+                    ("FR--R", "FR--KL", "FB--GVI"), certified, absolute_cap=4.0
                 )
+                # Stochastic arms are placed at a step that is both admissible and
+                # practically useful; the deterministic sweep above locates it.
                 stochastic = [
                     {
                         "name": name,
-                        "step_size": 0.5 * certified[name],
+                        "step_size": float(min(0.25, 64.0 * certified[name])),
+                        "normalized_step_size": float(
+                            min(0.25, 64.0 * certified[name]) / certified[name]
+                        ),
+                        "certified_step_size": float(certified[name]),
                         "batch_size": 16,
                         "seeds": 10,
                     }
@@ -619,9 +649,9 @@ def experiment_l() -> list[dict[str, Any]]:
                         },
                         "target": target,
                         "update_points": update_points,
-                        "evaluation_points": 512,
-                        "reference_points": 2048,
-                        "iterations": 200 if dimension <= 50 else 100,
+                        "evaluation_points": update_points,
+                        "reference_points": update_points,
+                        "iterations": 200 if dimension <= 50 else 120,
                         "record_every": 1 if dimension <= 50 else 2,
                         "curvature": constants,
                         "certified_step_sizes": certified,
@@ -645,29 +675,33 @@ def experiment_m() -> list[dict[str, Any]]:
                 if tau <= -omega / dimension:
                     continue
                 metrics.append({"omega": float(omega), "tau": float(tau)})
-        master_seed = 20261800 + dimension
-        configs.append(
-            {
-                "id": f"M_affine_metric_d{dimension}",
-                "experiment": "M",
-                "tier": "full",
-                "master_seed": master_seed,
-                "grid": {"dimension": dimension},
-                "target": {
-                    "kind": "gaussian",
-                    "dimension": dimension,
-                    "condition": 20.0,
-                    "rotation": True,
-                    "mean_scale": 0.0,
-                },
-                "step_size": 0.01,
-                "iterations": 600,
-                "perturbation": 1.0e-4,
-                "fit_fraction": 0.6,
-                "seeds": 5,
-                "metrics": metrics,
-            }
-        )
+        # The retraction fits a rate biased by O(h): a step h resolves a true
+        # rate r as -log(1 - h r)/h.  Sweeping h therefore lets the figure show
+        # the fitted rates converging onto the predicted ones as h -> 0.
+        for step_size in (0.04, 0.02, 0.01, 0.005):
+            master_seed = 20261800 + dimension * 10 + int(1000 * step_size)
+            configs.append(
+                {
+                    "id": f"M_affine_metric_d{dimension}_h{step_size:g}",
+                    "experiment": "M",
+                    "tier": "full",
+                    "master_seed": master_seed,
+                    "grid": {"dimension": dimension, "step_size": step_size},
+                    "target": {
+                        "kind": "gaussian",
+                        "dimension": dimension,
+                        "condition": 20.0,
+                        "rotation": True,
+                        "mean_scale": 0.0,
+                    },
+                    "step_size": step_size,
+                    "iterations": int(round(6.0 / step_size)),
+                    "perturbation": 1.0e-4,
+                    "fit_fraction": 0.6,
+                    "seeds": 5,
+                    "metrics": metrics,
+                }
+            )
     return configs
 
 

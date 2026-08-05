@@ -1,0 +1,41 @@
+{
+  "runs": {
+    "D_logcosh_d50_k100_rho5:fr-r-x0p0625:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p0625_seed0.json",
+      "status": "completed"
+    },
+    "D_logcosh_d50_k100_rho5:fr-r-x0p0625:seed1": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p0625_seed1.json",
+      "status": "completed"
+    },
+    "D_logcosh_d50_k100_rho5:fr-r-x0p0625:seed2": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p0625_seed2.json",
+      "status": "completed"
+    },
+    "D_logcosh_d50_k100_rho5:fr-r-x0p0625:seed3": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p0625_seed3.json",
+      "status": "completed"
+    },
+    "D_logcosh_d50_k100_rho5:fr-r-x0p0625:seed4": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p0625_seed4.json",
+      "status": "completed"
+    },
+    "D_logcosh_d50_k100_rho5:fr-r-x0p125:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "a303c99ee34ab0a77d5cf0397283fc9c9d364c595b5c7b9c83187a8c2b599b17",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/D_logcosh_d50_k100_rho5_fr-r-x0p125_seed0.json",
+      "status": "running"
+    }
+  },
+  "version": 1
+}

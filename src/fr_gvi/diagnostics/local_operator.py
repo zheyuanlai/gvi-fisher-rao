@@ -64,3 +64,36 @@ def assemble_local_operator(
             operator[row, column] = inner(test_u, test_x, output_u, output_x)
     return np.asarray((operator + operator.T) * 0.5, dtype=np.float64)
 
+
+
+def kl_local_gap(operator: FloatArray, dimension: int, step_size: float) -> float:
+    """Spectral gap of the linearized KL/Bregman generator of Theorem 3.7(iii).
+
+    ``L^KL_{star,dt}`` is self-adjoint for the weighted inner product
+    ``<(u,X),(v,Y)>_{star,dt} = u.v + (1+dt)/2 Tr(XY)`` and its quadratic form is
+    exactly ``Q_star``, the quadratic form of ``L_star``.  In the star-orthonormal
+    basis used above this makes the gap the smallest generalized eigenvalue of
+    ``(operator, W)`` with ``W = diag(1,...,1, 1+dt, ..., 1+dt)``.
+    """
+
+    size = operator.shape[0]
+    weights = np.ones(size, dtype=np.float64)
+    weights[dimension:] = 1.0 + step_size
+    root = np.sqrt(weights)
+    whitened = operator / root[:, None] / root[None, :]
+    return float(np.linalg.eigvalsh((whitened + whitened.T) / 2.0)[0])
+
+
+def discrete_rate(gap: float, step_size: float) -> float:
+    """Rate of the squared distance for a linear map with factor ``1 - dt * gap``.
+
+    The fitted decay of ``||a_n - a_star||^2`` under a one-step contraction
+    ``1 - dt * gap`` is ``-2 log(1 - dt * gap) / dt``, which tends to ``2 * gap``
+    as ``dt -> 0``.  Comparing against this rather than against ``2 * gap``
+    removes the O(dt) discretization bias from the comparison.
+    """
+
+    argument = 1.0 - step_size * gap
+    if argument <= 0.0:
+        return float("nan")
+    return float(-2.0 * np.log(argument) / step_size)

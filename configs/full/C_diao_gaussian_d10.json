@@ -1,0 +1,294 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 1.0000000000000004,
+    "FR--KL": 1.0,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.5,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 1.0000000000000004
+  },
+  "experiment": "C",
+  "grid": {
+    "condition": 1000000000.0,
+    "dimension": 10
+  },
+  "id": "C_diao_gaussian_d10",
+  "instance_per_seed": true,
+  "iterations": 500,
+  "master_seed": 20260930,
+  "methods": [
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 0.0625,
+      "seeds": 10,
+      "step_size": 0.03125,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 0.125,
+      "seeds": 10,
+      "step_size": 0.0625,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 0.25,
+      "seeds": 10,
+      "step_size": 0.125,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 0.5,
+      "seeds": 10,
+      "step_size": 0.25,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 1.0,
+      "seeds": 10,
+      "step_size": 0.5,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "seeds": 10,
+      "step_size": 1.0,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 4.0,
+      "seeds": 10,
+      "step_size": 2.0,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 8.0,
+      "seeds": 10,
+      "step_size": 4.0,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 16.0,
+      "seeds": 10,
+      "step_size": 8.0,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 32.0,
+      "seeds": 10,
+      "step_size": 16.0,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--R",
+      "normalized_step_size": 64.0,
+      "seeds": 10,
+      "step_size": 32.0,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 0.0625,
+      "seeds": 10,
+      "step_size": 0.0625,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 0.125,
+      "seeds": 10,
+      "step_size": 0.125,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 0.25,
+      "seeds": 10,
+      "step_size": 0.25,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 0.5,
+      "seeds": 10,
+      "step_size": 0.5,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 1.0,
+      "seeds": 10,
+      "step_size": 1.0,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "seeds": 10,
+      "step_size": 2.0,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 4.0,
+      "seeds": 10,
+      "step_size": 4.0,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 8.0,
+      "seeds": 10,
+      "step_size": 8.0,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 16.0,
+      "seeds": 10,
+      "step_size": 16.0,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 1.0,
+      "name": "FR--KL",
+      "normalized_step_size": 32.0,
+      "seeds": 10,
+      "step_size": 32.0,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.0625,
+      "seeds": 10,
+      "step_size": 0.06250000000000003,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.125,
+      "seeds": 10,
+      "step_size": 0.12500000000000006,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.25,
+      "seeds": 10,
+      "step_size": 0.2500000000000001,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "seeds": 10,
+      "step_size": 0.5000000000000002,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "seeds": 10,
+      "step_size": 1.0000000000000004,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 2.0,
+      "seeds": 10,
+      "step_size": 2.000000000000001,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 4.0,
+      "seeds": 10,
+      "step_size": 4.000000000000002,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 8.0,
+      "seeds": 10,
+      "step_size": 8.000000000000004,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 16.0,
+      "seeds": 10,
+      "step_size": 16.000000000000007,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 1.0000000000000004,
+      "name": "FB--GVI",
+      "normalized_step_size": 32.0,
+      "seeds": 10,
+      "step_size": 32.000000000000014,
+      "tag": "x32"
+    },
+    {
+      "iterations": 0,
+      "name": "FR--R",
+      "quadratic_rescue": true,
+      "seeds": 10,
+      "step_size": 0.5,
+      "tag": "rescue"
+    },
+    {
+      "iterations": 0,
+      "name": "FR--KL",
+      "quadratic_rescue": true,
+      "seeds": 10,
+      "step_size": 1.0,
+      "tag": "rescue"
+    }
+  ],
+  "target": {
+    "diao_spectrum": true,
+    "dimension": 10,
+    "initial_covariance_scale": 1.0,
+    "kind": "gaussian",
+    "mean_distribution": "uniform",
+    "rotation": true
+  },
+  "tier": "full"
+}

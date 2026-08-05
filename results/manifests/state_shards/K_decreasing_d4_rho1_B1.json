@@ -1,0 +1,17 @@
+{
+  "runs": {
+    "K_decreasing_d4_rho1_B1:fr-r-stl-qr-b1:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "d469a9f014d82f6d4fdcb304c0fd75ca0c1a33e87cfbc24534a515df16630fdc",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/K_decreasing_d4_rho1_B1_fr-r-stl-qr-b1_seed0.json",
+      "status": "completed"
+    },
+    "K_decreasing_d4_rho1_B1:fr-r-stl-qr-b1:seed1": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "d469a9f014d82f6d4fdcb304c0fd75ca0c1a33e87cfbc24534a515df16630fdc",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/K_decreasing_d4_rho1_B1_fr-r-stl-qr-b1_seed1.json",
+      "status": "running"
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,17 @@
+{
+  "runs": {
+    "F_gaussian_local_d10_rate1.5:fr-kl:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "15668eb0046dba2ba553d5967e20efe24ddd6628cfe8a843e5042df5fe481588",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/F_gaussian_local_d10_rate1.5_fr-kl_seed0.json",
+      "status": "completed"
+    },
+    "F_gaussian_local_d10_rate1.5:fr-r:seed0": {
+      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "config_hash": "15668eb0046dba2ba553d5967e20efe24ddd6628cfe8a843e5042df5fe481588",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/F_gaussian_local_d10_rate1.5_fr-r_seed0.json",
+      "status": "completed"
+    }
+  },
+  "version": 1
+}

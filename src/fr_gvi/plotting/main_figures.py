@@ -1,542 +1,527 @@
+"""Composite manuscript figures.
+
+These are the figures intended to appear in the paper.  Each one collects the
+panels that carry a single message across several experiments; the per-experiment
+figures in ``fr_gvi.plotting.figures`` remain the detailed supporting evidence.
+"""
+
 from __future__ import annotations
 
-import csv
-import json
-from collections import defaultdict
-from pathlib import Path
-from typing import Iterable
+import argparse
 
-import matplotlib
-
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
-from fr_gvi.plotting.aggregation import AggregateSeries, aggregate_series
-from fr_gvi.plotting.main_processed import write_main_processed
-from fr_gvi.plotting.figures import (
+from fr_gvi.plotting.figures import ordered_methods, plot_median_band
+from fr_gvi.plotting.style import (
     COLORS,
-    LINESTYLES,
     MARKERS,
-    FIGURES,
-    RAW,
-    ROOT,
+    REFERENCE_GREY,
+    TEXT_WIDTH,
     configure_style,
-    group_trajectories,
+    load_experiment,
+    method_style,
+    panel_letter,
     positive,
-    read_rows,
+    save_figure,
+    tidy_log_axes,
 )
 
-METHOD_ORDER = {
-    name: index
-    for index, name in enumerate(
-        (
-            "FR--R",
-            "FR--KL",
-            "FR--R--STL",
-            "FR--KL--STL",
-            "FB--GVI",
-            "S--FB--GVI",
-            "Laplace",
-        )
-    )
-}
 
-
-def _number(row: dict[str, str], key: str, default: float = np.nan) -> float:
-    try:
-        return float(row.get(key, ""))
-    except (TypeError, ValueError):
-        return default
-
-
-def _core(rows: Iterable[dict[str, str]]) -> list[dict[str, str]]:
-    return [row for row in rows if row.get("tier") == "core"]
-
-
-def _series(
-    rows: list[dict[str, str]], y_key: str, *, x_key: str = "iteration"
-) -> list[AggregateSeries]:
-    values = aggregate_series(group_trajectories(rows), y_key, x_key=x_key)
-    return sorted(values, key=lambda item: (METHOD_ORDER.get(item.method, 99), item.job))
-
-
-def _method_label(item: AggregateSeries) -> str:
-    return item.method
-
-
-def _plot_series(
-    axis: plt.Axes,
-    rows: list[dict[str, str]],
-    y_key: str,
-    *,
-    x_key: str = "iteration",
-    xlabel: str,
-    ylabel: str,
-    log_y: bool = True,
-    log_x: bool = False,
-    laplace_line: bool = False,
-) -> None:
-    for index, item in enumerate(_series(rows, y_key, x_key=x_key)):
-        color = COLORS.get(item.method, f"C{index % 10}")
-        y = positive(list(item.median)) if log_y else np.asarray(item.median)
-        lower = positive(list(item.lower)) if log_y else np.asarray(item.lower)
-        upper = positive(list(item.upper)) if log_y else np.asarray(item.upper)
-        finite = np.isfinite(item.x) & np.isfinite(y)
-        if laplace_line and item.method == "Laplace" and np.any(finite):
-            axis.axhline(
-                float(y[finite][-1]), color=color, linestyle=LINESTYLES[item.method],
-                linewidth=1.5, label="Laplace",
-            )
-            continue
-        if item.replicates > 1:
-            axis.fill_between(item.x, lower, upper, color=color, alpha=0.18, linewidth=0.0)
-        axis.plot(
-            item.x,
-            y,
-            color=color,
-            linestyle=LINESTYLES.get(item.method, "-"),
-            marker=MARKERS[index % len(MARKERS)],
-            markevery=max(1, len(item.x) // 6),
-            markersize=3.0,
-            label=_method_label(item),
-        )
-    axis.set_xlabel(xlabel)
-    axis.set_ylabel(ylabel)
-    if log_y:
-        axis.set_yscale("log")
-    if log_x:
-        axis.set_xscale("log")
-
-
-def _deduplicated_legend(figure: plt.Figure, axes: Iterable[plt.Axes], ncols: int = 4) -> None:
-    handles: list[object] = []
+def _legend(figure: plt.Figure, axes, columns: int = 4) -> None:
+    handles: list = []
     labels: list[str] = []
-    for axis in axes:
-        current_handles, current_labels = axis.get_legend_handles_labels()
-        for handle, label in zip(current_handles, current_labels, strict=False):
-            if label and label not in labels:
+    for axis in np.atleast_1d(axes).ravel():
+        for handle, label in zip(*axis.get_legend_handles_labels(), strict=False):
+            if label not in labels:
                 handles.append(handle)
                 labels.append(label)
     if handles:
         figure.legend(
-            handles,
-            labels,
-            loc="outside lower center",
-            ncols=min(ncols, len(labels)),
-            frameon=False,
+            handles, labels, loc="outside lower center",
+            ncols=min(columns, len(labels)), frameon=False,
         )
 
 
-def _save(figure: plt.Figure, number: int, caption: str) -> None:
-    FIGURES.mkdir(parents=True, exist_ok=True)
-    base = FIGURES / f"main_figure_{number}"
-    figure.savefig(base.with_suffix(".png"))
-    figure.savefig(base.with_suffix(".pdf"), metadata={"Creator": "fr-gvi academic plotting"})
-    plt.close(figure)
-    base.with_suffix(".md").write_text(
-        f"# Main Figure {number} caption draft\n\n{caption}\n",
-        encoding="utf-8",
-    )
+def _terminal(frame: pd.DataFrame) -> pd.DataFrame:
+    keys = [k for k in ("job_id", "method", "variant", "seed") if k in frame.columns]
+    return frame.sort_values("iteration").groupby(keys, as_index=False).last()
 
 
-def _panel_titles(axes: Iterable[plt.Axes], titles: Iterable[str]) -> None:
-    for axis, title in zip(axes, titles, strict=True):
-        axis.set_title(title, loc="left")
+def main_figure_1() -> None:
+    """Affine invariance: burn-in law, equivariance, and the Diao benchmark."""
 
+    burn = load_experiment("A")
+    affine = load_experiment("B")
+    diao = load_experiment("C")
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.4), constrained_layout=True)
 
-def figure_1(by_experiment: dict[str, list[dict[str, str]]]) -> None:
-    figure, axes_array = plt.subplots(2, 2, figsize=(7.0, 5.6), constrained_layout=True)
-    axes = axes_array.ravel()
-
-    burn_records: list[tuple[str, float, float]] = []
-    for path in sorted((ROOT / "results" / "manifests" / "core").glob("A_burnin_*.json")):
-        record = json.loads(path.read_text(encoding="utf-8"))
-        if record.get("status") != "completed" or record.get("burn_in_iteration") is None:
+    rows = []
+    for (_, method, _), trajectory in burn.groupby(["job_id", "method", "seed"]):
+        trajectory = trajectory.sort_values("iteration")
+        beta_star = float(trajectory["beta_star"].iloc[0])
+        entered = trajectory[
+            trajectory["relative_covariance_min_eigenvalue"] >= 1.0 / (2.0 * beta_star)
+        ]
+        if entered.empty:
             continue
-        config = record["config"]
-        scale = float(config["target"]["initial_covariance_scale"])
-        beta = float(config["target"]["condition"])
-        step = float(record["method_specification"]["step_size"])
-        burn_records.append(
-            (
-                str(record["method_specification"]["name"]),
-                float(np.log(1.0 / (beta * scale))),
-                float(record["burn_in_iteration"]) * step,
-            )
+        step = float(trajectory["step_size"].iloc[-1])
+        rows.append(
+            {
+                "method": method,
+                "measured": int(entered["iteration"].iloc[0]) * step,
+                "predicted": float(
+                    np.log(1.0 / (beta_star * float(trajectory["lambda_0_star"].iloc[0])))
+                ),
+            }
         )
-    for index, method in enumerate(("FR--R", "FR--KL")):
-        values = sorted((x, y) for name, x, y in burn_records if name == method)
-        if values:
-            x, y = np.asarray(values).T
-            axes[0].plot(
-                x, y, marker=MARKERS[index], color=COLORS[method],
-                linestyle=LINESTYLES[method], label=method,
-            )
-    if burn_records:
-        limit = np.asarray([min(value[1] for value in burn_records), max(value[1] for value in burn_records)])
-        axes[0].plot(limit, limit, color="#444444", linestyle=":", label="log envelope")
-    axes[0].set_xlabel(r"$\log[1/(\beta\lambda_0)]$")
-    axes[0].set_ylabel(r"$N_{\rm cov}h$")
+    burn_table = pd.DataFrame(rows)
+    for method in ordered_methods(burn_table):
+        subset = burn_table[burn_table["method"] == method]
+        axes[0].plot(
+            subset["predicted"], subset["measured"], linestyle="none", label=method,
+            **{k: v for k, v in method_style(method).items() if k != "linestyle"},
+        )
+    limits = [0.0, float(burn_table["predicted"].max()) * 1.05]
+    axes[0].plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+                 label="theory")
+    axes[0].set_xlabel(r"$\log[1/(\beta_\star\lambda_{0,\star})]$")
+    axes[0].set_ylabel(r"$N_{\mathrm{cov}}\,\Delta t$")
+    panel_letter(axes[0], "a", "Covariance burn-in")
 
-    hard_rows = [
-        row
-        for row in _core(by_experiment.get("A", []))
-        if "lam1e12" in row.get("job_id", "") and row.get("method") == "FR--R"
-    ]
-    hard_rows.sort(key=lambda row: _number(row, "iteration"))
-    if hard_rows:
-        n = np.asarray([_number(row, "iteration") for row in hard_rows])
-        state = np.sqrt(
-            np.asarray([_number(row, "mean_error") for row in hard_rows]) ** 2
-            + np.asarray([_number(row, "covariance_error") for row in hard_rows]) ** 2
+    summary = (
+        affine.groupby(["method", "grid_affine_condition"])["equivariance_error_covariance"]
+        .max()
+        .reset_index()
+    )
+    for method in ordered_methods(summary):
+        subset = summary[summary["method"] == method].sort_values("grid_affine_condition")
+        axes[1].plot(
+            subset["grid_affine_condition"], positive(subset["equivariance_error_covariance"]),
+            label=method, **method_style(method),
         )
-        trajectories = (
-            ("relative_covariance_min_eigenvalue", r"$\lambda_{\min}(C_\star^{-1/2}C_nC_\star^{-1/2})$"),
-            ("objective_gap", r"$\Delta_n$"),
-            ("fisher_rao_residual_squared", r"$\|\operatorname{grad}\mathcal{E}\|_{\rm FR}$"),
-        )
-        for index, (key, label) in enumerate(trajectories):
-            values = np.asarray([_number(row, key) for row in hard_rows])
-            if key.endswith("squared"):
-                values = np.sqrt(np.maximum(values, 0.0))
-            axes[1].plot(n, positive(list(values)), label=label, marker=MARKERS[index],
-                         markevery=max(1, len(n) // 7), markersize=2.8)
-        axes[1].plot(n, positive(list(state)), label=r"$r_\star$", color="#CC79A7", linestyle="--")
-        markers = [(207, "cov. band")]
-        for threshold, label in ((1.0, r"$r_\star\leq1$"), (0.1, r"$r_\star\leq0.1$")):
-            indices = np.flatnonzero(state <= threshold)
-            if indices.size:
-                markers.append((int(n[indices[0]]), label))
-        for location, label in markers:
-            axes[1].axvline(location, color="#777777", linewidth=0.8, linestyle=":")
-            axes[1].text(location, 0.03, label, rotation=90, transform=axes[1].get_xaxis_transform(),
-                         ha="right", va="bottom", fontsize=6.5, color="#555555")
-        axes[1].set_yscale("log")
-        axes[1].set_xlabel("Iteration")
-        axes[1].set_ylabel("Diagnostic value")
+    axes[1].set_xscale("log")
+    axes[1].set_yscale("log")
+    axes[1].set_xlabel(r"conditioning $K$ of the change of variables")
+    axes[1].set_ylabel("max equivariance error")
+    panel_letter(axes[1], "b", "Affine equivariance")
 
-    _plot_series(
-        axes[2], _core(by_experiment.get("B", [])), "equivariance_error_covariance",
-        xlabel="Iteration", ylabel="Relative covariance discrepancy",
-    )
-    _plot_series(
-        axes[3], [row for row in _core(by_experiment.get("C", [])) if row.get("quadratic_rescue") != "True"],
-        "objective_gap", xlabel="Oracle pairs", x_key="oracle_pairs", ylabel="Exact Gaussian KL gap",
-    )
-    _panel_titles(
-        axes,
-        (
-            "(a) Logarithmic covariance burn-in",
-            "(b) Hard-start three-stage diagnostics",
-            "(c) Affine-equivariance error, $K=10^4$",
-            "(d) Diao anisotropic Gaussian pilot",
-        ),
-    )
-    _deduplicated_legend(figure, axes)
-    _save(
+    competitive = diao[~diao["variant"].str.contains("rescue", na=False)]
+    terminal = _terminal(competitive)
+    for method in ordered_methods(competitive):
+        subset = terminal[terminal["method"] == method]
+        best_step = float(
+            subset.groupby("normalized_step_size")["exact_gaussian_kl"].median().idxmin()
+        )
+        trajectory = competitive[
+            (competitive["method"] == method)
+            & np.isclose(competitive["normalized_step_size"], best_step)
+        ]
+        plot_median_band(
+            axes[2], trajectory, "iteration", "exact_gaussian_kl",
+            label=method, style=method_style(method),
+        )
+    axes[2].set_xlabel("iteration $n$")
+    axes[2].set_ylabel("exact KL gap")
+    panel_letter(axes[2], "c", r"$\kappa=10^9$, $\kappa_\star=1$")
+
+    tidy_log_axes(*axes)
+    _legend(figure, axes)
+    save_figure(
         figure,
-        1,
-        "Gaussian geometry and initialization. (a) Recorded covariance-band entry times follow the logarithmic envelope. "
-        "(b) The hardest core initialization shows covariance, objective, Fisher--Rao residual, and optimizer-relative stages; "
-        "the two radius thresholds are operational diagnostics, not theorem constants. (c) Direct transformed-iterate errors "
-        "test affine equivariance. (d) The competitive Diao benchmark excludes the one-query quadratic-rescue verification.",
+        "main_figure_1",
+        "Affine invariance of the Gaussian Fisher--Rao flow. "
+        "(a) The optimizer-whitened covariance band is entered after the predicted "
+        "$\\log[1/(\\beta_\\star\\lambda_{0,\\star})]$ of Theorem 2.9, over "
+        "$\\kappa\\in\\{10,10^2,10^3\\}$ and $\\lambda_0\\in\\{10^{-2},\\dots,10^{-12}\\}$. "
+        "(b) Transformed Fisher--Rao iterates agree with the transported reference at "
+        "roundoff level over eight decades of coordinate conditioning; FB--GVI does not. "
+        "(c) On the anisotropic Gaussian of Diao et al., where $\\kappa=10^9$ but "
+        "$\\kappa_\\star=1$, both Fisher--Rao schemes reach machine precision at their own "
+        "best swept step while FB--GVI remains limited by the original-coordinate "
+        "conditioning.",
+        burn_table,
     )
 
 
-def figure_2(by_experiment: dict[str, list[dict[str, str]]]) -> None:
-    rows = _core(by_experiment.get("D", []))
-    figure, axes_array = plt.subplots(2, 2, figsize=(7.0, 5.6), constrained_layout=True)
-    axes = axes_array.ravel()
-    _plot_series(axes[0], rows, "objective_gap", xlabel="Iteration", ylabel="Objective gap")
-    _plot_series(
-        axes[1], rows, "objective_gap", x_key="wall_time_seconds",
-        xlabel="Wall time (s)", ylabel="Objective gap",
+def main_figure_2() -> None:
+    """Local convergence: exact Gaussian identity and the near-Gaussian spectral gap."""
+
+    gaussian = load_experiment("F")
+    spectral = load_experiment("G")
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.4), constrained_layout=True)
+
+    gaussian = gaussian.copy()
+    gaussian["distance_squared"] = (
+        gaussian["mean_error"] ** 2 + 0.5 * gaussian["covariance_error"] ** 2
     )
-    for index, item in enumerate(_series(rows, "mean_error")):
-        color = COLORS.get(item.method, f"C{index}")
-        axes[2].plot(item.x, positive(list(item.median)), color=color,
-                     linestyle="-", label=f"{item.method}: mean")
-    for index, item in enumerate(_series(rows, "covariance_error")):
-        color = COLORS.get(item.method, f"C{index}")
-        axes[2].plot(item.x, positive(list(item.median)), color=color,
-                     linestyle=":", label=f"{item.method}: covariance")
-    axes[2].set_yscale("log")
-    axes[2].set_xlabel("Iteration")
-    axes[2].set_ylabel("Optimizer-relative error")
-
-    terminal: dict[str, tuple[float, float, float]] = {}
-    for item in _series(rows, "objective_gap"):
-        initial = float(item.median[0])
-        final = float(item.median[-1])
-        step_rows = [row for row in rows if row.get("method") == item.method]
-        step = _number(step_rows[-1], "normalized_step_size") if step_rows else np.nan
-        terminal[item.method] = (initial, final, step)
-    methods = [name for name in ("FR--R", "FR--KL", "FB--GVI") if name in terminal]
-    status = np.asarray(
-        [[2 if terminal[name][1] <= 1.0e-6 else 1 if terminal[name][1] < terminal[name][0] else 0] for name in methods]
-    )
-    from matplotlib.colors import ListedColormap
-
-    axes[3].imshow(status, aspect="auto", vmin=0, vmax=2,
-                   cmap=ListedColormap(["#D55E00", "#F0E442", "#009E73"]))
-    axes[3].set_xticks([0], ["theory-scale core cell"])
-    axes[3].set_yticks(range(len(methods)), methods)
-    for row_index, name in enumerate(methods):
-        axes[3].text(0, row_index, f"stable; h={terminal[name][2]:g}", ha="center", va="center", fontsize=7)
-    axes[3].text(0.02, -0.18, "Full logarithmic stepsize grid: pending full tier",
-                 transform=axes[3].transAxes, fontsize=6.5, color="#555555")
-    _panel_titles(
-        axes,
-        (
-            "(a) Objective versus iteration",
-            "(b) Objective versus wall time",
-            "(c) Mean and covariance errors",
-            "(d) Stepsize-status pilot",
-        ),
-    )
-    _deduplicated_legend(figure, axes[:3], ncols=3)
-    _save(
-        figure,
-        2,
-        "Global shifted log-cosh core pilot (d=10, intrinsic condition 100). Solid and dotted curves in (c) "
-        "separate mean and covariance error. Panel (d) reports only the completed theory-scale cell per method; "
-        "the planned logarithmic stability sweep belongs to the unrun full tier.",
-    )
-
-
-def _observed_rate(rows: list[dict[str, str]]) -> tuple[float, float] | None:
-    ordered = sorted(rows, key=lambda row: _number(row, "iteration"))
-    if len(ordered) < 8:
-        return None
-    time = np.asarray([_number(row, "iteration") * _number(row, "step_size") for row in ordered])
-    gap = np.asarray([_number(row, "objective_gap") for row in ordered])
-    finite = np.isfinite(time) & np.isfinite(gap) & (gap > 0.0)
-    time, gap = time[finite], gap[finite]
-    start = len(time) // 2
-    if len(time[start:]) < 4:
-        return None
-    slope = np.polyfit(time[start:], np.log(gap[start:]), deg=1)[0]
-    gamma = _number(ordered[-1], "local_gamma")
-    return 2.0 * gamma, -float(slope)
-
-
-def figure_3(by_experiment: dict[str, list[dict[str, str]]]) -> None:
-    figure, axes = plt.subplots(1, 3, figsize=(7.0, 3.4), constrained_layout=True)
-    axes[0].axis("off")
-    axes[0].text(
-        0.5,
-        0.57,
-        "Bump-train experiment\nnot executed",
-        ha="center",
-        va="center",
-        fontsize=10,
-        weight="bold",
-    )
-    axes[0].text(
-        0.5,
-        0.34,
-        "The manuscript and supplied plan do not\nspecify the theorem's potential formula.\nNo surrogate was invented.",
-        ha="center",
-        va="center",
-        fontsize=7.5,
-        color="#555555",
-    )
-    _plot_series(
-        axes[1], [row for row in _core(by_experiment.get("F", [])) if row.get("method") != "FB--GVI"],
-        "objective_gap", xlabel="Iteration", ylabel="Exact Gaussian KL gap",
-    )
-    rates: list[tuple[str, float, float]] = []
-    grouped = group_trajectories(_core(by_experiment.get("G", [])))
-    for (_job, method, _seed, _variant), trajectory in grouped.items():
-        value = _observed_rate(trajectory)
-        if value is not None:
-            rates.append((method, *value))
-    for index, (method, prediction, observed) in enumerate(sorted(rates, key=lambda item: METHOD_ORDER.get(item[0], 99))):
-        axes[2].scatter(prediction, observed, s=40, marker=MARKERS[index],
-                        color=COLORS.get(method, f"C{index}"), label=method, zorder=3)
-    if rates:
-        bounds = np.asarray([min(value for _, predicted, observed in rates for value in (predicted, observed)),
-                             max(value for _, predicted, observed in rates for value in (predicted, observed))])
-        padding = max(0.05, 0.08 * float(np.ptp(bounds)))
-        bounds = np.asarray([bounds[0] - padding, bounds[1] + padding])
-        axes[2].plot(bounds, bounds, color="#555555", linestyle=":", label="observed = predicted")
-        axes[2].set_xlim(bounds)
-        axes[2].set_ylim(bounds)
-    axes[2].set_xlabel(r"Predicted $2\gamma_\star$")
-    axes[2].set_ylabel("Fitted objective rate")
-    _panel_titles(
-        axes,
-        (
-            r"(a) $N_{1/2}$ versus $\kappa$",
-            "(b) Exact Gaussian local trajectory",
-            "(c) Spectral-rate pilot",
-        ),
-    )
-    _deduplicated_legend(figure, axes, ncols=3)
-    _save(
-        figure,
-        3,
-        "Sharp-mechanism evidence. The bump-train cell is explicitly blocked because its defining potential is absent "
-        "from the supplied sources. Panel (b) uses a nontrivial covariance perturbation and excludes FB--GVI because "
-        "the mechanism is Fisher--Rao specific. Panel (c) fits the final half of each objective trajectory in algorithmic time.",
-    )
-
-
-def _terminal_floors(rows: list[dict[str, str]]) -> dict[str, list[tuple[float, float, float, float]]]:
-    samples: dict[tuple[str, float], list[float]] = defaultdict(list)
-    for (_job, method, _seed, _variant), trajectory in group_trajectories(rows).items():
-        ordered = sorted(trajectory, key=lambda row: _number(row, "iteration"))
-        tail = ordered[max(0, int(0.8 * len(ordered))):]
-        batch = _number(ordered[-1], "batch_size")
-        values = positive([_number(row, "objective_gap") for row in tail])
-        samples[(method, batch)].append(float(np.nanmedian(values)))
-    output: dict[str, list[tuple[float, float, float, float]]] = defaultdict(list)
-    for (method, batch), values in samples.items():
-        output[method].append(
-            (batch, float(np.median(values)), float(np.percentile(values, 10)), float(np.percentile(values, 90)))
-        )
-    return output
-
-
-def figure_4(by_experiment: dict[str, list[dict[str, str]]]) -> None:
-    figure, axes_array = plt.subplots(2, 2, figsize=(7.0, 5.6), constrained_layout=True)
-    axes = axes_array.ravel()
-    variance = _core(by_experiment.get("I", []))
-    for index, item in enumerate(_series(variance, "stl_raw_variance_ratio", x_key="optimizer_relative_distance")):
-        axes[0].fill_between(item.x, positive(list(item.lower)), positive(list(item.upper)),
-                             alpha=0.18, color="#0072B2", linewidth=0.0)
-        axes[0].plot(item.x, positive(list(item.median)), color="#0072B2", marker=MARKERS[index],
-                     label="STL/raw")
-    axes[0].axhline(1.0, color="#555555", linestyle=":", label="equal variance")
+    representative = gaussian[gaussian["grid_dimension"] == 10]
+    smallest = float(representative["grid_rate"].min())
+    for rate, subset in representative.groupby("grid_rate"):
+        first = subset[subset["method"] == "FR--R"].sort_values("iteration")
+        step = float(first["step_size"].iloc[-1])
+        times = first["iteration"].to_numpy() * step
+        axes[0].plot(times, positive(first["distance_squared"]), color=COLORS["FR--R"],
+                     linewidth=1.1, label="FR--R" if rate == smallest else None)
+        start = float(first["distance_squared"].iloc[0])
+        axes[0].plot(times, start * np.exp(-rate * times), color=REFERENCE_GREY,
+                     linestyle=":", linewidth=0.9,
+                     label=r"bound $e^{-2\ell_\delta t}$" if rate == smallest else None)
     axes[0].set_yscale("log")
-    axes[0].set_xlabel("Optimizer-relative state distance")
-    axes[0].set_ylabel("Intrinsic variance ratio")
+    axes[0].set_xlabel(r"time $t=n\,\Delta t$")
+    axes[0].set_ylabel(r"$\|a_n-a_\star\|_\star^2$")
+    panel_letter(axes[0], "a", "Exact Gaussian region")
 
-    _plot_series(
-        axes[1], _core(by_experiment.get("H", [])), "objective_gap",
-        xlabel="Iteration", ylabel="Exact Gaussian KL gap",
-    )
-
-    floor_data = _terminal_floors(_core(by_experiment.get("J", [])))
-    for index, method in enumerate(sorted(floor_data, key=lambda name: METHOD_ORDER.get(name, 99))):
-        values = sorted(floor_data[method])
-        batch = np.asarray([value[0] for value in values])
-        median = np.asarray([value[1] for value in values])
-        lower = np.asarray([value[2] for value in values])
-        upper = np.asarray([value[3] for value in values])
-        color = COLORS.get(method, f"C{index}")
-        axes[2].fill_between(batch, lower, upper, alpha=0.18, color=color, linewidth=0.0)
-        axes[2].plot(batch, median, marker=MARKERS[index], color=color,
-                     linestyle=LINESTYLES.get(method, "-"), label=method)
-    if floor_data:
-        anchor_method = min(floor_data, key=lambda name: METHOD_ORDER.get(name, 99))
-        anchor = sorted(floor_data[anchor_method])[0]
-        batch = np.asarray(sorted({value[0] for values in floor_data.values() for value in values}))
-        axes[2].plot(batch, anchor[1] * anchor[0] / batch, color="#555555", linestyle=":", label=r"$B^{-1}$")
-    axes[2].set_xscale("log", base=2)
-    axes[2].set_yscale("log")
-    axes[2].set_xlabel("Minibatch size B")
-    axes[2].set_ylabel("Tail median objective gap")
-
-    decreasing = _core(by_experiment.get("K", []))
-    _plot_series(
-        axes[3], decreasing, "objective_gap", xlabel="Iteration N", ylabel=r"$\mathbb{E}[\Delta_N]$",
-        log_x=True,
-    )
-    reference_series = _series(decreasing, "objective_gap")
-    if reference_series:
-        item = reference_series[0]
-        mask = item.x > 0
-        x = item.x[mask]
-        y = positive(list(item.median[mask]))
-        if len(x):
-            axes[3].plot(x, y[0] * x[0] / x, color="#555555", linestyle=":", label=r"$N^{-1}$")
-    _panel_titles(
-        axes,
-        (
-            "(a) Raw versus STL variance",
-            "(b) Gaussian pathwise cancellation",
-            "(c) Minibatch residual floor",
-            "(d) Decreasing-step diagnostic",
-        ),
-    )
-    _deduplicated_legend(figure, axes)
-    _save(
-        figure,
-        4,
-        "Stochastic core evidence. Bands are 10--90 percentiles across paired seeds. Gaussian-matched FR--STL "
-        "trajectories coincide pathwise, whereas S--FB--GVI retains sampling variation. Floors are tail medians; "
-        "the decreasing-step panel overlays the predicted inverse-iteration slope.",
-    )
-
-
-def figure_5(by_experiment: dict[str, list[dict[str, str]]]) -> None:
-    rows = _core(by_experiment.get("L", []))
-    figure, axes_array = plt.subplots(2, 2, figsize=(7.0, 5.6), constrained_layout=True)
-    axes = axes_array.ravel()
-    _plot_series(
-        axes[0], rows, "objective_gap", x_key="oracle_pairs",
-        xlabel="Gradient--Hessian oracle pairs", ylabel="Objective gap", laplace_line=True,
-    )
-    _plot_series(
-        axes[1], rows, "objective_gap", x_key="wall_time_seconds",
-        xlabel="Wall time (s)", ylabel="Objective gap", laplace_line=True,
-    )
-    _plot_series(
-        axes[2], rows, "predictive_nll", x_key="wall_time_seconds",
-        xlabel="Wall time (s)", ylabel="Test predictive NLL", log_y=False, laplace_line=True,
-    )
-    terminal: list[tuple[str, float, float, float]] = []
-    for method in sorted({row.get("method", "") for row in rows}, key=lambda name: METHOD_ORDER.get(name, 99)):
-        method_rows = [row for row in rows if row.get("method") == method]
-        per_seed: list[float] = []
-        for trajectory in group_trajectories(method_rows).values():
-            ordered = sorted(trajectory, key=lambda row: _number(row, "iteration"))
-            per_seed.append(_number(ordered[-1], "predictive_nll"))
-        terminal.append(
-            (method, float(np.nanmedian(per_seed)), float(np.nanpercentile(per_seed, 10)),
-             float(np.nanpercentile(per_seed, 90)))
+    rows = []
+    for (_, method), subset in gaussian.groupby(["job_id", "method"]):
+        subset = subset.sort_values("iteration").reset_index(drop=True)
+        step = float(subset["step_size"].iloc[-1])
+        values = subset["distance_squared"].to_numpy()
+        core = subset["gaussian_core_rate"].to_numpy()
+        for index in range(len(values) - 1):
+            if not (values[index] > 1e-20 and values[index + 1] > 1e-20):
+                continue
+            rows.append(
+                {
+                    "method": method,
+                    "core_rate": float(core[index]),
+                    "measured_rate": -float(np.log(values[index + 1] / values[index])) / step,
+                }
+            )
+    identity = pd.DataFrame(rows)
+    for method in ordered_methods(identity):
+        subset = identity[identity["method"] == method]
+        axes[1].plot(
+            subset["core_rate"], subset["measured_rate"], linestyle="none",
+            markersize=1.8, alpha=0.4, label=method,
+            **{k: v for k, v in method_style(method).items() if k != "linestyle"},
         )
-    positions = np.arange(len(terminal))
-    medians = np.asarray([value[1] for value in terminal])
-    errors = np.asarray([[value[1] - value[2] for value in terminal], [value[3] - value[1] for value in terminal]])
-    axes[3].errorbar(positions, medians, yerr=errors, fmt="none", ecolor="#555555", capsize=2)
-    for index, (method, median, _lower, _upper) in enumerate(terminal):
-        axes[3].scatter(index, median, marker=MARKERS[index % len(MARKERS)], s=32,
-                        color=COLORS.get(method, f"C{index}"), zorder=3)
-    axes[3].set_xticks(positions, [value[0] for value in terminal], rotation=35, ha="right")
-    axes[3].set_ylabel("Final test predictive NLL")
-    axes[3].text(0.02, 0.04, r"Core pilot: $\operatorname{cond}(\Sigma_x)=100$; full grid pending",
-                 transform=axes[3].transAxes, fontsize=6.5, color="#555555")
-    _panel_titles(
-        axes,
-        (
-            "(a) Objective versus oracle pairs",
-            "(b) Objective versus wall time",
-            "(c) Predictive loss versus wall time",
-            "(d) Final NLL at condition 100",
-        ),
-    )
-    _deduplicated_legend(figure, axes[:3])
-    _save(
+    limits = [
+        float(identity["core_rate"].min()) * 0.95,
+        float(identity["core_rate"].max()) * 1.05,
+    ]
+    axes[1].plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+                 label="identity")
+    axes[1].set_xlabel(r"$q_{\mathrm{G}}(a_n)$")
+    axes[1].set_ylabel("measured rate")
+    panel_letter(axes[1], "b", "Lemma 2.24")
+
+    rows = []
+    for (_, method), subset in spectral.groupby(["job_id", "method"]):
+        subset = subset.sort_values("iteration")
+        step = float(subset["step_size"].iloc[-1])
+        times = subset["iteration"].to_numpy() * step
+        distance = (subset["mean_error"] ** 2 + 0.5 * subset["covariance_error"] ** 2).to_numpy()
+        usable = np.isfinite(distance) & (distance > 1e-22)
+        if not usable.any():
+            continue
+        tail = usable & (times >= 0.55 * times[usable].max())
+        if tail.sum() < 4:
+            continue
+        rows.append(
+            {
+                "method": method,
+                "fitted": float(-np.polyfit(times[tail], np.log(distance[tail]), 1)[0]),
+                "predicted": float(subset["local_discrete_rate"].iloc[0]),
+                "rho": float(subset["grid_rho"].iloc[0]),
+            }
+        )
+    spectral_table = pd.DataFrame(rows)
+    for method in ordered_methods(spectral_table):
+        subset = spectral_table[spectral_table["method"] == method]
+        axes[2].plot(
+            subset["predicted"], subset["fitted"], linestyle="none", label=method,
+            **{k: v for k, v in method_style(method).items() if k != "linestyle"},
+        )
+    limits = [
+        float(spectral_table["predicted"].min()) * 0.97,
+        float(spectral_table["predicted"].max()) * 1.03,
+    ]
+    axes[2].plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0)
+    axes[2].set_xlabel("predicted one-step rate")
+    axes[2].set_ylabel("fitted rate")
+    panel_letter(axes[2], "c", r"Near-Gaussian $\gamma_\star$")
+
+    tidy_log_axes(*axes)
+    _legend(figure, axes)
+    save_figure(
         figure,
-        5,
-        "Theory-aligned Bayesian logistic-regression core pilot (d=10, n=100, proper Gaussian prior). Laplace "
-        "is a noniterative horizontal quality reference. Stochastic bands use three paired seeds. Panel (d) is the "
-        "completed feature-condition cell; the planned conditioning sweep remains in the full tier.",
+        "main_figure_2",
+        "Local convergence. (a) For a standard Gaussian target the trajectories obey the "
+        "uniform bound $e^{-2\\ell_\\delta t}$ of Corollary 2.26. (b) The measured "
+        "instantaneous rate coincides with the exact Gaussian-core rate $q_{\\mathrm G}$ of "
+        "Lemma 2.24 over $d\\in\\{2,10,100\\}$ and four initial covariance eigenvalues. "
+        "(c) On near-Gaussian log-cosh targets the fitted asymptotic rate of both "
+        "discretizations matches the rate predicted by the spectral gap of the linearized "
+        "generator $\\mathcal L_\\star$ of Proposition 3.5 and Theorem 3.7.",
+        spectral_table,
     )
 
 
-def main() -> int:
+def main_figure_3() -> None:
+    """Stochastic behaviour: STL cancellation, minibatch floors, decreasing steps."""
+
+    cancellation = load_experiment("H")
+    floors_frame = load_experiment("J")
+    decreasing = load_experiment("K")
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.4), constrained_layout=True)
+
+    spread = (
+        cancellation.groupby(["job_id", "method", "iteration"])["objective"]
+        .agg(lambda values: float(values.max() - values.min()))
+        .reset_index(name="spread")
+        .merge(cancellation.groupby("job_id")["grid_dimension"].first(), on="job_id")
+    )
+    representative = spread[spread["grid_dimension"] == 10]
+    for method in ordered_methods(representative):
+        subset = representative[representative["method"] == method].sort_values("iteration")
+        axes[0].plot(subset["iteration"], positive(subset["spread"]), label=method,
+                     **method_style(method), markevery=max(1, len(subset) // 8))
+    axes[0].set_yscale("log")
+    axes[0].set_xlabel("iteration $n$")
+    axes[0].set_ylabel("across-seed objective spread")
+    panel_letter(axes[0], "a", r"STL cancellation, $B=1$")
+
+    floors_frame = floors_frame.copy()
+    floors_frame["rescued"] = floors_frame["variant"].str.contains("-qr", na=False)
+    tail = floors_frame[floors_frame["iteration"] >= 0.75 * floors_frame["iteration"].max()]
+    floors = (
+        tail.groupby(["method", "rescued", "grid_dimension", "grid_condition", "grid_rho",
+                      "grid_batch_size"])["objective_gap"]
+        .median()
+        .reset_index(name="floor")
+    )
+    cell = floors[
+        (floors["grid_dimension"] == 8)
+        & (floors["grid_condition"] == 10.0)
+        & (floors["grid_rho"] == 0.5)
+    ]
+    cell = cell[cell["rescued"] | (cell["method"] == "S--FB--GVI")]
+    for method in ordered_methods(cell):
+        subset = cell[cell["method"] == method].sort_values("grid_batch_size")
+        axes[1].plot(subset["grid_batch_size"], positive(subset["floor"]), label=method,
+                     **method_style(method))
+    batches = np.asarray(sorted(cell["grid_batch_size"].unique()), dtype=float)
+    anchor = float(cell[cell["grid_batch_size"] == 1]["floor"].median())
+    axes[1].plot(batches, anchor / batches, color=REFERENCE_GREY, linestyle=":",
+                 linewidth=1.0, label=r"$\propto 1/B$")
+    axes[1].set_xscale("log", base=2)
+    axes[1].set_yscale("log")
+    axes[1].set_xlabel("batch size $B$")
+    axes[1].set_ylabel("terminal gap floor")
+    panel_letter(axes[1], "b", "Minibatch floors")
+
+    job = "K_decreasing_d8_rho1_B8"
+    representative = decreasing[decreasing["job_id"] == job]
+    if representative.empty:
+        representative = decreasing[decreasing["job_id"] == sorted(decreasing["job_id"])[0]]
+    representative = representative[representative["iteration"] > 0]
+    for method in ordered_methods(representative):
+        subset = representative[representative["method"] == method]
+        plot_median_band(axes[2], subset, "iteration", "objective_gap",
+                         label=method, style=method_style(method))
+    iterations = np.asarray(sorted(representative["iteration"].unique()), dtype=float)
+    anchor_index = len(iterations) // 4
+    anchor = float(
+        representative[representative["iteration"] == iterations[anchor_index]][
+            "objective_gap"
+        ].median()
+    )
+    axes[2].plot(iterations, anchor * iterations[anchor_index] / iterations,
+                 color=REFERENCE_GREY, linestyle=":", linewidth=1.0, label=r"slope $-1$")
+    axes[2].set_xscale("log")
+    axes[2].set_xlabel("iteration $N$")
+    axes[2].set_ylabel(r"$\mathbb{E}\,\Delta(a_N)$")
+    panel_letter(axes[2], "c", "Decreasing steps")
+
+    tidy_log_axes(axes[0], axes[2])
+    axes[1].set_xticks(batches)
+    axes[1].set_xticklabels([f"{int(b)}" for b in batches])
+    _legend(figure, axes)
+    save_figure(
+        figure,
+        "main_figure_3",
+        "Stochastic Fisher--Rao schemes with the Price/Hessian--STL estimator. "
+        "(a) With the covariance matched to a Gaussian target the STL mean noise vanishes "
+        "pathwise, so the Fisher--Rao trajectories are seed-independent to floating-point "
+        "precision while S--FB--GVI retains its native estimator noise; this compares "
+        "complete algorithms together with their estimators, not geometry alone. "
+        "(b) Terminal objective-gap floors decrease like $1/B$, matching the "
+        "$O(\\mathfrak V_\\bullet/B)$ prediction of Theorems 4.16 and 4.17. "
+        "(c) With the schedule $\\Delta t_n=8\\kappa_\\star/(n+n_0)$ of Theorem 4.21 the "
+        "expected gap follows $O(1/N)$ and the additive floor disappears.",
+        floors,
+    )
+
+
+def main_figure_4() -> None:
+    """Applications: log-cosh grid and Bayesian logistic regression."""
+
+    logcosh = load_experiment("D")
+    logistic = load_experiment("L")
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.4), constrained_layout=True)
+
+    terminal = _terminal(logcosh)
+    best = terminal.loc[terminal.groupby(["job_id", "method"])["objective_gap"].idxmin()]
+    sizes = {2: 12.0, 10: 22.0, 50: 38.0}
+    for method in ordered_methods(best):
+        subset = best[best["method"] == method]
+        axes[0].scatter(
+            subset["kappa_star"], positive(subset["objective_gap"]),
+            s=[sizes.get(int(d), 20.0) for d in subset["grid_dimension"]],
+            facecolors="none", edgecolors=COLORS.get(method), linewidths=0.9,
+            marker=MARKERS.get(method), label=method,
+        )
+    axes[0].set_xscale("log")
+    axes[0].set_yscale("log")
+    axes[0].set_xlabel(r"$\kappa_\star$")
+    axes[0].set_ylabel("best gap at fixed budget")
+    panel_letter(axes[0], "a", "Log-cosh, 27 cells")
+
+    if not logistic.empty:
+        job = "L_logistic_d50_lam1_fc1e2"
+        cell = logistic[logistic["job_id"] == job]
+        if cell.empty:
+            job = sorted(logistic["job_id"].unique())[0]
+            cell = logistic[logistic["job_id"] == job]
+        iterative = cell[cell["method"] != "Laplace"]
+        terminal_cell = _terminal(iterative)
+        for method in ordered_methods(iterative):
+            subset = terminal_cell[terminal_cell["method"] == method]
+            if subset.empty:
+                continue
+            best_step = float(
+                subset.groupby("normalized_step_size")["objective_gap"].median().idxmin()
+            )
+            trajectory = iterative[
+                (iterative["method"] == method)
+                & np.isclose(iterative["normalized_step_size"], best_step)
+            ]
+            plot_median_band(axes[1], trajectory, "oracle_pairs", "objective_gap",
+                             label=method, style=method_style(method))
+            plot_median_band(axes[2], trajectory, "oracle_pairs", "predictive_nll",
+                             label=method, style=method_style(method), log_y=False)
+        laplace = cell[cell["method"] == "Laplace"]
+        if not laplace.empty:
+            axes[1].axhline(float(laplace["objective_gap"].iloc[-1]), color=COLORS["Laplace"],
+                            linestyle=":", linewidth=1.1, label="Laplace")
+            axes[2].axhline(float(laplace["predictive_nll"].iloc[-1]), color=COLORS["Laplace"],
+                            linestyle=":", linewidth=1.1, label="Laplace")
+        axes[1].set_xlabel("oracle pairs")
+        axes[1].set_ylabel("objective gap")
+        panel_letter(axes[1], "b", job.replace("_", " "))
+        axes[2].set_xlabel("oracle pairs")
+        axes[2].set_ylabel("held-out predictive NLL")
+        panel_letter(axes[2], "c", "Predictive quality")
+
+    tidy_log_axes(*axes)
+    _legend(figure, axes)
+    save_figure(
+        figure,
+        "main_figure_4",
+        "Applications. (a) Best objective gap at a fixed oracle budget over the full "
+        "shifted log-cosh grid ($d\\in\\{2,10,50\\}$, $\\kappa_{\\rm base}\\in\\{1,10,10^2\\}$, "
+        "$\\rho\\in\\{0.1,1,5\\}$), each method at its own best swept step, plotted against "
+        "the affine-invariant condition number $\\kappa_\\star$; marker size encodes the "
+        "dimension. (b, c) Bayesian logistic regression with a proper Gaussian prior: "
+        "objective gap and held-out predictive negative log-likelihood against the number "
+        "of gradient--Hessian oracle pairs, with the non-iterative Laplace baseline shown "
+        "for reference.",
+        best,
+    )
+
+
+def main_figure_5() -> None:
+    """Section 5: modal rates of the general affine-invariant metric family."""
+
+    frame = load_experiment("M")
+    summary = (
+        frame.groupby(["job_id", "omega", "tau", "dimension", "step_size"])[
+            ["predicted_traceless_rate", "fitted_traceless_rate",
+             "predicted_trace_rate", "fitted_trace_rate"]
+        ]
+        .first()
+        .reset_index()
+    )
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.4), constrained_layout=True)
+    finest = summary[summary["step_size"] == summary["step_size"].min()]
+
+    for dimension, subset in finest.groupby("dimension"):
+        axes[0].plot(subset["predicted_traceless_rate"], subset["fitted_traceless_rate"],
+                     linestyle="none", marker="o", markersize=3.5, fillstyle="none",
+                     label=f"$N={int(dimension)}$")
+        axes[1].plot(subset["predicted_trace_rate"], subset["fitted_trace_rate"],
+                     linestyle="none", marker="s", markersize=3.5, fillstyle="none",
+                     label=f"$N={int(dimension)}$")
+    for axis, column, xlabel in (
+        (axes[0], "predicted_traceless_rate", r"$1/(2\omega)$"),
+        (axes[1], "predicted_trace_rate", r"$1/(2(\omega+\tau N))$"),
+    ):
+        values = finest[column]
+        limits = [float(values.min()) * 0.8, float(values.max()) * 1.25]
+        axis.plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0)
+        axis.set_xscale("log")
+        axis.set_yscale("log")
+        axis.set_xlabel(f"predicted {xlabel}")
+        axis.set_ylabel("fitted rate")
+    panel_letter(axes[0], "a", "Traceless mode")
+    panel_letter(axes[1], "b", "Trace mode")
+
+    refinement = summary.copy()
+    refinement["traceless"] = (
+        refinement["fitted_traceless_rate"] / refinement["predicted_traceless_rate"] - 1.0
+    ).abs()
+    refinement["trace"] = (
+        refinement["fitted_trace_rate"] / refinement["predicted_trace_rate"] - 1.0
+    ).abs()
+    grouped = refinement.groupby("step_size")[["traceless", "trace"]].median()
+    axes[2].plot(grouped.index, positive(grouped["traceless"]), marker="o", label="traceless")
+    axes[2].plot(grouped.index, positive(grouped["trace"]), marker="s", linestyle="--",
+                 label="trace")
+    steps = np.asarray(grouped.index, dtype=float)
+    axes[2].plot(steps, steps * float(grouped["traceless"].iloc[-1]) / steps[-1],
+                 color=REFERENCE_GREY, linestyle=":", linewidth=1.0, label=r"$O(\Delta t)$")
+    axes[2].set_xscale("log")
+    axes[2].set_yscale("log")
+    axes[2].set_xlabel(r"step $\Delta t$")
+    axes[2].set_ylabel("relative rate error")
+    panel_letter(axes[2], "c", "Step refinement")
+
+    tidy_log_axes(*axes)
+    _legend(figure, axes)
+    save_figure(
+        figure,
+        "main_figure_5",
+        "Verification of the affine-invariant metric classification of Section 5. Running "
+        "members $(\\omega,\\tau)$ of the classified family through the Riemannian retraction "
+        "discretization on Gaussian targets with $N\\in\\{2,5,10\\}$, the traceless and trace "
+        "covariance modes decay at the predicted rates $1/(2\\omega)$ and "
+        "$1/(2(\\omega+\\tau N))$. Panel (c) shows the residual discrepancy is the "
+        "$O(\\Delta t)$ bias of the retraction and vanishes under step refinement. The "
+        "Fisher--Rao metric is the member $(\\omega,\\tau)=(1/2,0)$, where the two rates "
+        "coincide at $1$.",
+        summary,
+    )
+
+
+BUILDERS = {
+    1: main_figure_1,
+    2: main_figure_2,
+    3: main_figure_3,
+    4: main_figure_4,
+    5: main_figure_5,
+}
+
+
+def main(arguments: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--figures", nargs="*", type=int, default=None)
+    args = parser.parse_args(arguments)
     configure_style()
-    by_experiment = read_rows(RAW)
-    write_main_processed(by_experiment)
-    figure_1(by_experiment)
-    figure_2(by_experiment)
-    figure_3(by_experiment)
-    figure_4(by_experiment)
-    figure_5(by_experiment)
+    for index in args.figures or sorted(BUILDERS):
+        BUILDERS[index]()
+        print(f"main figure {index} written")
     return 0
 
 

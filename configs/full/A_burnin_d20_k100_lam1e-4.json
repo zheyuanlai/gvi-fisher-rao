@@ -1,0 +1,41 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.009999999999999997,
+    "FR--KL": 1.0,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.5,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 0.009999999999999997
+  },
+  "experiment": "A",
+  "grid": {
+    "condition": 100.0,
+    "dimension": 20,
+    "lambda0": 0.0001
+  },
+  "id": "A_burnin_d20_k100_lam1e-4",
+  "iterations": 173,
+  "master_seed": 20261105,
+  "methods": [
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    }
+  ],
+  "target": {
+    "condition": 100.0,
+    "dimension": 20,
+    "initial_covariance_scale": 0.0001,
+    "kind": "gaussian",
+    "mean_scale": 0.2,
+    "rotation": true,
+    "spectrum_scale": "unit_min"
+  },
+  "tier": "full"
+}

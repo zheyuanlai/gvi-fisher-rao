@@ -9,6 +9,70 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 
 
+def _pathwise_covariance_bands() -> dict[str, object]:
+    """Check the almost-sure covariance bands of Lemma 4.4 on every stochastic run.
+
+    Under the quadratic rescue the Riemannian scheme must satisfy
+    ``(2 beta_star)^{-1} I <= C_n <= alpha_star^{-1} I`` and the KL/Bregman scheme
+    ``beta_star^{-1} I <= C_n <= alpha_star^{-1} I``, both in optimizer-whitened
+    coordinates and pathwise rather than in expectation.
+    """
+
+    errors: list[str] = []
+    warnings: list[str] = []
+    lower_slack = {"FR--R--STL": [], "FR--KL--STL": []}
+    upper_slack = {"FR--R--STL": [], "FR--KL--STL": []}
+    checked = 0
+    for path in sorted((ROOT / "results" / "raw" / "full").rglob("*.csv")):
+        if "-qr" not in path.stem:
+            continue
+        with path.open(encoding="utf-8", newline="") as handle:
+            rows = list(csv.DictReader(handle))
+        if not rows:
+            continue
+        method = rows[0].get("method", "")
+        if method not in lower_slack:
+            continue
+        try:
+            beta_star = float(rows[0]["beta_star"])
+            alpha_star = float(rows[0]["alpha_star"])
+        except (KeyError, ValueError):
+            continue
+        lower_bound = 1.0 / (2.0 * beta_star) if method == "FR--R--STL" else 1.0 / beta_star
+        upper_bound = 1.0 / alpha_star
+        checked += 1
+        for line, row in enumerate(rows, start=2):
+            try:
+                minimum = float(row["relative_covariance_min_eigenvalue"])
+                maximum = float(row["relative_covariance_max_eigenvalue"])
+            except (KeyError, ValueError):
+                continue
+            lower_slack[method].append(minimum - lower_bound)
+            upper_slack[method].append(upper_bound - maximum)
+            if minimum < lower_bound * (1.0 - 1e-9):
+                errors.append(
+                    f"covariance band violated below at {path.name}:{line}: "
+                    f"{minimum:.6e} < {lower_bound:.6e}"
+                )
+            if maximum > upper_bound * (1.0 + 1e-9):
+                errors.append(
+                    f"covariance band violated above at {path.name}:{line}: "
+                    f"{maximum:.6e} > {upper_bound:.6e}"
+                )
+    if not checked:
+        warnings.append("no rescued stochastic runs found for the covariance-band check")
+    summary = {
+        "runs_checked": checked,
+        "minimum_lower_slack": {
+            method: (min(values) if values else None) for method, values in lower_slack.items()
+        },
+        "minimum_upper_slack": {
+            method: (min(values) if values else None) for method, values in upper_slack.items()
+        },
+    }
+    return {"errors": errors, "warnings": warnings, "summary": summary}
+
+
 def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--allow-failed", action="store_true")
@@ -49,6 +113,9 @@ def main(arguments: list[str] | None = None) -> int:
             for token in forbidden:
                 if token in text:
                     errors.append(f"forbidden token {token!r} in {path.relative_to(ROOT)}")
+    theory_checks = _pathwise_covariance_bands()
+    errors.extend(theory_checks["errors"])
+    warnings.extend(theory_checks["warnings"])
     for png in sorted((ROOT / "results" / "figures").glob("experiment_*.png")):
         pdf = png.with_suffix(".pdf")
         markdown = png.with_suffix(".md")
@@ -57,6 +124,7 @@ def main(arguments: list[str] | None = None) -> int:
         if not markdown.exists():
             errors.append(f"missing caption draft for {png.name}")
     report = {
+        "pathwise_covariance_bands": theory_checks["summary"],
         "manifest_statuses": dict(statuses),
         "manifest_count": len(manifests),
         "raw_csv_count": len(list((ROOT / "results" / "raw").rglob("*.csv"))),

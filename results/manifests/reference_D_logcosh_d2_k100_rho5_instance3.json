@@ -1,0 +1,25 @@
+{
+  "bures_wasserstein_residual_squared": 1.6139683211539308e-31,
+  "covariance": [
+    [
+      0.2077214197971935,
+      0.6092949885390565
+    ],
+    [
+      0.6092949885390565,
+      23.716684223577275
+    ]
+  ],
+  "fisher_rao_residual_squared": 4.8747621413177925e-31,
+  "instance": 3,
+  "job_id": "D_logcosh_d2_k100_rho5",
+  "mean": [
+    -0.7149032805146568,
+    -4.121358345566733
+  ],
+  "metadata": {
+    "backend": "gauss_hermite_foc",
+    "order": 128
+  },
+  "objective": 0.4222248642477019
+}

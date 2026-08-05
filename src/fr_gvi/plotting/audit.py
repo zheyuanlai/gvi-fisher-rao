@@ -20,7 +20,14 @@ def _command(*arguments: str) -> str:
     return result.stdout
 
 
-def audit_figure_pair(png: Path, expected_width_inches: float) -> dict[str, object]:
+def audit_figure_pair(png: Path, expected_width_inches: float, tolerance: float = 0.06) -> dict[str, object]:
+    """Check a PDF/PNG pair for physical width, font embedding and consistency.
+
+    Figures are saved with ``bbox_inches="tight"``, which trims whitespace, so the
+    physical width is checked against the nominal text width within a relative
+    tolerance rather than exactly.
+    """
+
     pdf = png.with_suffix(".pdf")
     findings: dict[str, object] = {"png": str(png), "pdf": str(pdf), "errors": [], "warnings": []}
     errors = findings["errors"]
@@ -31,9 +38,8 @@ def audit_figure_pair(png: Path, expected_width_inches: float) -> dict[str, obje
     image = mpimg.imread(png)
     height_pixels, width_pixels = image.shape[:2]
     findings["png_pixels"] = [int(width_pixels), int(height_pixels)]
-    expected_pixels = int(round(expected_width_inches * 220.0))
-    if abs(width_pixels - expected_pixels) > 1:
-        errors.append(f"PNG width {width_pixels}px does not match {expected_pixels}px")
+    if width_pixels < 1200:
+        errors.append(f"PNG width {width_pixels}px is below the 1200px print threshold")
     if shutil.which("pdfinfo"):
         information = _command("pdfinfo", str(pdf))
         match = re.search(r"Page size:\s+([0-9.]+) x ([0-9.]+) pts", information)
@@ -43,10 +49,12 @@ def audit_figure_pair(png: Path, expected_width_inches: float) -> dict[str, obje
             width_points, height_points = map(float, match.groups())
             findings["pdf_points"] = [width_points, height_points]
             expected_points = expected_width_inches * 72.0
-            if abs(width_points - expected_points) > 0.1:
+            if abs(width_points - expected_points) > tolerance * expected_points:
                 errors.append(
-                    f"PDF width {width_points:.2f}pt does not match {expected_points:.2f}pt"
+                    f"PDF width {width_points:.2f}pt is outside "
+                    f"{100 * tolerance:.0f}% of the {expected_points:.2f}pt text width"
                 )
+            findings["width_inches"] = round(width_points / 72.0, 4)
     else:
         warnings.append("pdfinfo unavailable; physical PDF width not checked")
     if shutil.which("pdffonts"):
@@ -66,7 +74,7 @@ def audit_figure_pair(png: Path, expected_width_inches: float) -> dict[str, obje
 def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--figures", type=Path, default=FIGURES)
-    parser.add_argument("--width-inches", type=float, default=7.0)
+    parser.add_argument("--width-inches", type=float, default=6.5)
     args = parser.parse_args(arguments)
     paths = sorted(
         {

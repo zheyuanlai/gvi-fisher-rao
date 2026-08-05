@@ -1,4 +1,4 @@
-.PHONY: bootstrap test smoke core full resume figures audit tables
+.PHONY: bootstrap test smoke configs full resume figures audit tables
 
 bootstrap:
 	./scripts/bootstrap_env.sh
@@ -9,8 +9,8 @@ test:
 smoke:
 	./scripts/run_smoke.sh
 
-core:
-	./scripts/run_core_overnight.sh
+configs:
+	./scripts/generate_full_configs.sh
 
 full:
 	./scripts/run_full.sh

@@ -1,0 +1,88 @@
+{
+  "experiment": "M",
+  "fit_fraction": 0.6,
+  "grid": {
+    "dimension": 5,
+    "step_size": 0.005
+  },
+  "id": "M_affine_metric_d5_h0.005",
+  "iterations": 1200,
+  "master_seed": 20261855,
+  "metrics": [
+    {
+      "omega": 0.25,
+      "tau": -0.025
+    },
+    {
+      "omega": 0.25,
+      "tau": 0.0
+    },
+    {
+      "omega": 0.25,
+      "tau": 0.05
+    },
+    {
+      "omega": 0.25,
+      "tau": 0.2
+    },
+    {
+      "omega": 0.5,
+      "tau": -0.05
+    },
+    {
+      "omega": 0.5,
+      "tau": 0.0
+    },
+    {
+      "omega": 0.5,
+      "tau": 0.1
+    },
+    {
+      "omega": 0.5,
+      "tau": 0.4
+    },
+    {
+      "omega": 1.0,
+      "tau": -0.1
+    },
+    {
+      "omega": 1.0,
+      "tau": 0.0
+    },
+    {
+      "omega": 1.0,
+      "tau": 0.2
+    },
+    {
+      "omega": 1.0,
+      "tau": 0.8
+    },
+    {
+      "omega": 2.0,
+      "tau": -0.2
+    },
+    {
+      "omega": 2.0,
+      "tau": 0.0
+    },
+    {
+      "omega": 2.0,
+      "tau": 0.4
+    },
+    {
+      "omega": 2.0,
+      "tau": 1.6
+    }
+  ],
+  "perturbation": 0.0001,
+  "seeds": 5,
+  "step_size": 0.005,
+  "target": {
+    "condition": 20.0,
+    "dimension": 5,
+    "kind": "gaussian",
+    "mean_scale": 0.0,
+    "rotation": true
+  },
+  "tier": "full"
+}

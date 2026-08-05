@@ -1,0 +1,47 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.9999999999999998,
+    "FR--KL": 0.9999999999999993,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.49999999999999967,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 0.9999999999999998
+  },
+  "experiment": "H",
+  "grid": {
+    "dimension": 10
+  },
+  "id": "H_stl_cancellation_d10",
+  "iterations": 80,
+  "master_seed": 20261310,
+  "methods": [
+    {
+      "batch_size": 1,
+      "name": "FR--R--STL",
+      "seeds": 30,
+      "step_size": 0.5
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--KL--STL",
+      "seeds": 30,
+      "step_size": 0.0625
+    },
+    {
+      "batch_size": 1,
+      "name": "S--FB--GVI",
+      "seeds": 30,
+      "step_size": 0.4999999999999999
+    }
+  ],
+  "target": {
+    "condition": 100.0,
+    "dimension": 10,
+    "initial_covariance": "target",
+    "initial_mean_scale": 1.0,
+    "kind": "gaussian",
+    "mean_scale": 0.3,
+    "rotation": true
+  },
+  "tier": "full"
+}

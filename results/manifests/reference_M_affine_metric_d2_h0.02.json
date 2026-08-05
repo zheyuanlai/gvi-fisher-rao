@@ -1,0 +1,24 @@
+{
+  "bures_wasserstein_residual_squared": 0.0,
+  "covariance": [
+    [
+      3.5687324637001807,
+      6.4967322817118
+    ],
+    [
+      6.4967322817118,
+      17.431267536299806
+    ]
+  ],
+  "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
+  "job_id": "M_affine_metric_d2_h0.02",
+  "mean": [
+    -0.0,
+    0.0
+  ],
+  "metadata": {
+    "backend": "exact"
+  },
+  "objective": -0.497866136776995
+}

@@ -1,54 +1,108 @@
-# Reproducibility
+# Reproduction guide
 
-## Clean machine
+## Requirements
 
-Requirements are CPython 3.11 or newer, a POSIX shell, Git, and a platform supported by the pinned NumPy/SciPy wheels.
+- Linux or macOS, Python 3.11--3.13, no GPU.
+- Roughly 8 GB of RAM for the campaign; more cores shorten wall time roughly
+  linearly up to the number of config files.
+- Optional: `poppler-utils` (`pdfinfo`, `pdffonts`) so the plot audit can check
+  physical figure width and font embedding.
+
+## 1. Environment
 
 ```bash
-git clone <repository-url> gvi-fisher-rao
+git clone <repository> gvi-fisher-rao
 cd gvi-fisher-rao
-./scripts/bootstrap_env.sh
-./scripts/run_smoke.sh
+./scripts/bootstrap_env.sh      # creates .venv and installs the pinned lock file
+make test                       # unit, integration and regression tests
 ```
 
-The bootstrap creates `.venv`, installs the exact versions in `requirements-lock.txt`, installs the package in editable mode, runs `pip check`, and executes the tests. The smoke wrapper runs validation, the smoke campaign, individual figures, tables, the numerical audit, and the physical plot audit.
+`requirements-lock.txt` pins every direct dependency. The test suite must pass
+before any campaign is launched; it contains the numerical-validation gates
+(exact Gaussian fixed points, one-query quadratic rescue, affine-equivariance
+regression, estimator unbiasedness, no-silent-clipping, and the closed-form
+curvature constants).
 
-## Reproduce campaign tiers
+## 2. Smoke tier
 
 ```bash
-# Core campaign; safe to rerun and ten hours by default
-OVERNIGHT_BUDGET_HOURS=10 ./scripts/run_core_overnight.sh
-
-# Resume only config/source mismatches or unfinished jobs
-OVERNIGHT_BUDGET_HOURS=10 ./scripts/resume_campaign.sh
-
-# Expanded and appendix configurations
-OVERNIGHT_BUDGET_HOURS=10 ./scripts/run_full.sh
+make smoke
 ```
 
-Completed jobs are skipped only when the serialized config hash, numerical source hash, and raw output all match. Atomic JSON updates leave exact status after interruption. The numerical hash excludes plotting and report-only modules, so changing a caption does not rerun algorithms.
+Finishes in under a minute and exercises every experiment end to end, including
+the data, plotting and reporting paths.
 
-## Regenerate artifacts without experiments
+## 3. Configuration grids
+
+The full-tier configs under `configs/full/` are generated programmatically and
+are committed, so this step is only needed if a grid definition changes:
 
 ```bash
-./scripts/make_all_figures.sh
+make configs        # instantiates each cell and solves its reference
+```
+
+Generation is slower than the campaign itself because it solves one reference per
+cell in order to compute the certified stepsizes that the sweep is built around.
+
+## 4. Full campaign
+
+```bash
+CAMPAIGN_JOBS=64 OVERNIGHT_BUDGET_HOURS=8 make full
+```
+
+The runner is resumable and idempotent: a job is skipped when its config hash and
+the numerical source hash both match a completed run and its CSV exists. Any edit
+to a hashed source file (everything under `src/` except the plotting modules)
+invalidates previous runs by design, so restyling figures is free but changing an
+algorithm forces a re-run.
+
+Interrupted campaigns resume with:
+
+```bash
+CAMPAIGN_JOBS=64 make resume
+```
+
+Parallelism is at the config-file level. Each worker owns a private state shard
+under `results/manifests/state_shards/`, and the parent merges them into
+`results/manifests/campaign_state.json`, so no two processes ever write the same
+JSON. Use one BLAS thread per worker (the scripts already export
+`OMP_NUM_THREADS=1` and friends) to avoid oversubscription.
+
+## 5. Figures, tables and audits
+
+```bash
+make figures        # regenerates every figure and table from saved results only
 make tables
-.venv/bin/python -m fr_gvi.experiments.pilot_summary
-./scripts/audit_results.sh --allow-failed
+make audit
 ```
 
-`make_all_figures.sh` creates individual and five composite manuscript figures, writes matching PDF/PNG files and caption drafts, saves figure-level processed CSV inputs, and runs size/font audits. Outputs are located as follows:
+`make figures` never reruns an experiment. It reads `results/raw/full/`, writes
+paired PDF and PNG files plus the exact processed CSV behind each figure and a
+caption draft, then runs the physical plot audit.
 
-- raw trajectories: `results/raw/<tier>/`;
-- run and reference manifests: `results/manifests/`;
-- processed figure inputs: `results/processed/`;
-- figures and captions: `results/figures/`;
-- tables: `results/tables/`;
-- campaign, numerical, and plot audits: `reports/`.
+## 6. What to check
 
-## Determinism and provenance
+- `reports/AUDIT_RESULTS.json` — manifest statuses, forbidden-method scan,
+  covariance positivity, and the pathwise covariance-band check of Lemma 4.4.
+- `reports/PLOT_AUDIT.json` — PDF/PNG pairing, physical width, font embedding.
+- `results/tables/reference_quality.csv` — the certification of every reference
+  used to compute an objective gap.
+- `results/manifests/full/*.json` — per-run provenance: config, config hash,
+  numerical source hash, git commit and dirty flag, Python and package versions,
+  platform, CPU count, BLAS configuration, seeds, curvature constants, operation
+  counts, status and failure reason.
 
-Each job owns a master seed. `numpy.random.SeedSequence` derives target, update-QMC, evaluation-QMC, reference, and paired stochastic streams. Campaign scripts set BLAS thread variables to one. Manifests record UTC times, config, source and reference hashes, Git commit/dirty status, Python/package/platform/CPU/BLAS information, seeds, exact command, operation counts, outputs, status, and any failure reason or traceback.
+## Determinism
 
-Core/full raw trajectories are intentionally ignored by Git because they are regenerable; smoke raw data and manifests are retained as regression artifacts. The complete current core raw data remain in the workspace.
+Every run derives its seeds from `numpy.random.SeedSequence(master_seed,
+spawn_key=(stream, repeat))`, and both the master seed and the derived run seed
+are stored in the manifest. Re-running a completed job with `--force` reproduces
+its CSV bit-for-bit on the same platform and package versions. Results are not
+guaranteed bit-identical across BLAS implementations; the reported quantities are
+stable far beyond the precision at which they are interpreted.
 
+## Known non-reproducible quantities
+
+Wall-clock timings are machine specific and are recorded for within-run
+comparison only. Peak RSS is process-level and reflects the worker, not a single
+trajectory.

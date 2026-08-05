@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 # Regenerate every full-tier config from the programmatic grid definitions.
+# This instantiates each cell, solves its reference and records the certified
+# stepsizes, so it is noticeably slower than running the campaign itself.
 set -euo pipefail
-cd "$(dirname "$0")/.."
 
-export OMP_NUM_THREADS=8
-export OPENBLAS_NUM_THREADS=8
-export MKL_NUM_THREADS=8
-
-source .venv/bin/activate
-python -m fr_gvi.experiments.grids --destination configs/full "$@"
+REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.grids \
+  --destination "${REPO_ROOT}/configs/full" "$@"

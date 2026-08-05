@@ -1,0 +1,397 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.037421191923588906,
+    "FR--KL": 0.0028009455603888248,
+    "FR--KL--STL": 0.0003501181950486031,
+    "FR--R": 0.0014004727801944124,
+    "FR--R--STL": 0.0028009455603888248,
+    "S--FB--GVI": 0.037421191923588906
+  },
+  "curvature": {
+    "alpha": 0.1,
+    "alpha_star": 0.006178720151969197,
+    "beta": 26.72282598699476,
+    "beta_star": 2.205940822038495,
+    "certified_step_sizes": {
+      "FB--GVI": 0.037421191923588906,
+      "FR--KL": 0.0028009455603888248,
+      "FR--KL--STL": 0.0003501181950486031,
+      "FR--R": 0.0014004727801944124,
+      "FR--R--STL": 0.0028009455603888248,
+      "S--FB--GVI": 0.037421191923588906
+    },
+    "condition": 267.2282598699476,
+    "exact": true,
+    "kappa_star": 357.0222906657211,
+    "lambda_0_star": 0.23650024744282033,
+    "lambda_0_star_max": 16.1845815218107,
+    "lambda_max_star": 161.84581521810688,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_points": 8192,
+  "experiment": "L",
+  "grid": {
+    "dimension": 10,
+    "feature_condition": 100.0,
+    "prior_precision": 0.1
+  },
+  "id": "L_logistic_d10_lam0.1_fc1e2",
+  "iterations": 200,
+  "master_seed": 20261803,
+  "methods": [
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 0.0625,
+      "step_size": 8.752954876215077e-05,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 0.125,
+      "step_size": 0.00017505909752430155,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 0.25,
+      "step_size": 0.0003501181950486031,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 0.5,
+      "step_size": 0.0007002363900972062,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 1.0,
+      "step_size": 0.0014004727801944124,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "step_size": 0.0028009455603888248,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 4.0,
+      "step_size": 0.0056018911207776495,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 8.0,
+      "step_size": 0.011203782241555299,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 16.0,
+      "step_size": 0.022407564483110598,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 32.0,
+      "step_size": 0.044815128966221196,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 64.0,
+      "step_size": 0.08963025793244239,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 128.0,
+      "step_size": 0.17926051586488478,
+      "tag": "x128"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 256.0,
+      "step_size": 0.35852103172976957,
+      "tag": "x256"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 512.0,
+      "step_size": 0.7170420634595391,
+      "tag": "x512"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 1024.0,
+      "step_size": 1.4340841269190783,
+      "tag": "x1024"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 2048.0,
+      "step_size": 2.8681682538381565,
+      "tag": "x2048"
+    },
+    {
+      "certified_step_size": 0.0014004727801944124,
+      "name": "FR--R",
+      "normalized_step_size": 4096.0,
+      "step_size": 5.736336507676313,
+      "tag": "x4096"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 0.0625,
+      "step_size": 0.00017505909752430155,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 0.125,
+      "step_size": 0.0003501181950486031,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 0.25,
+      "step_size": 0.0007002363900972062,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 0.5,
+      "step_size": 0.0014004727801944124,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 1.0,
+      "step_size": 0.0028009455603888248,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "step_size": 0.0056018911207776495,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 4.0,
+      "step_size": 0.011203782241555299,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 8.0,
+      "step_size": 0.022407564483110598,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 16.0,
+      "step_size": 0.044815128966221196,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 32.0,
+      "step_size": 0.08963025793244239,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 64.0,
+      "step_size": 0.17926051586488478,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 128.0,
+      "step_size": 0.35852103172976957,
+      "tag": "x128"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 256.0,
+      "step_size": 0.7170420634595391,
+      "tag": "x256"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 512.0,
+      "step_size": 1.4340841269190783,
+      "tag": "x512"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 1024.0,
+      "step_size": 2.8681682538381565,
+      "tag": "x1024"
+    },
+    {
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--KL",
+      "normalized_step_size": 2048.0,
+      "step_size": 5.736336507676313,
+      "tag": "x2048"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.0625,
+      "step_size": 0.0023388244952243066,
+      "tag": "x0p0625"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.125,
+      "step_size": 0.004677648990448613,
+      "tag": "x0p125"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.25,
+      "step_size": 0.009355297980897227,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "step_size": 0.018710595961794453,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "step_size": 0.037421191923588906,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 2.0,
+      "step_size": 0.07484238384717781,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 4.0,
+      "step_size": 0.14968476769435562,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 8.0,
+      "step_size": 0.29936953538871125,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 16.0,
+      "step_size": 0.5987390707774225,
+      "tag": "x16"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 32.0,
+      "step_size": 1.197478141554845,
+      "tag": "x32"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 64.0,
+      "step_size": 2.39495628310969,
+      "tag": "x64"
+    },
+    {
+      "certified_step_size": 0.037421191923588906,
+      "name": "FB--GVI",
+      "normalized_step_size": 128.0,
+      "step_size": 4.78991256621938,
+      "tag": "x128"
+    },
+    {
+      "batch_size": 16,
+      "certified_step_size": 0.0028009455603888248,
+      "name": "FR--R--STL",
+      "normalized_step_size": 64.0,
+      "seeds": 10,
+      "step_size": 0.17926051586488478
+    },
+    {
+      "batch_size": 16,
+      "certified_step_size": 0.0003501181950486031,
+      "name": "FR--KL--STL",
+      "normalized_step_size": 64.0,
+      "seeds": 10,
+      "step_size": 0.022407564483110598
+    },
+    {
+      "batch_size": 16,
+      "certified_step_size": 0.037421191923588906,
+      "name": "S--FB--GVI",
+      "normalized_step_size": 6.68070649674869,
+      "seeds": 10,
+      "step_size": 0.25
+    },
+    {
+      "name": "Laplace"
+    }
+  ],
+  "record_every": 1,
+  "reference_points": 8192,
+  "target": {
+    "dimension": 10,
+    "feature_condition": 100.0,
+    "kind": "logistic",
+    "prior_precision": 0.1,
+    "samples": 100,
+    "test_samples": 500
+  },
+  "tier": "full",
+  "update_points": 8192
+}

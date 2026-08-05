@@ -1,0 +1,87 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.5,
+    "FR--KL": 0.09090909090909091,
+    "FR--KL--STL": 0.011363636363636364,
+    "FR--R": 0.045454545454545456,
+    "FR--R--STL": 0.09090909090909091,
+    "S--FB--GVI": 0.5
+  },
+  "curvature": {
+    "alpha": 0.1,
+    "alpha_star": 0.16209626919542652,
+    "beta": 2.0,
+    "beta_star": 1.7830589611496916,
+    "certified_step_sizes": {
+      "FB--GVI": 0.5,
+      "FR--KL": 0.09090909090909091,
+      "FR--KL--STL": 0.011363636363636364,
+      "FR--R": 0.045454545454545456,
+      "FR--R--STL": 0.09090909090909091,
+      "S--FB--GVI": 0.5
+    },
+    "condition": 20.0,
+    "exact": true,
+    "kappa_star": 11.0,
+    "lambda_0_star": 0.4318421413857873,
+    "lambda_0_star_max": 1.170546231829436,
+    "lambda_max_star": 6.169173448368388,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "J",
+  "grid": {
+    "batch_size": 2,
+    "condition": 10.0,
+    "dimension": 8,
+    "rho": 1.0
+  },
+  "id": "J_floor_d8_k10_rho1_B2",
+  "iterations": 600,
+  "master_seed": 20261585,
+  "methods": [
+    {
+      "batch_size": 2,
+      "name": "FR--R--STL",
+      "quadratic_rescue": true,
+      "seeds": 30,
+      "step_size": 0.045454545454545456
+    },
+    {
+      "batch_size": 2,
+      "name": "FR--KL--STL",
+      "quadratic_rescue": true,
+      "seeds": 30,
+      "step_size": 0.005681818181818182
+    },
+    {
+      "batch_size": 2,
+      "name": "FR--R--STL",
+      "seeds": 30,
+      "step_size": 0.045454545454545456,
+      "tag": "noqr"
+    },
+    {
+      "batch_size": 2,
+      "name": "FR--KL--STL",
+      "seeds": 30,
+      "step_size": 0.005681818181818182,
+      "tag": "noqr"
+    },
+    {
+      "batch_size": 2,
+      "name": "S--FB--GVI",
+      "seeds": 30,
+      "step_size": 0.25
+    }
+  ],
+  "record_every": 2,
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 10.0,
+    "dimension": 8,
+    "initial_covariance_scale": 0.7,
+    "kind": "logcosh",
+    "rho": 1.0
+  },
+  "tier": "full"
+}

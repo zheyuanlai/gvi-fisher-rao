@@ -1,0 +1,62 @@
+{
+  "curvature": {
+    "alpha": 0.999999999999998,
+    "alpha_star": 0.8396656882057566,
+    "beta": 1.300000000000002,
+    "beta_star": 1.1019254468376225,
+    "certified_step_sizes": {
+      "FB--GVI": 0.769230769230768,
+      "FR--KL": 0.7619986366731833,
+      "FR--KL--STL": 0.09524982958414792,
+      "FR--R": 0.3809993183365917,
+      "FR--R--STL": 0.7619986366731833,
+      "S--FB--GVI": 0.769230769230768
+    },
+    "condition": 1.3000000000000047,
+    "exact": true,
+    "kappa_star": 1.312338305965886,
+    "lambda_0_star": 0.9438025076784098,
+    "lambda_0_star_max": 0.9527601416100309,
+    "lambda_max_star": 1.1909501770125375,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "K",
+  "grid": {
+    "batch_size": 8,
+    "dimension": 8,
+    "rho": 0.3
+  },
+  "id": "K_decreasing_d8_rho0.3_B8",
+  "iterations": 20000,
+  "master_seed": 20261691,
+  "methods": [
+    {
+      "batch_size": 8,
+      "kappa_star": 1.312338305965886,
+      "n0": 111,
+      "name": "FR--R--STL",
+      "quadratic_rescue": true,
+      "schedule": "manuscript_decreasing",
+      "seeds": 30
+    },
+    {
+      "batch_size": 8,
+      "kappa_star": 1.312338305965886,
+      "n0": 111,
+      "name": "FR--KL--STL",
+      "quadratic_rescue": true,
+      "schedule": "manuscript_decreasing",
+      "seeds": 30
+    }
+  ],
+  "record_every": 20,
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 1.0,
+    "dimension": 8,
+    "initial_covariance_scale": 0.8,
+    "kind": "logcosh",
+    "rho": 0.3
+  },
+  "tier": "full"
+}

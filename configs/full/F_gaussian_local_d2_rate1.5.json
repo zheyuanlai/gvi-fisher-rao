@@ -1,0 +1,43 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 1.0,
+    "FR--KL": 1.0,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.5,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 1.0
+  },
+  "experiment": "F",
+  "grid": {
+    "dimension": 2,
+    "initial_eigenvalue": 0.75,
+    "rate": 1.5
+  },
+  "id": "F_gaussian_local_d2_rate1.5",
+  "iterations": 200,
+  "master_seed": 20261252,
+  "methods": [
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    }
+  ],
+  "target": {
+    "condition": 1.0,
+    "dimension": 2,
+    "initial_covariance_diagonal": [
+      0.75,
+      1.0
+    ],
+    "kind": "gaussian",
+    "mean_scale": 0.0,
+    "rotation": false
+  },
+  "tier": "full"
+}

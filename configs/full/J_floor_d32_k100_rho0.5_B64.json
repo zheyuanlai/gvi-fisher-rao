@@ -1,0 +1,87 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.6666666666666669,
+    "FR--KL": 0.019607843137254905,
+    "FR--KL--STL": 0.0024509803921568627,
+    "FR--R": 0.009803921568627453,
+    "FR--R--STL": 0.0196078431372549,
+    "S--FB--GVI": 0.6666666666666669
+  },
+  "curvature": {
+    "alpha": 0.010000000000000016,
+    "alpha_star": 0.06231996314792911,
+    "beta": 1.4999999999999996,
+    "beta_star": 3.1783181205443847,
+    "certified_step_sizes": {
+      "FB--GVI": 0.6666666666666669,
+      "FR--KL": 0.019607843137254905,
+      "FR--KL--STL": 0.0024509803921568627,
+      "FR--R": 0.009803921568627453,
+      "FR--R--STL": 0.0196078431372549,
+      "S--FB--GVI": 0.6666666666666669
+    },
+    "condition": 149.99999999999972,
+    "exact": true,
+    "kappa_star": 51.0,
+    "lambda_0_star": 0.11232355807695321,
+    "lambda_0_star_max": 0.9177153415927897,
+    "lambda_max_star": 16.046222582421887,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "J",
+  "grid": {
+    "batch_size": 64,
+    "condition": 100.0,
+    "dimension": 32,
+    "rho": 0.5
+  },
+  "id": "J_floor_d32_k100_rho0.5_B64",
+  "iterations": 600,
+  "master_seed": 20261827,
+  "methods": [
+    {
+      "batch_size": 64,
+      "name": "FR--R--STL",
+      "quadratic_rescue": true,
+      "seeds": 30,
+      "step_size": 0.00980392156862745
+    },
+    {
+      "batch_size": 64,
+      "name": "FR--KL--STL",
+      "quadratic_rescue": true,
+      "seeds": 30,
+      "step_size": 0.0012254901960784314
+    },
+    {
+      "batch_size": 64,
+      "name": "FR--R--STL",
+      "seeds": 30,
+      "step_size": 0.00980392156862745,
+      "tag": "noqr"
+    },
+    {
+      "batch_size": 64,
+      "name": "FR--KL--STL",
+      "seeds": 30,
+      "step_size": 0.0012254901960784314,
+      "tag": "noqr"
+    },
+    {
+      "batch_size": 64,
+      "name": "S--FB--GVI",
+      "seeds": 30,
+      "step_size": 0.3333333333333334
+    }
+  ],
+  "record_every": 2,
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 100.0,
+    "dimension": 32,
+    "initial_covariance_scale": 0.7,
+    "kind": "logcosh",
+    "rho": 0.5
+  },
+  "tier": "full"
+}

@@ -43,13 +43,18 @@ from fr_gvi.diagnostics.curvature import (
     whitened_initialization,
 )
 from fr_gvi.diagnostics.core import (
+    gaussian_core_rate,
     gaussian_kl_gap,
     gaussian_w2_squared,
     objective,
     optimizer_relative,
     residuals,
 )
-from fr_gvi.diagnostics.local_operator import assemble_local_operator
+from fr_gvi.diagnostics.local_operator import (
+    assemble_local_operator,
+    discrete_rate,
+    kl_local_gap,
+)
 from fr_gvi.expectations.core import (
     ExactGaussianExpectation,
     ExpectationEngine,
@@ -59,7 +64,13 @@ from fr_gvi.expectations.core import (
 from fr_gvi.experiments.factories import BuiltProblem, build_problem
 from fr_gvi.experiments.reference import ReferenceSolution, laplace_approximation, solve_reference
 from fr_gvi.linear_algebra.spd import spd_solve, spd_sqrt, symmetrize as symmetrize_matrix
-from fr_gvi.targets.core import GaussianTarget, LogisticRegressionTarget, ShiftedLogCoshTarget, Target
+from fr_gvi.targets.core import (
+    GaussianTarget,
+    LogisticRegressionTarget,
+    ShiftedLogCoshTarget,
+    Target,
+    mean_hessian,
+)
 from fr_gvi.utils.accounting import OperationCounts
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -186,7 +197,9 @@ def engines(
         exact = ExactGaussianExpectation()
         return exact, exact
     if isinstance(target, ShiftedLogCoshTarget):
-        return GaussHermiteLogCoshExpectation(48), GaussHermiteLogCoshExpectation(120)
+        # Order 80 makes the separable quadrature exact to float64 for these
+        # potentials; order 48 leaves a 2e-12 error in the expected Hessian.
+        return GaussHermiteLogCoshExpectation(80), GaussHermiteLogCoshExpectation(160)
     # Nonseparable targets share one fixed quadrature design between the
     # deterministic updates, the objective evaluation and the reference solve.
     # The discretized problem is then internally exact, and the quadrature error
@@ -282,6 +295,7 @@ def trajectory_row(
         "covariance_max_eigenvalue": float(eigenvalues[-1]),
         "relative_covariance_min_eigenvalue": relative.covariance_minimum_eigenvalue,
         "relative_covariance_max_eigenvalue": relative.covariance_maximum_eigenvalue,
+        "gaussian_core_rate": gaussian_core_rate(state, optimum),
         "fisher_rao_residual_squared": certificate.fisher_rao_squared,
         "bures_wasserstein_residual_squared": certificate.bures_wasserstein_squared,
         "wall_time_seconds": elapsed,
@@ -370,6 +384,8 @@ def _run_trajectory(
 
     local_gamma = np.nan
     local_lambda = np.nan
+    local_kl_gamma = np.nan
+    local_discrete_rate = np.nan
     if config["experiment"] == "G":
         local_normals = FixedNormalExpectation.qmc(
             state.mean.size, int(config.get("local_operator_points", 2048)), run_seed + 37
@@ -377,6 +393,9 @@ def _run_trajectory(
         operator = assemble_local_operator(problem.target, reference.state, local_normals)
         spectrum = np.linalg.eigvalsh(operator)
         local_gamma, local_lambda = float(spectrum[0]), float(spectrum[-1])
+        local_kl_gamma = kl_local_gap(operator, state.mean.size, base_step_size)
+        gap = local_kl_gamma if method == Method.FR_KL else local_gamma
+        local_discrete_rate = discrete_rate(gap, base_step_size)
 
     base_target = None
     base_state = None
@@ -429,6 +448,8 @@ def _run_trajectory(
             method_specification.get("normalized_step_size", actual_step)
         )
         rows[-1]["problem_instance"] = int(instance)
+        rows[-1]["local_kl_gamma"] = float(local_kl_gamma)
+        rows[-1]["local_discrete_rate"] = float(local_discrete_rate)
         for key in ("alpha", "beta", "alpha_star", "beta_star", "kappa_star",
                     "lambda_0_star", "lambda_0_star_max", "lambda_max_star"):
             rows[-1][key] = float((curvature or {}).get(key, np.nan))
@@ -491,10 +512,14 @@ def _run_trajectory(
 
     write_rows(output_path, rows)
     burn_in = None
-    if config["experiment"] == "A" and isinstance(problem.target, GaussianTarget):
-        threshold = 1.0 / (2.0 * float(np.linalg.eigvalsh(problem.target.precision)[-1]))
+    if config["experiment"] == "A":
+        # The manuscript's covariance bootstrap is stated in optimizer-whitened
+        # coordinates: the band is C_n >= (2 beta_star)^{-1} C_star, i.e.
+        # lambda_min(C_star^{-1/2} C_n C_star^{-1/2}) >= 1 / (2 beta_star).
+        beta_star = float((curvature or {}).get("beta_star", 1.0))
+        threshold = 1.0 / (2.0 * beta_star)
         for row in rows:
-            if float(row["covariance_min_eigenvalue"]) >= threshold:
+            if float(row["relative_covariance_min_eigenvalue"]) >= threshold:
                 burn_in = int(row["iteration"])
                 break
     summary = {
@@ -537,8 +562,13 @@ def _run_variance_ablation(
             run_seed + index + 100,
         ).evaluate(problem.target, mean, covariance)
         g = -evaluation.grad
+        population_hessian = np.asarray(evaluation.hessian, dtype=np.float64)
+        certificate = residuals(state, evaluation)
+        whitened_population = symmetrize_matrix(root @ population_hessian @ root)
         raw_errors: list[float] = []
         stl_errors: list[float] = []
+        tangent_errors: list[float] = []
+        fluctuations: list[float] = []
         for _ in range(replicates):
             normals = rng.standard_normal((batch_size, target_dimension), dtype=np.float64)
             samples = mean + normals @ root.T
@@ -550,9 +580,32 @@ def _run_variance_ablation(
             stl_error = stl - g
             raw_errors.append(float(raw_error @ covariance @ raw_error))
             stl_errors.append(float(stl_error @ covariance @ stl_error))
+            # Full Fisher--Rao tangent error of the stochastic gradient, and the
+            # intrinsic Hessian fluctuation Psi of Definition 4.6, both evaluated
+            # on the same batch so that Lemma 4.7 can be checked directly.
+            sampled_hessian = mean_hessian(problem.target, samples)
+            whitened_error = symmetrize_matrix(
+                root @ (sampled_hessian - population_hessian) @ root
+            )
+            tangent_errors.append(
+                float(stl_error @ covariance @ stl_error)
+                + 0.5 * float(np.linalg.norm(whitened_error, ord="fro") ** 2)
+            )
+            single = samples[:1]
+            single_hessian = mean_hessian(problem.target, single)
+            single_whitened = symmetrize_matrix(
+                root @ (single_hessian - population_hessian) @ root
+            )
+            fluctuations.append(float(np.linalg.norm(single_whitened, ord="fro") ** 2))
         relative = optimizer_relative(state, reference.state)
         raw_variance = float(np.mean(raw_errors))
         stl_variance = float(np.mean(stl_errors))
+        psi = float(np.mean(fluctuations))
+        gradient_norm_squared = float(certificate.fisher_rao_squared)
+        measured_tangent_variance = float(np.mean(tangent_errors))
+        # Lemma 4.7 bounds the single-sample tangent variance; averaging over a
+        # batch of size B divides it by B.
+        lemma_bound = (2.0 * gradient_norm_squared + 1.5 * psi) / batch_size
         rows.append(
             {
                 "tier": config["tier"],
@@ -568,6 +621,12 @@ def _run_variance_ablation(
                 "raw_intrinsic_variance": raw_variance,
                 "stl_intrinsic_variance": stl_variance,
                 "stl_raw_variance_ratio": stl_variance / raw_variance if raw_variance > 0.0 else np.nan,
+                "psi_hessian_fluctuation": psi,
+                "fisher_rao_gradient_norm_squared": gradient_norm_squared,
+                "measured_tangent_variance": measured_tangent_variance,
+                "lemma_variance_bound": lemma_bound,
+                "lemma_bound_slack": lemma_bound - measured_tangent_variance,
+                **{f"grid_{key}": value for key, value in config.get("grid", {}).items()},
             }
         )
     write_rows(output_path, rows)
@@ -685,6 +744,7 @@ def _run_affine_metric(
                     "fitted_mean_rate": fitted_mean,
                     "is_fisher_rao": metric.is_fisher_rao,
                     "status": status_entry,
+                    **{f"grid_{key}": value for key, value in config.get("grid", {}).items()},
                 }
             )
     write_rows(output_path, rows)

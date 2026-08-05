@@ -1,61 +1,240 @@
+"""Manuscript tables built from the full-tier grids."""
+
 from __future__ import annotations
 
-import csv
+import json
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+
+from fr_gvi.plotting.style import load_experiment
+
 ROOT = Path(__file__).resolve().parents[3]
+TABLES = ROOT / "results" / "tables"
+
+
+def _terminal(frame: pd.DataFrame) -> pd.DataFrame:
+    keys = [k for k in ("job_id", "method", "variant", "seed") if k in frame.columns]
+    return frame.sort_values("iteration").groupby(keys, as_index=False).last()
+
+
+def _write(frame: pd.DataFrame, name: str, caption: str, formats: dict[str, str]) -> None:
+    TABLES.mkdir(parents=True, exist_ok=True)
+    frame.to_csv(TABLES / f"{name}.csv", index=False)
+    formatted = frame.copy()
+    for column, spec in formats.items():
+        if column in formatted.columns:
+            formatted[column] = formatted[column].map(
+                lambda value, spec=spec: format(float(value), spec)
+                if isinstance(value, (int, float, np.floating, np.integer))
+                and np.isfinite(float(value))
+                else "--"
+            )
+    body = formatted.to_latex(index=False, escape=True)
+    (TABLES / f"{name}.tex").write_text(f"% {caption}\n{body}", encoding="utf-8")
+    print(f"  {name}: {len(frame)} rows")
+
+
+def stepsize_table() -> None:
+    """Largest stable step and best gap at a fixed budget, per method and cell."""
+
+    records = []
+    for experiment in ("C", "D", "L"):
+        frame = load_experiment(experiment)
+        if frame.empty:
+            continue
+        frame = frame[frame["method"] != "Laplace"]
+        if experiment == "C":
+            frame = frame[~frame["variant"].str.contains("rescue", na=False)]
+        initial = frame[frame["iteration"] == 0].groupby(["job_id", "method"])[
+            "objective_gap"
+        ].median()
+        terminal = _terminal(frame)
+        for (job, method), subset in terminal.groupby(["job_id", "method"]):
+            start = float(initial.get((job, method), np.inf))
+            progressed = subset[subset["objective_gap"] < start]
+            best = subset.loc[subset["objective_gap"].idxmin()]
+            multiple = float(best["normalized_step_size"])
+            records.append(
+                {
+                    "experiment": experiment,
+                    "job_id": job,
+                    "method": method,
+                    "kappa_star": float(subset["kappa_star"].iloc[0]),
+                    "certified_step": float(best["step_size"]) / multiple
+                    if multiple > 0
+                    else np.nan,
+                    "largest_stable_multiple": float(progressed["normalized_step_size"].max())
+                    if not progressed.empty
+                    else np.nan,
+                    "best_multiple": multiple,
+                    "best_terminal_gap": float(best["objective_gap"]),
+                    "oracle_pairs": float(best["oracle_pairs"]),
+                    "wall_time_seconds": float(best["wall_time_seconds"]),
+                }
+            )
+    if not records:
+        return
+    _write(
+        pd.DataFrame(records).sort_values(["experiment", "job_id", "method"]),
+        "stepsize_summary",
+        "Per-cell stepsize summary: each method's certified step, the largest multiple of it "
+        "that still makes progress, and the best terminal gap at a fixed oracle budget.",
+        {
+            "kappa_star": ".3g",
+            "certified_step": ".3e",
+            "largest_stable_multiple": ".3g",
+            "best_multiple": ".3g",
+            "best_terminal_gap": ".3e",
+            "oracle_pairs": ".0f",
+            "wall_time_seconds": ".3f",
+        },
+    )
+
+
+def headline_table() -> None:
+    """The headline verification numbers quoted in the text."""
+
+    rows = []
+
+    burn = load_experiment("A")
+    if not burn.empty:
+        ratios = []
+        for (_, _, _), trajectory in burn.groupby(["job_id", "method", "seed"]):
+            trajectory = trajectory.sort_values("iteration")
+            beta_star = float(trajectory["beta_star"].iloc[0])
+            entered = trajectory[
+                trajectory["relative_covariance_min_eigenvalue"] >= 1.0 / (2.0 * beta_star)
+            ]
+            if entered.empty:
+                continue
+            step = float(trajectory["step_size"].iloc[-1])
+            predicted = float(
+                np.log(1.0 / (beta_star * float(trajectory["lambda_0_star"].iloc[0])))
+            )
+            ratios.append(int(entered["iteration"].iloc[0]) * step / predicted)
+        if ratios:
+            rows.append(
+                {
+                    "quantity": "burn-in time / predicted log envelope (median)",
+                    "value": float(np.median(ratios)),
+                    "worst_case": float(np.max(np.abs(np.asarray(ratios) - 1.0))),
+                    "runs": len(ratios),
+                }
+            )
+
+    affine = load_experiment("B")
+    if not affine.empty:
+        for method in ("FR--R", "FR--KL", "FB--GVI"):
+            subset = affine[affine["method"] == method]
+            if subset.empty:
+                continue
+            rows.append(
+                {
+                    "quantity": f"max affine equivariance error, {method}",
+                    "value": float(subset["equivariance_error_covariance"].max()),
+                    "worst_case": np.nan,
+                    "runs": int(subset["job_id"].nunique()),
+                }
+            )
+
+    cancellation = load_experiment("H")
+    if not cancellation.empty:
+        spread = (
+            cancellation.groupby(["job_id", "method", "iteration"])["objective"]
+            .agg(lambda values: float(values.max() - values.min()))
+            .reset_index(name="spread")
+        )
+        for method, subset in spread.groupby("method"):
+            rows.append(
+                {
+                    "quantity": f"max across-seed objective spread, {method}",
+                    "value": float(subset["spread"].max()),
+                    "worst_case": np.nan,
+                    "runs": int(subset["job_id"].nunique()),
+                }
+            )
+
+    metrics = load_experiment("M")
+    if not metrics.empty:
+        finest = metrics[metrics["step_size"] == metrics["step_size"].min()]
+        summary = finest.groupby(["omega", "tau", "dimension"]).first().reset_index()
+        for label, fitted, predicted in (
+            ("traceless", "fitted_traceless_rate", "predicted_traceless_rate"),
+            ("trace", "fitted_trace_rate", "predicted_trace_rate"),
+        ):
+            error = (summary[fitted] / summary[predicted] - 1.0).abs()
+            rows.append(
+                {
+                    "quantity": f"max relative rate error, {label} mode (finest step)",
+                    "value": float(error.max()),
+                    "worst_case": np.nan,
+                    "runs": int(len(summary)),
+                }
+            )
+
+    if not rows:
+        return
+    _write(
+        pd.DataFrame(rows),
+        "headline_summary",
+        "Headline verification numbers quoted in the text.",
+        {"value": ".3e", "worst_case": ".3e", "runs": ".0f"},
+    )
+
+
+def reference_quality_table() -> None:
+    """Certification of every reference solution used to compute objective gaps."""
+
+    records = []
+    for path in sorted((ROOT / "results" / "manifests").glob("reference_*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        metadata = payload.get("metadata", {})
+        records.append(
+            {
+                "job_id": payload.get("job_id", ""),
+                "backend": metadata.get("backend", ""),
+                "fisher_rao_residual_squared": payload.get(
+                    "fisher_rao_residual_squared", np.nan
+                ),
+                "bures_wasserstein_residual_squared": payload.get(
+                    "bures_wasserstein_residual_squared", np.nan
+                ),
+                "quadrature_resolution_floor": metadata.get(
+                    "quadrature_resolution_floor", np.nan
+                ),
+                "independent_design_residual_squared": metadata.get(
+                    "design_transfer_fisher_rao_residual_squared", np.nan
+                ),
+            }
+        )
+    if not records:
+        return
+    _write(
+        pd.DataFrame(records),
+        "reference_quality",
+        "Reference certification. Every reference is a stationary point of the problem the "
+        "algorithms actually solve, certified by both the Fisher--Rao and the "
+        "Bures--Wasserstein residual; for quadrature-based cells the resolution floor and "
+        "the residual against an independent four-times-larger design are also reported.",
+        {
+            "fisher_rao_residual_squared": ".3e",
+            "bures_wasserstein_residual_squared": ".3e",
+            "quadrature_resolution_floor": ".3e",
+            "independent_design_residual_squared": ".3e",
+        },
+    )
 
 
 def main() -> int:
-    rows: list[dict[str, str]] = []
-    for path in sorted((ROOT / "results" / "raw").rglob("*.csv")):
-        with path.open(encoding="utf-8", newline="") as handle:
-            values = list(csv.DictReader(handle))
-        if not values or "objective_gap" not in values[-1]:
-            continue
-        final = values[-1]
-        rows.append(
-            {
-                "experiment": final.get("experiment", ""),
-                "job_id": final.get("job_id", ""),
-                "method": final.get("method", ""),
-                "seed": final.get("seed", ""),
-                "iterations": final.get("iteration", ""),
-                "objective_gap": final.get("objective_gap", ""),
-                "w2_squared": final.get("w2_squared", ""),
-                "wall_time_seconds": final.get("wall_time_seconds", ""),
-                "oracle_pairs": final.get("oracle_pairs", ""),
-            }
-        )
-    table_dir = ROOT / "results" / "tables"
-    table_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = table_dir / "terminal_summary.csv"
-    fields = list(rows[0]) if rows else ["experiment", "method"]
-    with csv_path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(rows)
-    tex_path = table_dir / "terminal_summary.tex"
-    lines = [
-        r"\begin{tabular}{lllrr}",
-        r"\toprule",
-        r"Experiment & Job & Method & Iter. & Objective gap \\",
-        r"\midrule",
-    ]
-    for row in rows:
-        try:
-            gap = f"{float(row['objective_gap']):.3e}"
-        except ValueError:
-            gap = "--"
-        lines.append(
-            f"{row['experiment']} & {row['job_id']} & {row['method']} & {row['iterations']} & {gap} \\\\"
-        )
-    lines.extend([r"\bottomrule", r"\end{tabular}"])
-    tex_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"wrote {csv_path} and {tex_path} ({len(rows)} rows)")
+    print("writing tables:")
+    stepsize_table()
+    headline_table()
+    reference_quality_table()
+    print(f"tables written to {TABLES}")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

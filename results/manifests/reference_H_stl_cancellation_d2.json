@@ -1,0 +1,24 @@
+{
+  "bures_wasserstein_residual_squared": 0.0,
+  "covariance": [
+    [
+      85.87456707256676,
+      34.624991038676974
+    ],
+    [
+      34.624991038676974,
+      15.125432927433064
+    ]
+  ],
+  "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
+  "job_id": "H_stl_cancellation_d2",
+  "mean": [
+    0.06424492496930084,
+    -0.06455546443773547
+  ],
+  "metadata": {
+    "backend": "exact"
+  },
+  "objective": -1.3025850929940463
+}
