@@ -1,14 +1,14 @@
 {
   "runs": {
     "G_local_spectral_d3_rho0.1:fr-kl:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
-      "config_hash": "7ebef721404d68a07af2539b45f1510e42b0ee86787d52498d6403ab80dce25c",
+      "code_hash": "06284edf201dd5945ca310d61d9e83c4b673abaaf1eb7c9dc46eda5c605e5eff",
+      "config_hash": "0676dc6ae780fa877f75fed4ddab3e9d58c4451fc1637bb511d5d01e6ce11506",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/G_local_spectral_d3_rho0.1_fr-kl_seed0.json",
       "status": "completed"
     },
     "G_local_spectral_d3_rho0.1:fr-r:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
-      "config_hash": "7ebef721404d68a07af2539b45f1510e42b0ee86787d52498d6403ab80dce25c",
+      "code_hash": "06284edf201dd5945ca310d61d9e83c4b673abaaf1eb7c9dc46eda5c605e5eff",
+      "config_hash": "0676dc6ae780fa877f75fed4ddab3e9d58c4451fc1637bb511d5d01e6ce11506",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/G_local_spectral_d3_rho0.1_fr-r_seed0.json",
       "status": "completed"
     }

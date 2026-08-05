@@ -293,10 +293,14 @@ def figure_b(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         "Affine equivariance (Proposition 2.3). A Gaussian target and its initialization "
         "are transformed by an invertible affine map of conditioning $K$, and the "
         "transformed iterates are compared with the iterates of the untransformed run. "
-        "Both Fisher--Rao schemes agree with the transported reference at roundoff level "
-        "across eight decades of $K$; FB--GVI, whose Bures--Wasserstein geometry is not "
-        "affine invariant, does not. This is an iterate-level identity test, not a "
-        "cross-geometry performance comparison."
+        "Both Fisher--Rao schemes agree with the transported reference to within roundoff "
+        "across eight decades of $K$. Their residual grows in proportion to the "
+        "conditioning of the change of variables, from $10^{-15}$ at $K=1$ to $10^{-9}$ at "
+        "$K=10^8$, which is floating-point amplification through an ill-conditioned map "
+        "rather than a loss of equivariance. FB--GVI, whose Bures--Wasserstein geometry is "
+        "not affine invariant, departs by an $O(1)$ amount as soon as the map is "
+        "non-orthogonal. This is an iterate-level identity test, not a cross-geometry "
+        "performance comparison."
     )
     return figure, caption, summary
 
@@ -381,9 +385,7 @@ def figure_c(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     for method in ordered_methods(terminal):
         subset = terminal[terminal["method"] == method]
         grouped = subset.groupby("normalized_step_size")["exact_gaussian_kl"].median()
-        axes[2].plot(
-            grouped.index, positive(grouped.to_numpy()), label=method, **method_style(method)
-        )
+        axes[2].plot(grouped.index, positive(grouped.to_numpy()), **method_style(method))
     axes[2].set_xscale("log")
     axes[2].set_yscale("log")
     bottom, top = axes[2].get_ylim()
@@ -717,9 +719,11 @@ def figure_g(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         step = float(subset["step_size"].iloc[-1])
         times = subset["iteration"].to_numpy() * step
         values = subset["distance_squared"].to_numpy()
+        # The whitened error saturates once it reaches the relative precision of
+        # C_star^{-1/2} C C_star^{-1/2}, which puts the squared distance on a
+        # roundoff plateau near 1e-26.  Everything below 1e-22 is discarded.
         usable = np.isfinite(values) & (values > 1e-22)
-        # Fit on the tail, where the linearization governs the decay.
-        tail = usable & (times >= 0.55 * times[usable].max()) if usable.any() else usable
+        tail = usable & (times >= 0.6 * times[usable].max()) if usable.any() else usable
         fitted = np.nan
         if tail.sum() >= 4:
             fitted = float(-np.polyfit(times[tail], np.log(values[tail]), 1)[0])
@@ -737,51 +741,69 @@ def figure_g(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
                 "fitted_rate": fitted,
                 "continuous_rate": 2.0 * float(subset["local_gamma"].iloc[0]),
                 "discrete_rate": float(subset["local_discrete_rate"].iloc[0]),
+                "fast_rate": float(
+                    -2.0 * np.log1p(-step * float(subset["local_lambda"].iloc[0])) / step
+                ),
             }
         )
     table = pd.DataFrame(records)
 
     figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.5), constrained_layout=True)
 
+    # (a) The per-step contraction rate along a representative trajectory,
+    # converging onto the rate predicted by the spectral gap.  A single window
+    # fit would mix in the faster modes, which decay only a little quicker.
+    representative = frame[(frame["grid_dimension"] == 3) & (frame["grid_rho"] == 0.01)]
+    for method in ordered_methods(representative):
+        subset = representative[representative["method"] == method].sort_values("iteration")
+        step = float(subset["step_size"].iloc[-1])
+        times = subset["iteration"].to_numpy() * step
+        distance = (
+            subset["mean_error"] ** 2 + 0.5 * subset["covariance_error"] ** 2
+        ).to_numpy()
+        usable = np.flatnonzero(np.isfinite(distance) & (distance > 1e-22))
+        rates = -np.diff(np.log(distance[usable])) / np.diff(times[usable])
+        style = method_style(method)
+        axes[0].plot(times[usable][:-1], rates, label=method, **style,
+                     markevery=max(1, len(rates) // 8))
+        predicted = float(subset["local_discrete_rate"].iloc[0])
+        axes[0].axhline(predicted, color=style["color"], linestyle=":", linewidth=0.9)
+    axes[0].set_xlabel(r"time $t=n\,\Delta t$")
+    axes[0].set_ylabel("per-step contraction rate")
+    panel_letter(axes[0], "a", r"$d=3$, $\rho=10^{-2}$")
+
     for method in ordered_methods(table):
         subset = table[table["method"] == method]
-        axes[0].plot(
+        axes[1].vlines(
+            subset["discrete_rate"], subset["discrete_rate"], subset["fast_rate"],
+            color=COLORS.get(method), alpha=0.25, linewidth=2.5,
+        )
+        axes[1].plot(
             subset["discrete_rate"], subset["fitted_rate"], linestyle="none", label=method,
             **{k: v for k, v in method_style(method).items() if k != "linestyle"},
         )
     finite = table["discrete_rate"].dropna()
     limits = [float(finite.min()) * 0.95, float(finite.max()) * 1.05]
-    axes[0].plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+    axes[1].plot(limits, limits, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
                  label="identity")
-    axes[0].set_xlabel(r"predicted one-step rate")
-    axes[0].set_ylabel("fitted asymptotic rate")
-    panel_letter(axes[0], "a", "Discretization-exact")
-
-    for method in ordered_methods(table):
-        subset = table[table["method"] == method].sort_values("rho")
-        axes[1].plot(
-            subset["rho"], subset["fitted_rate"] / subset["continuous_rate"],
-            linestyle="none", label=rf"{method} / $2\gamma_\star$",
-            **{k: v for k, v in method_style(method).items() if k != "linestyle"},
-        )
-        axes[1].plot(
-            subset["rho"], subset["fitted_rate"] / subset["discrete_rate"],
-            linestyle="none", marker="+", markersize=4.5,
-            color=COLORS.get(method), label=rf"{method} / one-step",
-        )
-    axes[1].axhline(1.0, color=REFERENCE_GREY, linestyle=":", linewidth=1.0)
-    axes[1].set_xscale("log")
-    axes[1].set_xlabel(r"non-Gaussianity $\rho$")
-    axes[1].set_ylabel("fitted / predicted")
-    panel_letter(axes[1], "b", "Continuous vs one-step")
+    axes[1].set_xlabel("predicted slowest one-step rate")
+    axes[1].set_ylabel("measured rate")
+    panel_letter(axes[1], "b", "Inside the spectral bracket")
 
     spectra = table.groupby(["dimension", "rho"])[["gamma_star", "lambda_star"]].first().reset_index()
+    dimension_markers = {2: "o", 3: "s", 5: "^"}
     for dimension, subset in spectra.groupby("dimension"):
         subset = subset.sort_values("rho")
-        axes[2].plot(subset["rho"], subset["gamma_star"], marker="o",
-                     label=rf"$\gamma_\star$, $d={int(dimension)}$")
-        axes[2].plot(subset["rho"], subset["lambda_star"], marker="s", linestyle="--",
-                     label=rf"$\Lambda_\star$, $d={int(dimension)}$")
+        axes[2].plot(subset["rho"], subset["gamma_star"], color="#0072B2",
+                     marker=dimension_markers.get(int(dimension), "o"),
+                     label=rf"$\gamma_\star$" if dimension == 2 else None)
+        axes[2].plot(subset["rho"], subset["lambda_star"], color="#D55E00", linestyle="--",
+                     marker=dimension_markers.get(int(dimension), "o"),
+                     label=rf"$\Lambda_\star$" if dimension == 2 else None)
+    for dimension, marker in dimension_markers.items():
+        axes[2].plot([], [], color=REFERENCE_GREY, linestyle="none", marker=marker,
+                     label=f"$d={dimension}$")
+    axes[2].axhline(1.0, color=REFERENCE_GREY, linestyle=":", linewidth=0.9)
     axes[2].set_xscale("log")
     axes[2].set_xlabel(r"non-Gaussianity $\rho$")
     axes[2].set_ylabel(r"spectrum of $\mathcal{L}_\star$")
@@ -795,12 +817,17 @@ def figure_g(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         "$\\mathcal T$, $\\mathcal T^\\ast$ and $\\mathcal S$ in optimizer-whitened "
         "coordinates, and the KL/Bregman gap $\\gamma_{\\mathrm{KL},\\Delta t}$ of "
         "Theorem 3.7(iii) from the same operator under the weighted inner product. "
-        "(a) Fitted asymptotic rates against the exact one-step prediction "
-        "$-2\\log(1-\\Delta t\\,\\gamma)/\\Delta t$. (b) The same fits against the "
-        "continuous rate $2\\gamma_\\star$ and against the one-step rate; the residual "
-        "discrepancy of the former is the $O(\\Delta t)$ discretization bias. "
-        "(c) $\\gamma_\\star$ and $\\Lambda_\\star$ against the non-Gaussianity, both "
-        "approaching $1$ as $\\rho\\to0$ where $\\mathcal L_\\star=\\mathrm{Id}$."
+        "(a) The per-step contraction rate along a representative trajectory settles onto "
+        "the exact one-step prediction $-2\\log(1-\\Delta t\\,\\gamma)/\\Delta t$ "
+        "(dotted). (b) Measured rates against that prediction, with the shaded segments "
+        "showing the full spectral bracket from the slowest mode $\\gamma$ to the fastest "
+        "$\\Lambda_\\star$. Every measurement lies inside its bracket. Where it sits above "
+        "the slow end -- FR--KL at small $\\rho$, whose two extreme modes differ by only "
+        "$5\\%$ -- the faster modes have not yet died out at the largest horizon float64 "
+        "allows: the whitened error saturates near $10^{-26}$, capping the usable time at "
+        "$t\\approx30$. (c) $\\gamma_\\star$ and $\\Lambda_\\star$ against the "
+        "non-Gaussianity, both approaching $1$ as $\\rho\\to0$ where "
+        "$\\mathcal L_\\star=\\mathrm{Id}$."
     )
     return figure, caption, table
 
@@ -868,53 +895,87 @@ def figure_h(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
 
 
 def figure_i(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
-    figure, axes = plt.subplots(1, 2, figsize=(TEXT_WIDTH, 2.6), constrained_layout=True)
+    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.5), constrained_layout=True)
     palette = {"gaussian": "#0072B2", "logcosh": "#D55E00"}
+    dashes = {1: "-", 4: "--", 16: ":"}
     markers = {1: "o", 4: "s", 16: "^"}
+
+    summaries = []
     for (family, batch), subset in frame.groupby(["grid_family", "grid_batch_size"]):
         summary = (
             subset.groupby("interpolation_level")[
                 ["optimizer_relative_distance", "stl_raw_variance_ratio",
-                 "stl_intrinsic_variance", "raw_intrinsic_variance"]
+                 "measured_tangent_variance", "lemma_variance_bound",
+                 "psi_hessian_fluctuation", "fisher_rao_gradient_norm_squared"]
             ]
             .median()
             .reset_index()
             .sort_values("optimizer_relative_distance")
         )
-        style = {"color": palette.get(family, "C0"), "marker": markers.get(int(batch), "o")}
-        axes[0].plot(
-            summary["optimizer_relative_distance"], positive(summary["stl_raw_variance_ratio"]),
-            label=f"{family}, $B={int(batch)}$", **style,
+        summary["family"] = family
+        summary["batch_size"] = int(batch)
+        summaries.append(summary)
+        style = {
+            "color": palette.get(family, "C0"),
+            "linestyle": dashes.get(int(batch), "-"),
+            "marker": markers.get(int(batch), "o"),
+        }
+        label = f"{family}, $B={int(batch)}$"
+        # The exact-zero point at the optimizer of the Gaussian target would
+        # collapse a log axis; it is reported in the caption instead of plotted.
+        finite = summary[summary["optimizer_relative_distance"] > 0.0]
+        axes[0].plot(finite["optimizer_relative_distance"],
+                     positive(finite["stl_raw_variance_ratio"]), label=label, **style)
+        axes[1].plot(finite["optimizer_relative_distance"],
+                     positive(finite["measured_tangent_variance"]), label=label, **style)
+        axes[1].plot(finite["optimizer_relative_distance"],
+                     positive(finite["lemma_variance_bound"]),
+                     color=style["color"], linestyle=style["linestyle"], alpha=0.45,
+                     marker="", linewidth=2.2)
+        axes[2].plot(
+            finite["optimizer_relative_distance"],
+            positive(finite["measured_tangent_variance"] / finite["lemma_variance_bound"]),
+            label=label, **style,
         )
-        axes[1].plot(
-            summary["optimizer_relative_distance"], positive(summary["stl_intrinsic_variance"]),
-            label=f"STL {family}, $B={int(batch)}$", **style,
-        )
-        axes[1].plot(
-            summary["optimizer_relative_distance"], positive(summary["raw_intrinsic_variance"]),
-            linestyle="--", alpha=0.65,
-            label=f"raw {family}, $B={int(batch)}$", **style,
-        )
-    axes[0].set_yscale("log")
-    axes[0].set_xlabel(r"optimizer-relative distance $\|a-a_\star\|_\star$")
-    axes[0].set_ylabel("STL / raw intrinsic variance")
-    panel_letter(axes[0], "a", "Variance ratio")
-    axes[1].set_yscale("log")
-    axes[1].set_xlabel(r"optimizer-relative distance $\|a-a_\star\|_\star$")
-    axes[1].set_ylabel("intrinsic conditional variance")
-    panel_letter(axes[1], "b", "Absolute variances")
+    table = pd.concat(summaries, ignore_index=True)
 
-    legend_below(figure, axes, columns=3)
+    axes[0].set_xscale("log")
+    axes[0].set_yscale("log")
+    axes[0].set_xlabel(r"$\|a-a_\star\|_\star$")
+    axes[0].set_ylabel("STL / raw variance")
+    panel_letter(axes[0], "a", "Estimator ratio")
+
+    axes[1].set_xscale("log")
+    axes[1].set_yscale("log")
+    axes[1].set_xlabel(r"$\|a-a_\star\|_\star$")
+    axes[1].set_ylabel("tangent variance")
+    panel_letter(axes[1], "b", "Measured vs Lemma 4.7")
+
+    axes[2].axhline(1.0, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+                    label="Lemma 4.7 bound")
+    axes[2].set_xscale("log")
+    axes[2].set_ylim(0.0, 1.15)
+    axes[2].set_xlabel(r"$\|a-a_\star\|_\star$")
+    axes[2].set_ylabel("measured / bound")
+    panel_letter(axes[2], "c", "Bound tightness")
+
+    legend_below(figure, axes, columns=4)
+    worst = float((table["measured_tangent_variance"] / table["lemma_variance_bound"]).max())
     caption = (
-        "Estimator ablation. Intrinsic Fisher--Rao conditional variance of the "
-        "sticking-the-landing mean estimator relative to the raw-score estimator, along a "
-        "path interpolating from the initialization to the optimizer, on a Gaussian and a "
-        "shifted log-cosh target with $d=8$ and $B\\in\\{1,4,16\\}$. The STL variance "
-        "collapses as the state approaches $a_\\star$, and vanishes identically at the "
-        "optimizer of the Gaussian target; the raw-score variance does not. This is an "
-        "estimator ablation, not one of the six compared algorithms."
+        "Estimator ablation and the sticking-the-landing variance bound, on a Gaussian and "
+        "a shifted log-cosh target with $d=8$ and $B\\in\\{1,4,16\\}$, along a path "
+        "interpolating from the initialization to the optimizer. (a) The intrinsic "
+        "Fisher--Rao variance of the STL mean estimator relative to the raw-score "
+        "estimator collapses as the state approaches $a_\\star$; for the Gaussian target it "
+        "is exactly zero at $a_\\star$, which is off a logarithmic axis and so is omitted "
+        "from the panel. (b) The measured Fisher--Rao tangent variance (thin lines with "
+        "markers) against the Lemma 4.7 bound "
+        "$(2\\|\\mathrm{grad}\\,\\mathcal E\\|_a^2 + \\tfrac32\\Psi(a))/B$ (thick pale "
+        f"lines). (c) The bound holds at every state and batch size, with a worst-case "
+        f"ratio of {worst:.3f}. This is an estimator ablation, not one of the six compared "
+        "algorithms."
     )
-    return figure, caption, frame
+    return figure, caption, table
 
 
 # --------------------------------------------------------------------------
@@ -925,52 +986,77 @@ def figure_i(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
 def figure_j(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     frame = frame.copy()
     frame["rescued"] = frame["variant"].str.contains("-qr", na=False)
+    frame["swept_step"] = frame["variant"].str.contains("-hx", na=False)
     tail = frame[frame["iteration"] >= 0.75 * frame["iteration"].max()]
     floors = (
-        tail.groupby(["job_id", "method", "rescued", "grid_dimension", "grid_condition",
+        tail.groupby(["job_id", "method", "rescued", "swept_step", "step_size",
+                      "normalized_step_size", "grid_dimension", "grid_condition",
                       "grid_rho", "grid_batch_size"])["objective_gap"]
         .median()
         .reset_index(name="terminal_floor")
     )
 
-    figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.5), constrained_layout=True)
-
+    figure, axes = plt.subplots(2, 2, figsize=(TEXT_WIDTH, 4.4), constrained_layout=True)
     base = floors[
         (floors["grid_dimension"] == 8)
         & (floors["grid_condition"] == 10.0)
         & (floors["grid_rho"] == 0.5)
     ]
-    # The Fisher--Rao arms use their quadratic-rescued form, which is the setting
-    # of the theorem; S--FB--GVI has no such initializer and appears as-is.
-    reference_cell = base[base["rescued"] | (base["method"] == "S--FB--GVI")]
+    default_step = base[~base["swept_step"]]
+
+    # (a) floor against batch size, at each method's own default step
+    reference_cell = default_step[
+        default_step["rescued"] | (default_step["method"] == "S--FB--GVI")
+    ]
+    batches = np.asarray(sorted(reference_cell["grid_batch_size"].unique()), dtype=float)
     for method in ordered_methods(reference_cell):
         subset = reference_cell[reference_cell["method"] == method].sort_values("grid_batch_size")
-        axes[0].plot(
-            subset["grid_batch_size"], positive(subset["terminal_floor"]),
-            label=method, **method_style(method),
-        )
-    anchor = reference_cell[reference_cell["grid_batch_size"] == 1]["terminal_floor"].median()
-    batches = np.asarray(sorted(reference_cell["grid_batch_size"].unique()), dtype=float)
-    axes[0].plot(batches, anchor / batches, color=REFERENCE_GREY, linestyle=":",
-                 linewidth=1.0, label=r"$\propto 1/B$")
-    axes[0].set_xscale("log", base=2)
-    axes[0].set_xticks(batches)
-    axes[0].set_xticklabels([f"{int(b)}" for b in batches])
-    axes[0].set_yscale("log")
-    axes[0].set_xlabel("batch size $B$")
-    axes[0].set_ylabel("terminal objective-gap floor")
-    panel_letter(axes[0], "a", r"$d=8$, $\kappa=10$, $\rho=0.5$")
+        axes[0, 0].plot(subset["grid_batch_size"], positive(subset["terminal_floor"]),
+                        label=method, **method_style(method))
+    anchor = float(reference_cell[reference_cell["grid_batch_size"] == 1]["terminal_floor"].median())
+    axes[0, 0].plot(batches, anchor / batches, color=REFERENCE_GREY, linestyle=":",
+                    linewidth=1.0, label=r"$\propto 1/B$")
+    axes[0, 0].set_xscale("log", base=2)
+    axes[0, 0].set_yscale("log")
+    axes[0, 0].set_xticks(batches)
+    axes[0, 0].set_xticklabels([f"{int(b)}" for b in batches])
+    axes[0, 0].set_xlabel("batch size $B$")
+    axes[0, 0].set_ylabel("terminal gap floor")
+    panel_letter(axes[0, 0], "a", r"$d=8$, $\kappa=10$, $\rho=0.5$")
 
+    # (b) floor against stepsize at fixed batch size
+    sweep = base[base["rescued"] & base["grid_batch_size"].isin([1, 16])]
+    for method in ordered_methods(sweep):
+        for batch, subset in sweep[sweep["method"] == method].groupby("grid_batch_size"):
+            subset = subset.sort_values("step_size")
+            axes[0, 1].plot(
+                subset["step_size"], positive(subset["terminal_floor"]),
+                color=COLORS.get(method), marker=MARKERS.get(method),
+                linestyle="-" if batch == 1 else "--",
+                label=f"{method}, $B={int(batch)}$",
+            )
+    if not sweep.empty:
+        steps = np.asarray(sorted(sweep["step_size"].unique()), dtype=float)
+        anchor = float(sweep[np.isclose(sweep["step_size"], steps[0])]["terminal_floor"].median())
+        axes[0, 1].plot(steps, anchor * steps / steps[0], color=REFERENCE_GREY,
+                        linestyle=":", linewidth=1.0, label=r"$\propto \Delta t$")
+    axes[0, 1].set_xscale("log")
+    axes[0, 1].set_yscale("log")
+    axes[0, 1].set_xlabel(r"step $\Delta t$")
+    axes[0, 1].set_ylabel("terminal gap floor")
+    panel_letter(axes[0, 1], "b", "Floor scales with the step")
+
+    # (c) trajectories per oracle pair
     cell = frame[
         (frame["grid_dimension"] == 8) & (frame["grid_condition"] == 10.0)
-        & (frame["grid_rho"] == 0.5) & (frame["rescued"])
+        & (frame["grid_rho"] == 0.5) & (frame["rescued"]) & (~frame["swept_step"])
         & (frame["method"] == "FR--R--STL")
     ]
     for batch, subset in cell.groupby("grid_batch_size"):
         if int(batch) not in {1, 4, 16, 64}:
             continue
         plot_median_band(
-            axes[1], subset, "oracle_pairs", "objective_gap",
+            axes[1, 0], subset, "oracle_pairs", "objective_gap",
             label=rf"$B={int(batch)}$",
             style={
                 "color": tuple(float(v) for v in plt.get_cmap("viridis")(np.log2(batch) / 6.0)),
@@ -978,45 +1064,43 @@ def figure_j(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
                 "marker": "",
             },
         )
-    axes[1].set_xscale("log")
-    axes[1].set_xlabel("gradient--Hessian oracle pairs")
-    axes[1].set_ylabel("objective gap")
-    panel_letter(axes[1], "b", "FR--R--STL per oracle pair")
+    axes[1, 0].set_xscale("log")
+    axes[1, 0].set_xlabel("gradient--Hessian oracle pairs")
+    axes[1, 0].set_ylabel("objective gap")
+    panel_letter(axes[1, 0], "c", "FR--R--STL per oracle pair")
 
-    ablation = floors[
-        (floors["grid_dimension"] == 8) & (floors["grid_condition"] == 10.0)
-        & (floors["grid_rho"] == 0.5)
-        & (floors["method"].isin(["FR--R--STL", "FR--KL--STL"]))
-    ]
+    # (d) quadratic-rescue ablation
+    ablation = default_step[default_step["method"].isin(["FR--R--STL", "FR--KL--STL"])]
     for method in ordered_methods(ablation):
         for rescued, subset in ablation[ablation["method"] == method].groupby("rescued"):
             subset = subset.sort_values("grid_batch_size")
-            axes[2].plot(
+            axes[1, 1].plot(
                 subset["grid_batch_size"], positive(subset["terminal_floor"]),
-                color=COLORS.get(method),
-                linestyle="-" if rescued else "--",
-                marker=MARKERS.get(method),
-                alpha=1.0 if rescued else 0.6,
+                color=COLORS.get(method), linestyle="-" if rescued else "--",
+                marker=MARKERS.get(method), alpha=1.0 if rescued else 0.6,
                 label=f"{method}{'+QR' if rescued else ' (plain start)'}",
             )
-    axes[2].set_xscale("log", base=2)
-    axes[2].set_xticks(batches)
-    axes[2].set_xticklabels([f"{int(b)}" for b in batches])
-    axes[2].set_yscale("log")
-    axes[2].set_xlabel("batch size $B$")
-    axes[2].set_ylabel("terminal floor")
-    panel_letter(axes[2], "c", "Quadratic-rescue ablation")
+    axes[1, 1].set_xscale("log", base=2)
+    axes[1, 1].set_yscale("log")
+    axes[1, 1].set_xticks(batches)
+    axes[1, 1].set_xticklabels([f"{int(b)}" for b in batches])
+    axes[1, 1].set_xlabel("batch size $B$")
+    axes[1, 1].set_ylabel("terminal floor")
+    panel_letter(axes[1, 1], "d", "Quadratic-rescue ablation")
 
     legend_below(figure, axes, columns=4, tidy=False)
-    tidy_log_axes(axes[1])
+    tidy_log_axes(axes[0, 1], axes[1, 0])
     caption = (
         "Minibatch residual floors on the shifted log-cosh family over "
         "$d\\in\\{8,32\\}$, $\\kappa\\in\\{10,10^2\\}$, $\\rho\\in\\{0.5,1\\}$ and "
-        "$B\\in\\{1,\\dots,64\\}$, with 30 paired seeds per cell. (a) The terminal floor "
-        "decreases like $1/B$, matching the $O(\\mathfrak V_\\bullet/B)$ prediction of "
-        "Theorems 4.16 and 4.17. (b) Per-oracle-pair cost of increasing $B$. (c) The "
-        "quadratic rescue is reported as an ablation against an ordinary initialization "
-        "rather than being used only for the Fisher--Rao arm of the main comparison."
+        "$B\\in\\{1,\\dots,64\\}$, quadratic-rescued, 30 paired seeds per cell and 6000 "
+        "iterations so the deterministic transient has died out before the floor is read "
+        "off. (a) The floor decreases like $1/B$ and (b) in proportion to $\\Delta t$, "
+        "which together are the $O(\\Delta t\\,\\mathfrak V_\\bullet/(B\\gamma))$ prediction "
+        "of Theorems 4.16 and 4.17. Floor levels are not comparable across geometries, "
+        "because $\\Delta t$ carries different units in each. (c) The per-oracle-pair cost "
+        "of increasing $B$. (d) The quadratic rescue reported as an ablation against an "
+        "ordinary initialization, rather than being used only for the Fisher--Rao arm."
     )
     return figure, caption, floors
 
@@ -1104,7 +1188,7 @@ def figure_k(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     legend_below(figure, axes)
     caption = (
         "Decreasing-stepsize schedule $\\Delta t_n = 8\\kappa_\\star/(n+n_0)$ with "
-        "$n_0=\\lceil 64\\kappa_\\star^2\\rceil$, exactly as in Theorem 4.21, run for 4000 "
+        "$n_0=\\lceil 64\\kappa_\\star^2\\rceil$, exactly as in Theorem 4.21, run for 20000 "
         "iterations with 30 seeds on shifted log-cosh targets with $d\\in\\{4,8\\}$, "
         "$\\rho\\in\\{0.3,1\\}$ and $B\\in\\{1,8\\}$. Curves are sample means over seeds "
         "with standard-error bands. (a) The expected objective gap follows the predicted "

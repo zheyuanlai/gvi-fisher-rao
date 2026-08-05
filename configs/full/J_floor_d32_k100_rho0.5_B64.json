@@ -1,31 +1,31 @@
 {
   "certified_step_sizes": {
     "FB--GVI": 0.6666666666666669,
-    "FR--KL": 0.019607843137254905,
+    "FR--KL": 0.0196078431372549,
     "FR--KL--STL": 0.0024509803921568627,
-    "FR--R": 0.009803921568627453,
+    "FR--R": 0.00980392156862745,
     "FR--R--STL": 0.0196078431372549,
     "S--FB--GVI": 0.6666666666666669
   },
   "curvature": {
     "alpha": 0.010000000000000016,
-    "alpha_star": 0.06231996314792911,
+    "alpha_star": 0.062314159598170236,
     "beta": 1.4999999999999996,
-    "beta_star": 3.1783181205443847,
+    "beta_star": 3.178022139506682,
     "certified_step_sizes": {
       "FB--GVI": 0.6666666666666669,
-      "FR--KL": 0.019607843137254905,
+      "FR--KL": 0.0196078431372549,
       "FR--KL--STL": 0.0024509803921568627,
-      "FR--R": 0.009803921568627453,
+      "FR--R": 0.00980392156862745,
       "FR--R--STL": 0.0196078431372549,
       "S--FB--GVI": 0.6666666666666669
     },
     "condition": 149.99999999999972,
     "exact": true,
     "kappa_star": 51.0,
-    "lambda_0_star": 0.11232355807695321,
-    "lambda_0_star_max": 0.9177153415927897,
-    "lambda_max_star": 16.046222582421887,
+    "lambda_0_star": 0.1123340191882416,
+    "lambda_0_star_max": 0.9177153415927888,
+    "lambda_max_star": 16.047717026891647,
     "source": "logcosh_separable_exact"
   },
   "experiment": "J",
@@ -36,45 +36,55 @@
     "rho": 0.5
   },
   "id": "J_floor_d32_k100_rho0.5_B64",
-  "iterations": 600,
+  "iterations": 6000,
   "master_seed": 20261827,
   "methods": [
     {
       "batch_size": 64,
+      "certified_step_size": 0.0196078431372549,
       "name": "FR--R--STL",
+      "normalized_step_size": 1.02,
       "quadratic_rescue": true,
       "seeds": 30,
-      "step_size": 0.00980392156862745
+      "step_size": 0.02
     },
     {
       "batch_size": 64,
-      "name": "FR--KL--STL",
-      "quadratic_rescue": true,
-      "seeds": 30,
-      "step_size": 0.0012254901960784314
-    },
-    {
-      "batch_size": 64,
+      "certified_step_size": 0.0196078431372549,
       "name": "FR--R--STL",
+      "normalized_step_size": 1.02,
       "seeds": 30,
-      "step_size": 0.00980392156862745,
+      "step_size": 0.02,
       "tag": "noqr"
     },
     {
       "batch_size": 64,
+      "certified_step_size": 0.0024509803921568627,
       "name": "FR--KL--STL",
+      "normalized_step_size": 8.0,
+      "quadratic_rescue": true,
       "seeds": 30,
-      "step_size": 0.0012254901960784314,
+      "step_size": 0.0196078431372549
+    },
+    {
+      "batch_size": 64,
+      "certified_step_size": 0.0024509803921568627,
+      "name": "FR--KL--STL",
+      "normalized_step_size": 8.0,
+      "seeds": 30,
+      "step_size": 0.0196078431372549,
       "tag": "noqr"
     },
     {
       "batch_size": 64,
+      "certified_step_size": 0.6666666666666669,
       "name": "S--FB--GVI",
+      "normalized_step_size": 0.029999999999999992,
       "seeds": 30,
-      "step_size": 0.3333333333333334
+      "step_size": 0.02
     }
   ],
-  "record_every": 2,
+  "record_every": 10,
   "target": {
     "affine_condition": 1.0,
     "condition": 100.0,

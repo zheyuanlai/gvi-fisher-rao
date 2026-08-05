@@ -27,6 +27,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "H_stl_cancellation_smoke",
   "mean": [
     0.12073114450847228,

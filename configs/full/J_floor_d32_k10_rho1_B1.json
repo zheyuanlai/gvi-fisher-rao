@@ -9,9 +9,9 @@
   },
   "curvature": {
     "alpha": 0.10000000000000003,
-    "alpha_star": 0.16209626919542647,
+    "alpha_star": 0.16209626917411551,
     "beta": 1.9999999999999984,
-    "beta_star": 1.7830589611496912,
+    "beta_star": 1.7830589609152707,
     "certified_step_sizes": {
       "FB--GVI": 0.5000000000000004,
       "FR--KL": 0.09090909090909091,
@@ -23,9 +23,9 @@
     "condition": 19.99999999999998,
     "exact": true,
     "kappa_star": 11.0,
-    "lambda_0_star": 0.4318421413857871,
-    "lambda_0_star_max": 1.1705462318294362,
-    "lambda_max_star": 6.16917344836839,
+    "lambda_0_star": 0.43184214144256267,
+    "lambda_0_star_max": 1.1705462318294377,
+    "lambda_max_star": 6.169173449179458,
     "source": "logcosh_separable_exact"
   },
   "experiment": "J",
@@ -36,45 +36,55 @@
     "rho": 1.0
   },
   "id": "J_floor_d32_k10_rho1_B1",
-  "iterations": 600,
+  "iterations": 6000,
   "master_seed": 20261825,
   "methods": [
     {
       "batch_size": 1,
+      "certified_step_size": 0.09090909090909091,
       "name": "FR--R--STL",
+      "normalized_step_size": 0.22,
       "quadratic_rescue": true,
       "seeds": 30,
-      "step_size": 0.045454545454545456
+      "step_size": 0.02
     },
     {
       "batch_size": 1,
-      "name": "FR--KL--STL",
-      "quadratic_rescue": true,
-      "seeds": 30,
-      "step_size": 0.005681818181818182
-    },
-    {
-      "batch_size": 1,
+      "certified_step_size": 0.09090909090909091,
       "name": "FR--R--STL",
+      "normalized_step_size": 0.22,
       "seeds": 30,
-      "step_size": 0.045454545454545456,
+      "step_size": 0.02,
       "tag": "noqr"
     },
     {
       "batch_size": 1,
+      "certified_step_size": 0.011363636363636364,
       "name": "FR--KL--STL",
+      "normalized_step_size": 1.76,
+      "quadratic_rescue": true,
       "seeds": 30,
-      "step_size": 0.005681818181818182,
+      "step_size": 0.02
+    },
+    {
+      "batch_size": 1,
+      "certified_step_size": 0.011363636363636364,
+      "name": "FR--KL--STL",
+      "normalized_step_size": 1.76,
+      "seeds": 30,
+      "step_size": 0.02,
       "tag": "noqr"
     },
     {
       "batch_size": 1,
+      "certified_step_size": 0.5000000000000004,
       "name": "S--FB--GVI",
+      "normalized_step_size": 0.039999999999999966,
       "seeds": 30,
-      "step_size": 0.2500000000000002
+      "step_size": 0.02
     }
   ],
-  "record_every": 2,
+  "record_every": 10,
   "target": {
     "affine_condition": 1.0,
     "condition": 10.0,

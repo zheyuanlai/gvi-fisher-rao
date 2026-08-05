@@ -1,15 +1,38 @@
 # Blocked experiments
 
-The supplied manuscript source and numerical experiment plan name sharpness and boundary constructions but provide no executable potential, smoothing rule, or constants for the requested one-dimensional bump train, logarithmic spiral, convex ridge, or smooth double well. Searches of the full 8,646-line manuscript found no matching construction names or formulas.
+## Experiment E: fixed-step bump-train sharpness
 
-Per the source-of-truth policy, the repository does not invent these targets. Experiment E has explicit skipped manifests in both smoke and core tiers, and Main Figure 3 labels the missing cell rather than substituting a generic potential.
+The manuscript states that "the sharpness of the resulting global rates and the
+associated lower-bound constructions are deferred to the appendix", and that
+appendix is not yet written. Searches of the full manuscript source and of the
+downloaded references found no bump-train potential, smoothing rule, or
+constants. Per the source-of-truth policy the construction was not invented.
 
-The following remain blocked until exact formulas and constants are supplied:
+Experiment E is therefore **not run**, by explicit decision rather than by
+oversight. No surrogate target was substituted, and no figure claims a sharpness
+result.
 
-- E: fixed-step bump-train sharpness;
-- optional smooth double-well boundary behavior;
-- optional convex-ridge local-gap scaling;
-- optional logarithmic-spiral continuous-time lower bound.
+The generic infrastructure needed to add it later is already present: a
+one-dimensional target interface, exact curvature constants, per-method certified
+stepsize sweeps, strict failure recording, and manifest provenance. Supplying the
+exact potential and constants would require adding one target class and one grid
+builder; nothing else in the runner would change.
 
-Generic one-dimensional target interfaces, strict failure recording, manifest provenance, and plotting hooks are already available, so an exact construction can be added without redesigning the runner.
+## Related optional constructions
 
+The same reasoning applies to the other lower-bound and boundary constructions
+named in the plan but absent from the manuscript:
+
+- the smooth double-well boundary target;
+- the convex-ridge local-gap target;
+- the logarithmic-spiral continuous-time lower bound.
+
+## What is covered instead
+
+The sharpness question is not left entirely without evidence. The stepsize sweeps
+in Experiments C, D and L report, for every cell and every method, the certified
+step, the largest multiple of it that still makes progress, and the best terminal
+gap at a fixed oracle budget (`results/tables/stepsize_summary.csv`). This
+quantifies how conservative the certified steps are, which is the practical half
+of the sharpness question, but it is not a lower-bound construction and is not
+presented as one.

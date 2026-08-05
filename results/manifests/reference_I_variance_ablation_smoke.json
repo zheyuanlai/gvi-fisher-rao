@@ -18,6 +18,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "I_variance_ablation_smoke",
   "mean": [
     -0.25043336029156954,

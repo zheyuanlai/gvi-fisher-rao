@@ -352,7 +352,12 @@ def experiment_g() -> list[dict[str, Any]]:
                     "grid": {"dimension": dimension, "rho": rho},
                     "target": target,
                     "local_operator_points": 8192,
-                    "iterations": 200,
+                    # The slowest and fastest linearized modes differ by only a
+                    # few percent here, so the asymptotic regime is reached only
+                    # after t >> 1/(Lambda_star - gamma_star).  float64 holds the
+                    # squared distance down to ~1e-250, which t = 60 respects.
+                    "iterations": 1200,
+                    "record_every": 4,
                     "curvature": constants,
                     "methods": [
                         {"name": "FR--R", "step_size": 0.05, "normalized_step_size": 0.05},
@@ -469,6 +474,69 @@ def experiment_j() -> list[dict[str, Any]]:
                     }
                     constants = cell_constants(target, master_seed, "J")
                     certified = constants["certified_step_sizes"]
+
+                    def _step(name: str, certified: dict[str, float] = certified) -> float:
+                        # The floor is only observable once the deterministic
+                        # transient has died out.  Certified steps scale like
+                        # 1/kappa_star, so at kappa_star ~ 100 they need a horizon
+                        # far beyond any affordable budget; capping the step at
+                        # 0.02 keeps every cell inside a common, empirically stable
+                        # window that the Experiment D sweeps locate.
+                        return float(min(0.02, 8.0 * certified[name]))
+
+                    methods: list[dict[str, Any]] = []
+                    for name in ("FR--R--STL", "FR--KL--STL"):
+                        methods.append(
+                            {
+                                "name": name,
+                                "step_size": _step(name),
+                                "normalized_step_size": _step(name) / certified[name],
+                                "certified_step_size": certified[name],
+                                "batch_size": batch,
+                                "quadratic_rescue": True,
+                                "seeds": STOCHASTIC_SEEDS,
+                            }
+                        )
+                        methods.append(
+                            {
+                                "name": name,
+                                "step_size": _step(name),
+                                "normalized_step_size": _step(name) / certified[name],
+                                "certified_step_size": certified[name],
+                                "batch_size": batch,
+                                "seeds": STOCHASTIC_SEEDS,
+                                "tag": "noqr",
+                            }
+                        )
+                    methods.append(
+                        {
+                            "name": "S--FB--GVI",
+                            "step_size": _step("S--FB--GVI"),
+                            "normalized_step_size": _step("S--FB--GVI")
+                            / certified["S--FB--GVI"],
+                            "certified_step_size": certified["S--FB--GVI"],
+                            "batch_size": batch,
+                            "seeds": STOCHASTIC_SEEDS,
+                        }
+                    )
+                    # Theorem 4.16 predicts a floor proportional to Delta t / B, so
+                    # one cell also sweeps the step at fixed batch size.
+                    if dimension == 8 and condition == 10.0 and rho == 0.5:
+                        for multiplier in (0.25, 0.5, 2.0):
+                            for name in ("FR--R--STL", "FR--KL--STL"):
+                                step_size = multiplier * _step(name)
+                                methods.append(
+                                    {
+                                        "name": name,
+                                        "step_size": step_size,
+                                        "normalized_step_size": step_size / certified[name],
+                                        "certified_step_size": certified[name],
+                                        "batch_size": batch,
+                                        "quadratic_rescue": True,
+                                        "seeds": 10,
+                                        "tag": f"h{_tag(multiplier)}",
+                                    }
+                                )
                     configs.append(
                         {
                             "id": (
@@ -485,46 +553,11 @@ def experiment_j() -> list[dict[str, Any]]:
                                 "batch_size": batch,
                             },
                             "target": target,
-                            "iterations": 600,
-                            "record_every": 2,
+                            "iterations": 6000,
+                            "record_every": 10,
                             "curvature": constants,
                             "certified_step_sizes": certified,
-                            "methods": [
-                                {
-                                    "name": "FR--R--STL",
-                                    "step_size": 0.5 * certified["FR--R--STL"],
-                                    "batch_size": batch,
-                                    "quadratic_rescue": True,
-                                    "seeds": STOCHASTIC_SEEDS,
-                                },
-                                {
-                                    "name": "FR--KL--STL",
-                                    "step_size": 0.5 * certified["FR--KL--STL"],
-                                    "batch_size": batch,
-                                    "quadratic_rescue": True,
-                                    "seeds": STOCHASTIC_SEEDS,
-                                },
-                                {
-                                    "name": "FR--R--STL",
-                                    "step_size": 0.5 * certified["FR--R--STL"],
-                                    "batch_size": batch,
-                                    "seeds": STOCHASTIC_SEEDS,
-                                    "tag": "noqr",
-                                },
-                                {
-                                    "name": "FR--KL--STL",
-                                    "step_size": 0.5 * certified["FR--KL--STL"],
-                                    "batch_size": batch,
-                                    "seeds": STOCHASTIC_SEEDS,
-                                    "tag": "noqr",
-                                },
-                                {
-                                    "name": "S--FB--GVI",
-                                    "step_size": 0.5 * certified["S--FB--GVI"],
-                                    "batch_size": batch,
-                                    "seeds": STOCHASTIC_SEEDS,
-                                },
-                            ],
+                            "methods": methods,
                         }
                     )
     return configs

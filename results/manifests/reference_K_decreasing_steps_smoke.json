@@ -1,24 +1,25 @@
 {
-  "bures_wasserstein_residual_squared": 2.889878694038414e-26,
+  "bures_wasserstein_residual_squared": 6.779410171863512e-30,
   "covariance": [
     [
-      0.8476349591057655,
-      -4.070551459809698e-17
+      0.8476349591058623,
+      -7.414122939017976e-17
     ],
     [
-      -4.070551459809698e-17,
-      0.8476349591057654
+      -7.414122939017976e-17,
+      0.8476349591058617
     ]
   ],
-  "fisher_rao_residual_squared": 1.2471388209540412e-26,
+  "fisher_rao_residual_squared": 2.9942064950456864e-30,
+  "instance": 0,
   "job_id": "K_decreasing_steps_smoke",
   "mean": [
-    0.20685875650166602,
-    0.20427371297556143
+    0.20685875650167806,
+    0.20427371297557176
   ],
   "metadata": {
     "backend": "gauss_hermite_foc",
-    "order": 96
+    "order": 128
   },
-  "objective": 1.24903624162036
+  "objective": 1.2490362416203453
 }

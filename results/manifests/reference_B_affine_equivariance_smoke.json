@@ -18,6 +18,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "B_affine_equivariance_smoke",
   "mean": [
     0.24988898480773436,

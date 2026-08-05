@@ -96,7 +96,6 @@ def code_hash() -> str:
         path
         for path in sorted((ROOT / "src").rglob("*.py"))
         if "plotting" not in path.relative_to(ROOT / "src").parts
-        and path.name != "pilot_summary.py"
     ]
     paths += [ROOT / "pyproject.toml", ROOT / "requirements-lock.txt"]
     paths = sorted(paths)
@@ -544,6 +543,7 @@ def _run_variance_ablation(
     reference: ReferenceSolution,
     run_seed: int,
     output_path: Path,
+    evaluation_engine: ExpectationEngine,
 ) -> tuple[str, dict[str, Any]]:
     rng = np.random.default_rng(run_seed)
     batch_size = int(config.get("batch_size", 4))
@@ -556,11 +556,11 @@ def _run_variance_ablation(
         covariance = (1.0 - level) * problem.initial_state.covariance + level * reference.state.covariance
         state = GaussianState(mean, covariance)
         root = spd_sqrt(covariance)
-        evaluation = FixedNormalExpectation.qmc(
-            target_dimension := state.mean.size,
-            max(1024, int(config.get("evaluation_points", 1024))),
-            run_seed + index + 100,
-        ).evaluate(problem.target, mean, covariance)
+        target_dimension = state.mean.size
+        # Population quantities come from the cell's own evaluation engine --
+        # exact for Gaussian targets, Gauss--Hermite for the separable ones -- so
+        # the Lemma 4.7 comparison is not limited by quadrature error.
+        evaluation = evaluation_engine.evaluate(problem.target, mean, covariance)
         g = -evaluation.grad
         population_hessian = np.asarray(evaluation.hessian, dtype=np.float64)
         certificate = residuals(state, evaluation)
@@ -1004,6 +1004,7 @@ def run_config(
                         reference=reference,
                         run_seed=run_seed,
                         output_path=output_path,
+                        evaluation_engine=evaluation_engine,
                     )
                 elif config["experiment"] == "M":
                     status_name, summary = _run_affine_metric(

@@ -27,6 +27,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "A_covariance_burnin_smoke",
   "mean": [
     -0.1442301749965261,

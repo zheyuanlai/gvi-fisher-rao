@@ -1,19 +1,19 @@
 {
   "runs": {
     "B_affine_K1e2:fb-gvi:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "e33166535f329ad2d858c378715836d166bd8721e01f2653d847b5bc1917f9ee",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/B_affine_K1e2_fb-gvi_seed0.json",
       "status": "completed"
     },
     "B_affine_K1e2:fr-kl:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "e33166535f329ad2d858c378715836d166bd8721e01f2653d847b5bc1917f9ee",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/B_affine_K1e2_fr-kl_seed0.json",
       "status": "completed"
     },
     "B_affine_K1e2:fr-r:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "e33166535f329ad2d858c378715836d166bd8721e01f2653d847b5bc1917f9ee",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/B_affine_K1e2_fr-r_seed0.json",
       "status": "completed"

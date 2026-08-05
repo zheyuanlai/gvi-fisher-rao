@@ -1,9 +1,9 @@
 {
   "curvature": {
     "alpha": 0.9999999999999996,
-    "alpha_star": 0.4012588954912306,
+    "alpha_star": 0.4012588954912304,
     "beta": 2.9999999999999996,
-    "beta_star": 1.203776686473692,
+    "beta_star": 1.2037766864736914,
     "certified_step_sizes": {
       "FB--GVI": 0.33333333333333337,
       "FR--KL": 0.33333333333333326,
@@ -15,9 +15,9 @@
     "condition": 3.000000000000001,
     "exact": true,
     "kappa_star": 3.0000000000000004,
-    "lambda_0_star": 2.242940929442071,
-    "lambda_0_star_max": 2.2429409294420717,
-    "lambda_max_star": 2.4921565882689687,
+    "lambda_0_star": 2.2429409294420726,
+    "lambda_0_star_max": 2.2429409294420735,
+    "lambda_max_star": 2.49215658826897,
     "source": "logcosh_separable_exact"
   },
   "experiment": "G",
@@ -26,7 +26,7 @@
     "rho": 2.0
   },
   "id": "G_local_spectral_d2_rho2",
-  "iterations": 200,
+  "iterations": 1200,
   "local_operator_points": 8192,
   "master_seed": 20261280,
   "methods": [
@@ -41,6 +41,7 @@
       "step_size": 0.05
     }
   ],
+  "record_every": 4,
   "target": {
     "affine_condition": 1.0,
     "condition": 1.0,

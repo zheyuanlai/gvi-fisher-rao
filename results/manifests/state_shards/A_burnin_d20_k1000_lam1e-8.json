@@ -1,13 +1,13 @@
 {
   "runs": {
     "A_burnin_d20_k1000_lam1e-8:fr-kl:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "fbadc80a8321598245d0044586889b92a418473f73683c6bd3aec5ce0876618f",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/A_burnin_d20_k1000_lam1e-8_fr-kl_seed0.json",
       "status": "completed"
     },
     "A_burnin_d20_k1000_lam1e-8:fr-r:seed0": {
-      "code_hash": "6dca5ecaba2b863d304aa471d101257b38ddc9767b0e4ba9a8b3bc5959830c4a",
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "fbadc80a8321598245d0044586889b92a418473f73683c6bd3aec5ce0876618f",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/A_burnin_d20_k1000_lam1e-8_fr-r_seed0.json",
       "status": "completed"

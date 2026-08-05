@@ -11,6 +11,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "F_gaussian_local_smoke",
   "mean": [
     0.0,

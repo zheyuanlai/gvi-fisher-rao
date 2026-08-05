@@ -123,6 +123,7 @@
     ]
   ],
   "fisher_rao_residual_squared": 0.0,
+  "instance": 0,
   "job_id": "C_diao_gaussian_smoke",
   "mean": [
     0.1297200782194302,
