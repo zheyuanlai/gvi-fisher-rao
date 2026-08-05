@@ -1,5 +1,6 @@
 {
   "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
   "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
   "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/full --jobs 120 --budget-hours 8",
   "config": {
@@ -451,9 +452,14 @@
     "lambda_max_star": 237.72763524045558,
     "source": "logistic_interval_exact"
   },
+  "end_utc": "2026-08-05T09:52:35.490944+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 29059.931424356095,
   "git_commit": "13e0d937b50d4cb146da062f097d0980d9870221",
   "git_dirty": true,
   "git_status": "M configs/appendix/diao_flat_prior_logistic.json\n M results/manifests/campaign_state.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x0p5_seed0.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x256_seed0.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x8_seed0.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x256_seed0.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed1.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x256_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x256_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x256_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x512_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e2_fb-gvi-x0p25_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x0p25_seed0.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e4.json\n?? results/manifests/appendix/\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x1_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x2_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x32_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x4_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x8_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x1024_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x2048_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x512_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fr-r-stl-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fr-r-stl-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fr-r-stl-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x128_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x256_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x32_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x512_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x64_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x1024_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x2048_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x512_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed4.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed5.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed6.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed7.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fr-r-stl-b16_seed8.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed4.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed5.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed6.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed7.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed8.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-kl-stl-b16_seed9.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed4.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_s-fb-gvi-b16_seed5.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed4.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed5.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed6.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed7.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed8.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-kl-stl-b16_seed9.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_s-fb-gvi-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_s-fb-gvi-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_s-fb-gvi-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_s-fb-gvi-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_s-fb-gvi-b16_seed4.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x2048_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x512_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x2048_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x512_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x2048_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x512_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fb-gvi-x0p0625_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x2048_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x4096_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x8192_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fb-gvi-x0p5_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fb-gvi-x1_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fb-gvi-x2_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x0p5_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x1_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x2_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x4_seed0.json\n?? results/manifests/reference_diao_flat_prior_logistic_appendix.json\n?? results/manifests/state_shards/boundary_targets_appendix_blocked.json\n?? results/manifests/state_shards/diao_flat_prior_logistic_appendix.json",
+  "iterations_completed": 120,
   "method_specification": {
     "batch_size": 16,
     "certified_step_size": 0.003722643761260086,
@@ -461,6 +467,20 @@
     "normalized_step_size": 64.0,
     "seeds": 10,
     "step_size": 0.2382492007206455
+  },
+  "minimum_covariance_eigenvalue": 0.23833856363671618,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 240,
+    "expectation_evaluations": 0,
+    "gradient_evaluations": 1920,
+    "hessian_evaluations": 1920,
+    "iterations": 120,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 240,
+    "oracle_pairs": 1920,
+    "roundoff_repairs": 0
   },
   "output_paths": [
     "/home/zheyuanlai/gvi-fisher-rao/results/raw/full/L/L_logistic_d100_lam1_fc1e4/s-fb-gvi-b16_seed5.csv"
@@ -471,6 +491,7 @@
     "pytest": "9.0.2",
     "scipy": "1.18.0"
   },
+  "peak_rss_kib": 299416,
   "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
   "problem_instance": 0,
   "problem_metadata": {
@@ -498,6 +519,7 @@
   "run_seed": 2969100779,
   "schema_version": 1,
   "start_utc": "2026-08-05T09:52:16.103900+00:00",
-  "status": "running",
-  "target_seed": 3258245118
+  "status": "completed",
+  "target_seed": 3258245118,
+  "wall_time_seconds": 19.386232641991228
 }

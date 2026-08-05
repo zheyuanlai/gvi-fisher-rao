@@ -1,0 +1,545 @@
+{
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/full --jobs 120 --budget-hours 8",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.007502558657502417,
+      "FR--KL": 0.0005962510808616117,
+      "FR--KL--STL": 7.453138510770145e-05,
+      "FR--R": 0.00029812554043080584,
+      "FR--R--STL": 0.0005962510808616116,
+      "S--FB--GVI": 0.007502558657502417
+    },
+    "curvature": {
+      "alpha": 0.1,
+      "alpha_star": 0.0009332032522767266,
+      "beta": 133.28786160172422,
+      "beta_star": 1.565117921343141,
+      "certified_step_sizes": {
+        "FB--GVI": 0.007502558657502417,
+        "FR--KL": 0.0005962510808616117,
+        "FR--KL--STL": 7.453138510770145e-05,
+        "FR--R": 0.00029812554043080584,
+        "FR--R--STL": 0.0005962510808616116,
+        "S--FB--GVI": 0.007502558657502417
+      },
+      "condition": 1332.8786160172422,
+      "exact": true,
+      "kappa_star": 1677.1458066875985,
+      "lambda_0_star": 0.9382768766207035,
+      "lambda_0_star_max": 107.15779199872192,
+      "lambda_max_star": 1071.577919987216,
+      "source": "logistic_interval_exact"
+    },
+    "evaluation_points": 4096,
+    "experiment": "L",
+    "grid": {
+      "dimension": 50,
+      "feature_condition": 100.0,
+      "prior_precision": 0.1
+    },
+    "id": "L_logistic_d50_lam0.1_fc1e2",
+    "iterations": 200,
+    "master_seed": 20262203,
+    "methods": [
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 0.0625,
+        "step_size": 1.8632846276925365e-05,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 0.125,
+        "step_size": 3.726569255385073e-05,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 0.25,
+        "step_size": 7.453138510770146e-05,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 0.5,
+        "step_size": 0.00014906277021540292,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 1.0,
+        "step_size": 0.00029812554043080584,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 2.0,
+        "step_size": 0.0005962510808616117,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 4.0,
+        "step_size": 0.0011925021617232234,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 8.0,
+        "step_size": 0.0023850043234464467,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 16.0,
+        "step_size": 0.0047700086468928935,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 32.0,
+        "step_size": 0.009540017293785787,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 64.0,
+        "step_size": 0.019080034587571574,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 128.0,
+        "step_size": 0.03816006917514315,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 256.0,
+        "step_size": 0.0763201383502863,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 512.0,
+        "step_size": 0.1526402767005726,
+        "tag": "x512"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 1024.0,
+        "step_size": 0.3052805534011452,
+        "tag": "x1024"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 2048.0,
+        "step_size": 0.6105611068022904,
+        "tag": "x2048"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 4096.0,
+        "step_size": 1.2211222136045807,
+        "tag": "x4096"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 8192.0,
+        "step_size": 2.4422444272091615,
+        "tag": "x8192"
+      },
+      {
+        "certified_step_size": 0.00029812554043080584,
+        "name": "FR--R",
+        "normalized_step_size": 16384.0,
+        "step_size": 4.884488854418323,
+        "tag": "x16384"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 0.0625,
+        "step_size": 3.726569255385073e-05,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 0.125,
+        "step_size": 7.453138510770146e-05,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 0.25,
+        "step_size": 0.00014906277021540292,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 0.5,
+        "step_size": 0.00029812554043080584,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 1.0,
+        "step_size": 0.0005962510808616117,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 2.0,
+        "step_size": 0.0011925021617232234,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 4.0,
+        "step_size": 0.0023850043234464467,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 8.0,
+        "step_size": 0.0047700086468928935,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 16.0,
+        "step_size": 0.009540017293785787,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 32.0,
+        "step_size": 0.019080034587571574,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 64.0,
+        "step_size": 0.03816006917514315,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 128.0,
+        "step_size": 0.0763201383502863,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 256.0,
+        "step_size": 0.1526402767005726,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 512.0,
+        "step_size": 0.3052805534011452,
+        "tag": "x512"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 1024.0,
+        "step_size": 0.6105611068022904,
+        "tag": "x1024"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 2048.0,
+        "step_size": 1.2211222136045807,
+        "tag": "x2048"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 4096.0,
+        "step_size": 2.4422444272091615,
+        "tag": "x4096"
+      },
+      {
+        "certified_step_size": 0.0005962510808616117,
+        "name": "FR--KL",
+        "normalized_step_size": 8192.0,
+        "step_size": 4.884488854418323,
+        "tag": "x8192"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0004689099160939011,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.125,
+        "step_size": 0.0009378198321878022,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.25,
+        "step_size": 0.0018756396643756044,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.5,
+        "step_size": 0.0037512793287512087,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 1.0,
+        "step_size": 0.007502558657502417,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 2.0,
+        "step_size": 0.015005117315004835,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 4.0,
+        "step_size": 0.03001023463000967,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 8.0,
+        "step_size": 0.06002046926001934,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 16.0,
+        "step_size": 0.12004093852003868,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 32.0,
+        "step_size": 0.24008187704007736,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 64.0,
+        "step_size": 0.4801637540801547,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 128.0,
+        "step_size": 0.9603275081603094,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 256.0,
+        "step_size": 1.9206550163206189,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 512.0,
+        "step_size": 3.8413100326412377,
+        "tag": "x512"
+      },
+      {
+        "certified_step_size": 0.007502558657502417,
+        "name": "FB--GVI",
+        "normalized_step_size": 1024.0,
+        "step_size": 7.682620065282475,
+        "tag": "x1024"
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.0005962510808616116,
+        "name": "FR--R--STL",
+        "normalized_step_size": 64.0,
+        "seeds": 10,
+        "step_size": 0.03816006917514314
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 7.453138510770145e-05,
+        "name": "FR--KL--STL",
+        "normalized_step_size": 64.0,
+        "seeds": 10,
+        "step_size": 0.004770008646892893
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.007502558657502417,
+        "name": "S--FB--GVI",
+        "normalized_step_size": 33.321965400431054,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "name": "Laplace"
+      }
+    ],
+    "record_every": 1,
+    "reference_points": 4096,
+    "target": {
+      "dimension": 50,
+      "feature_condition": 100.0,
+      "kind": "logistic",
+      "prior_precision": 0.1,
+      "samples": 500,
+      "test_samples": 1000
+    },
+    "tier": "full",
+    "update_points": 4096
+  },
+  "config_hash": "11cbd835698d7c04147f0513a208a04f1f85a66e3f1026e98898a0ad1f153c06",
+  "config_path": "configs/full/L_logistic_d50_lam0.1_fc1e2.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 0.1,
+    "alpha_star": 0.0009332363529198322,
+    "beta": 133.28786160172422,
+    "beta_star": 1.5648419829277587,
+    "certified_step_sizes": {
+      "FB--GVI": 0.007502558657502417,
+      "FR--KL": 0.0005963773742661116,
+      "FR--KL--STL": 7.454717178326395e-05,
+      "FR--R": 0.0002981886871330558,
+      "FR--R--STL": 0.0005963773742661116,
+      "S--FB--GVI": 0.007502558657502417
+    },
+    "condition": 1332.8786160172422,
+    "exact": true,
+    "kappa_star": 1676.7906415473544,
+    "lambda_0_star": 0.9382151628741633,
+    "lambda_0_star_max": 107.15399125540686,
+    "lambda_max_star": 1071.5399125540741,
+    "source": "logistic_interval_exact"
+  },
+  "end_utc": "2026-08-05T09:54:01.322141+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 12.70294499716448,
+  "git_commit": "839e465d2ab11a8ab288607a798c7e6945d1d410",
+  "git_dirty": true,
+  "git_status": "M results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x8192_seed0.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e2.json",
+  "iterations_completed": 200,
+  "method_specification": {
+    "certified_step_size": 0.007502558657502417,
+    "name": "FB--GVI",
+    "normalized_step_size": 0.0625,
+    "step_size": 0.0004689099160939011,
+    "tag": "x0p0625"
+  },
+  "minimum_covariance_eigenvalue": 0.009766714511245556,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 200,
+    "expectation_evaluations": 200,
+    "gradient_evaluations": 200,
+    "hessian_evaluations": 200,
+    "iterations": 200,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 200,
+    "oracle_pairs": 200,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/full/L/L_logistic_d50_lam0.1_fc1e2/fb-gvi-x0p0625_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 296300,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "feature_condition": 100.0,
+    "prior_precision": 0.1,
+    "samples": 500,
+    "true_parameter_norm": 0.9389509737411315
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 1.1436952793347477e-26,
+    "fisher_rao_residual_squared": 1.2848608122402575e-27,
+    "objective": 399.8492534949211,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_L_logistic_d50_lam0.1_fc1e2.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 499074461,
+  "schema_version": 1,
+  "start_utc": "2026-08-05T09:52:29.537210+00:00",
+  "status": "completed",
+  "target_seed": 706427115,
+  "wall_time_seconds": 91.78414672397776
+}

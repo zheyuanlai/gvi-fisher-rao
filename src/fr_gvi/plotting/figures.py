@@ -551,6 +551,15 @@ def figure_l(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     panel_letter(axes[0], "a", job.replace("_", " "))
     axes[1].set_xlabel("gradient--Hessian oracle pairs")
     axes[1].set_ylabel("held-out predictive NLL")
+    # The early transient is orders of magnitude above the converged level, so the
+    # axis is clipped to the region where the methods can actually be told apart.
+    converged = representative[
+        (representative["iteration"] >= 0.5 * representative["iteration"].max())
+    ]["predictive_nll"].dropna()
+    if len(converged):
+        low, high = float(converged.min()), float(converged.max())
+        margin = max(0.02 * abs(low), 1.5 * (high - low), 1e-3)
+        axes[1].set_ylim(low - margin, high + margin)
     panel_letter(axes[1], "b", "Predictive quality")
 
     for method in ordered_methods(table):
