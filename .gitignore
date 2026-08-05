@@ -31,5 +31,6 @@ results/manifests/appendix/
 results/manifests/core/
 results/manifests/state_shards/
 results/manifests/reference_*.json
+results/manifests/campaign_state.json
 results/tables/*.csv
 results/tables/*.tex

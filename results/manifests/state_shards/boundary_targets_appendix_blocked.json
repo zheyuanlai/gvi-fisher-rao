@@ -1,9 +1,0 @@
-{
-  "runs": {
-    "boundary_targets_appendix_blocked:blocked": {
-      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/appendix/boundary_targets_appendix_blocked_blocked.json",
-      "status": "skipped"
-    }
-  },
-  "version": 1
-}
