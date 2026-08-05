@@ -70,7 +70,12 @@ def hash_file(path: Path) -> str:
 
 def code_hash() -> str:
     digest = hashlib.sha256()
-    paths = sorted((ROOT / "src").rglob("*.py")) + sorted((ROOT / "scripts").glob("*.sh"))
+    paths = [
+        path
+        for path in sorted((ROOT / "src").rglob("*.py"))
+        if "plotting" not in path.relative_to(ROOT / "src").parts
+        and path.name != "pilot_summary.py"
+    ]
     paths += [ROOT / "pyproject.toml", ROOT / "requirements-lock.txt"]
     paths = sorted(paths)
     for path in paths:

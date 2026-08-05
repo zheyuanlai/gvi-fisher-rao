@@ -12,6 +12,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from fr_gvi.plotting.aggregation import aggregate_series
+
 ROOT = Path(__file__).resolve().parents[3]
 RAW = ROOT / "results" / "raw"
 PROCESSED = ROOT / "results" / "processed"
@@ -25,6 +27,15 @@ COLORS = {
     "FB--GVI": "#D55E00",
     "S--FB--GVI": "#E69F00",
     "Laplace": "#555555",
+}
+LINESTYLES = {
+    "FR--R": "-",
+    "FR--KL": "--",
+    "FR--R--STL": "-",
+    "FR--KL--STL": "--",
+    "FB--GVI": "-.",
+    "S--FB--GVI": ":",
+    "Laplace": ":",
 }
 MARKERS = ["o", "s", "^", "D", "v", "P", "X"]
 
@@ -86,7 +97,7 @@ def group_trajectories(rows: list[dict[str, str]]) -> dict[tuple[str, str, str, 
             row.get("job_id", ""),
             row.get("method", ""),
             row.get("seed", ""),
-            Path(row.get("source_file", "")).stem,
+            Path(row.get("source_file", "")).stem.rsplit("_seed", 1)[0],
         )
         groups[key].append(row)
     for values in groups.values():
@@ -104,10 +115,10 @@ def positive(values: list[float]) -> np.ndarray:
 def label_for(key: tuple[str, str, str, str], multiple_jobs: bool) -> str:
     job, method, seed, variant = key
     label = method
-    if "-qr_" in variant or "-qr-" in variant:
+    if "-qr" in variant:
         label += "+QR"
     if multiple_jobs:
-        label += f" ({job})"
+        label += f" ({job.removesuffix('_core').removesuffix('_smoke')})"
     if seed not in {"", "0"}:
         label += f", seed={seed}"
     return label
@@ -121,19 +132,24 @@ def line_panel(
     *,
     log_y: bool = True,
 ) -> None:
-    multiple_jobs = len({key[0] for key in groups}) > 1
-    for index, (key, trajectory) in enumerate(sorted(groups.items())):
-        x = [number(row, "iteration") for row in trajectory]
-        y_values = [number(row, y_key) for row in trajectory]
-        y = positive(y_values) if log_y else np.asarray(y_values)
-        method = key[1]
+    series_values = aggregate_series(groups, y_key)
+    multiple_jobs = len({series.job for series in series_values}) > 1
+    for index, series in enumerate(series_values):
+        median = positive(list(series.median)) if log_y else series.median
+        lower = positive(list(series.lower)) if log_y else series.lower
+        upper = positive(list(series.upper)) if log_y else series.upper
+        color = COLORS.get(series.method, f"C{index % 10}")
+        key = (series.job, series.method, "", series.variant)
+        if series.replicates > 1:
+            axis.fill_between(series.x, lower, upper, color=color, alpha=0.18, linewidth=0.0)
         axis.plot(
-            x,
-            y,
+            series.x,
+            median,
             label=label_for(key, multiple_jobs),
-            color=COLORS.get(method, f"C{index % 10}"),
+            color=color,
+            linestyle=LINESTYLES.get(series.method, "-"),
             marker=MARKERS[index % len(MARKERS)],
-            markevery=max(1, len(x) // 7),
+            markevery=max(1, len(series.x) // 7),
             markersize=3.2,
         )
     axis.set_xlabel("Iteration")
@@ -144,7 +160,7 @@ def line_panel(
 
 def make_figure(experiment: str, rows: list[dict[str, str]]) -> tuple[plt.Figure, str]:
     groups = group_trajectories(rows)
-    figure, axes = plt.subplots(1, 2, figsize=(7.2, 2.85), constrained_layout=True)
+    figure, axes = plt.subplots(1, 2, figsize=(7.0, 3.4), constrained_layout=True)
     caption = ""
     if experiment == "A":
         line_panel(axes[0], groups, "objective_gap", "Objective gap")
@@ -156,27 +172,49 @@ def make_figure(experiment: str, rows: list[dict[str, str]]) -> tuple[plt.Figure
         caption = "Affine-equivariance diagnostic. Fisher--Rao errors measure direct transformed-iterate agreement; FB--GVI is a geometry-specific comparison."
     elif experiment == "I":
         axes[1].set_visible(False)
-        for index, (key, trajectory) in enumerate(sorted(groups.items())):
-            x = [number(row, "optimizer_relative_distance") for row in trajectory]
-            y = positive([number(row, "stl_raw_variance_ratio") for row in trajectory])
-            axes[0].plot(x, y, marker=MARKERS[index], label=key[0] or "variance ablation")
+        series_values = aggregate_series(
+            groups, "stl_raw_variance_ratio", x_key="optimizer_relative_distance"
+        )
+        multiple_jobs = len({series.job for series in series_values}) > 1
+        for index, series in enumerate(series_values):
+            median = positive(list(series.median))
+            lower = positive(list(series.lower))
+            upper = positive(list(series.upper))
+            color = f"C{index % 10}"
+            if series.replicates > 1:
+                axes[0].fill_between(series.x, lower, upper, color=color, alpha=0.18, linewidth=0.0)
+            key = (series.job, series.method, "", series.variant)
+            axes[0].plot(
+                series.x,
+                median,
+                marker=MARKERS[index % len(MARKERS)],
+                color=color,
+                label=label_for(key, multiple_jobs),
+            )
         axes[0].set_xlabel("Optimizer-relative state distance")
         axes[0].set_ylabel("STL/raw intrinsic variance ratio")
         axes[0].set_yscale("log")
         caption = "Estimator ablation: Fisher--Rao intrinsic conditional mean-estimator variance for STL relative to the raw score estimator."
     elif experiment == "K":
         line_panel(axes[0], groups, "objective_gap", "Expected objective gap")
-        multiple_jobs = len({key[0] for key in groups}) > 1
-        for index, (key, trajectory) in enumerate(sorted(groups.items())):
-            x = np.asarray([number(row, "iteration") for row in trajectory])
-            gap = positive([number(row, "objective_gap") for row in trajectory])
+        series_values = aggregate_series(groups, "objective_gap")
+        multiple_jobs = len({series.job for series in series_values}) > 1
+        for index, series in enumerate(series_values):
+            gap = positive(list(series.median))
+            lower = np.maximum(series.x, 1.0) * positive(list(series.lower))
+            upper = np.maximum(series.x, 1.0) * positive(list(series.upper))
+            color = COLORS.get(series.method, f"C{index % 10}")
+            if series.replicates > 1:
+                axes[1].fill_between(series.x, lower, upper, color=color, alpha=0.18, linewidth=0.0)
+            key = (series.job, series.method, "", series.variant)
             axes[1].plot(
-                x,
-                np.maximum(x, 1.0) * gap,
+                series.x,
+                np.maximum(series.x, 1.0) * gap,
                 label=label_for(key, multiple_jobs),
-                color=COLORS.get(key[1]),
-                marker=MARKERS[index],
-                markevery=max(1, len(x) // 7),
+                color=color,
+                linestyle=LINESTYLES.get(series.method, "-"),
+                marker=MARKERS[index % len(MARKERS)],
+                markevery=max(1, len(series.x) // 7),
                 markersize=3.2,
             )
         axes[1].set_xlabel("Iteration N")
@@ -195,7 +233,7 @@ def make_figure(experiment: str, rows: list[dict[str, str]]) -> tuple[plt.Figure
             "F": "Exact standard-Gaussian local-region trajectories for the Fisher--Rao discretizations and FB--GVI.",
             "G": "Near-Gaussian local spectral-rate pilot using the manuscript score-operator definition.",
             "H": "Gaussian STL cancellation with paired samples. This compares complete algorithms and native estimators, not geometry alone.",
-            "J": "Minibatch residual-floor pilot retaining individual trajectories and batch-specific jobs.",
+            "J": "Minibatch residual-floor pilot showing medians and 10--90% bands while retaining every paired trajectory in the raw data.",
         }
         caption = captions.get(experiment, f"Experiment {experiment} numerical trajectories.")
     visible_axes = [axis for axis in axes if axis.get_visible()]
@@ -208,7 +246,10 @@ def make_figure(experiment: str, rows: list[dict[str, str]]) -> tuple[plt.Figure
                 handles.append(handle)
                 labels.append(label)
     if handles:
-        visible_axes[0].legend(handles, labels, loc="best", frameon=False)
+        if len(labels) > 6:
+            figure.legend(handles, labels, loc="outside lower center", ncols=min(4, len(labels)), frameon=False)
+        else:
+            visible_axes[0].legend(handles, labels, loc="best", frameon=False)
     figure.suptitle(f"Experiment {experiment}", fontsize=11)
     return figure, caption
 
@@ -230,11 +271,20 @@ def main(arguments: list[str] | None = None) -> int:
         rows = by_experiment.get(experiment, [])
         if not rows:
             continue
+        available_tiers = {row.get("tier", "") for row in rows}
+        preferred_tier = next(
+            tier for tier in ("full", "core", "smoke", "appendix") if tier in available_tiers
+        )
+        rows = [row for row in rows if row.get("tier", "") == preferred_tier]
+        if experiment == "C":
+            rows = [row for row in rows if row.get("quadratic_rescue", "False") != "True"]
+        if experiment == "F":
+            rows = [row for row in rows if row.get("method", "") != "FB--GVI"]
         processed = write_processed(experiment, rows)
         figure, caption = make_figure(experiment, rows)
         base = FIGURES / f"experiment_{experiment}"
-        figure.savefig(base.with_suffix(".png"), bbox_inches="tight")
-        figure.savefig(base.with_suffix(".pdf"), bbox_inches="tight")
+        figure.savefig(base.with_suffix(".png"))
+        figure.savefig(base.with_suffix(".pdf"), metadata={"Creator": "fr-gvi academic plotting"})
         plt.close(figure)
         base.with_suffix(".md").write_text(
             f"# Experiment {experiment} caption draft\n\n{caption}\n\nUnderlying data: `{processed.relative_to(ROOT)}`.\n",

@@ -10,6 +10,8 @@ OVERNIGHT_BUDGET_HOURS=${OVERNIGHT_BUDGET_HOURS:-10}
 "${REPO_ROOT}/.venv/bin/python" -m pytest -q
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.campaign "${REPO_ROOT}/configs/core" --budget-hours "${OVERNIGHT_BUDGET_HOURS}"
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.figures
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.main_figures
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.tables
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.audit --allow-failed
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.audit
 

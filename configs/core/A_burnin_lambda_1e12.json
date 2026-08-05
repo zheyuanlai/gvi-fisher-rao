@@ -3,7 +3,7 @@
   "experiment": "A",
   "tier": "core",
   "master_seed": 2026080602,
-  "target": {"kind": "gaussian", "dimension": 20, "condition": 1000.0, "rotation": true, "mean_scale": 0.2, "initial_covariance_scale": 1e-12},
+  "target": {"kind": "gaussian", "dimension": 20, "condition": 1000.0, "spectrum_scale": "unit_min", "rotation": true, "mean_scale": 0.2, "initial_covariance_scale": 1e-12},
   "iterations": 330,
   "methods": [
     {"name": "FR--R", "step_size": 0.1, "normalized_step_size": 0.1},

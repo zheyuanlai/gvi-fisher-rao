@@ -9,8 +9,8 @@
     {"name": "FR--R", "step_size": 0.5},
     {"name": "FR--KL", "step_size": 0.5},
     {"name": "FB--GVI", "step_size": 1.0},
-    {"name": "FR--R", "step_size": 0.5, "quadratic_rescue": true, "iterations": 1},
-    {"name": "FR--KL", "step_size": 0.5, "quadratic_rescue": true, "iterations": 1}
+    {"name": "FR--R", "step_size": 0.5, "quadratic_rescue": true, "iterations": 0},
+    {"name": "FR--KL", "step_size": 0.5, "quadratic_rescue": true, "iterations": 0}
   ]
 }
 

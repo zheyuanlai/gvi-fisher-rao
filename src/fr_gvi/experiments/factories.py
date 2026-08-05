@@ -40,6 +40,8 @@ def _gaussian(config: dict[str, Any], rng: np.random.Generator) -> BuiltProblem:
     condition = float(config.get("condition", 10.0))
     if config.get("diao_spectrum", False):
         eigenvalues = np.geomspace(1.0e-9, 1.0, dimension)
+    elif config.get("spectrum_scale") == "unit_min":
+        eigenvalues = np.geomspace(1.0, condition, dimension)
     else:
         eigenvalues = np.geomspace(1.0 / condition, 1.0, dimension)
     rotation = random_orthogonal(dimension, rng) if config.get("rotation", True) else np.eye(dimension)
@@ -138,7 +140,7 @@ def _affine_equivariance(config: dict[str, Any], rng: np.random.Generator) -> Bu
     base_precision = np.diag(np.linspace(0.7, 1.3, dimension, dtype=np.float64))
     base_initial_mean = np.linspace(0.5, -0.3, dimension, dtype=np.float64)
     base_initial_covariance = np.diag(np.linspace(0.4, 1.6, dimension, dtype=np.float64))
-    transform = conditioned_map(dimension, affine_condition, rng)
+    transform = conditioned_map(dimension, np.sqrt(affine_condition), rng)
     shift = rng.standard_normal(dimension, dtype=np.float64)
     inverse = np.linalg.solve(transform, np.eye(dimension))
     target_mean = transform @ base_mean + shift

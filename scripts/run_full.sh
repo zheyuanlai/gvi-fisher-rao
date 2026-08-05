@@ -11,5 +11,7 @@ OVERNIGHT_BUDGET_HOURS=${OVERNIGHT_BUDGET_HOURS:-10}
   "${REPO_ROOT}/configs/full" "${REPO_ROOT}/configs/appendix" \
   --budget-hours "${OVERNIGHT_BUDGET_HOURS}"
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.figures
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.main_figures
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.tables
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.audit
 

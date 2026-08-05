@@ -19,4 +19,7 @@ results/figures/*.png
 results/figures/*.pdf
 !results/processed/.gitkeep
 !results/figures/.gitkeep
+!results/processed/main_figure_*.csv
+!results/figures/main_figure_*.png
+!results/figures/main_figure_*.pdf
 

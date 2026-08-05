@@ -1,11 +1,11 @@
 {
   "errors": [],
-  "figure_png_count": 11,
-  "manifest_count": 47,
+  "figure_png_count": 16,
+  "manifest_count": 166,
   "manifest_statuses": {
-    "completed": 46,
-    "skipped": 1
+    "completed": 164,
+    "skipped": 2
   },
-  "raw_csv_count": 46,
+  "raw_csv_count": 164,
   "warnings": []
 }

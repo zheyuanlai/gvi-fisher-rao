@@ -7,6 +7,7 @@
     "kind": "gaussian",
     "dimension": 4,
     "condition": 100.0,
+    "spectrum_scale": "unit_min",
     "rotation": true,
     "mean_scale": 0.2,
     "initial_covariance_scale": 0.0001
