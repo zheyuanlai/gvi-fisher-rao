@@ -261,7 +261,7 @@ def figure_b(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         )
     axes[0].set_yscale("log")
     axes[0].set_xlabel("iteration $n$")
-    axes[0].set_ylabel("relative covariance equivariance error")
+    axes[0].set_ylabel("relative equivariance error")
     panel_letter(axes[0], "a", r"$K=10^8$")
 
     summary = (
@@ -279,8 +279,10 @@ def figure_b(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
             label=method,
             **method_style(method),
         )
-    axes[1].axhline(
-        1e-12, color=REFERENCE_GREY, linestyle=":", linewidth=1.0, label="roundoff scale"
+    conditions = np.asarray(sorted(summary["affine_condition"].unique()), dtype=float)
+    axes[1].plot(
+        conditions, np.finfo(np.float64).eps * conditions, color=REFERENCE_GREY,
+        linestyle=":", linewidth=1.0, label=r"$\varepsilon_{\mathrm{mach}}\,K$",
     )
     axes[1].set_xscale("log")
     axes[1].set_yscale("log")

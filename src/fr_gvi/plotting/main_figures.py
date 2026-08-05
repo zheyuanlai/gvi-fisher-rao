@@ -101,6 +101,11 @@ def main_figure_1() -> None:
             subset["grid_affine_condition"], positive(subset["equivariance_error_covariance"]),
             label=method, **method_style(method),
         )
+    conditions = np.asarray(sorted(summary["grid_affine_condition"].unique()), dtype=float)
+    axes[1].plot(
+        conditions, np.finfo(np.float64).eps * conditions, color=REFERENCE_GREY,
+        linestyle=":", linewidth=1.0, label=r"$\varepsilon_{\mathrm{mach}}\,K$",
+    )
     axes[1].set_xscale("log")
     axes[1].set_yscale("log")
     axes[1].set_xlabel(r"conditioning $K$ of the change of variables")
