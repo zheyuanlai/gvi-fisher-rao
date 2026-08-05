@@ -1,38 +1,94 @@
 # Numerical audit
 
-## Validation result
+This document records what was verified, how, and what remains uncertain. The
+machine-readable companions are `reports/AUDIT_RESULTS.json` (manifest statuses,
+forbidden-method scan, covariance positivity, pathwise covariance bands),
+`reports/PLOT_AUDIT.json` (figure pairing, physical width, font embedding) and
+`results/tables/reference_quality.csv` (reference certification).
 
-The final test run reports `38 passed`. The active smoke-plus-core campaign reports 164 completed, zero failed, zero interrupted, zero pending, and two source-of-truth skips. `reports/AUDIT_RESULTS.json` contains no audit error, and `reports/PLOT_AUDIT.json` contains no error or warning across 16 PDF/PNG pairs.
+## Validation gates in the test suite
 
-## Algorithm and diagnostic gates
+The suite must pass before any campaign runs. It contains:
 
-- FR--R and FR--KL: exact Gaussian fixed points, first-order flow consistency, strict SPD behavior, and one-query quadratic rescue are covered by unit and regression tests.
-- FR--R--STL and FR--KL--STL: sampled Price/Hessian updates, common-random-number behavior, estimator unbiasedness, and exact Gaussian pathwise cancellation are tested. The core cancellation spread is at floating-point scale.
-- FB--GVI and S--FB--GVI: the forward covariance map and entropy JKO eigenvalue map follow Diao et al.; Gaussian fixed points and stochastic updates are tested.
-- Laplace: available only as a noniterative logistic approximation baseline and absent from competitive algorithm enums outside that use.
-- Gaussian KL, Gaussian W2, optimizer-relative mean/covariance errors, covariance eigenvalue bands, and separate Fisher--Rao/Bures--Wasserstein residuals are evaluated independently.
-- The affine experiment transforms target and initialization together. Automated iterate-level tolerances reach `3.83e-13` covariance and `4.54e-13` mean for the FR methods at `cond(A A^T)=1e4`.
-- Target gradients and Hessians are finite-difference checked. Exact Gaussian, Gauss--Hermite, fixed scrambled Sobol, and fresh-IID backends have regression coverage.
-- Invalid SPD updates raise `AlgorithmFailure`; only roundoff repairs bounded by `100 eps max(scale,1)` are allowed and recorded. No active core job failed this gate.
-- Campaign integration tests cover `SeedSequence` derivation, paired streams, atomic manifests, config/source hashes, budget behavior, and resumability.
+- SPD square root, inverse square root, log, exp and the FB--GVI JKO eigenvalue map.
+- Exact Gaussian objective, Wasserstein distance, and a whitened-KL stability test
+  on a precision matrix of condition number `1e9`.
+- Target gradients and Hessians against finite differences.
+- The fast `weighted_hessian` path against the generic per-sample average.
+- Every deterministic algorithm preserving the exact Gaussian optimizer.
+- One-query quadratic rescue on an arbitrary Gaussian target.
+- FR--R and FR--KL matching first-order Euler expansions of the flow at small steps.
+- Stochastic estimator unbiasedness at fixed `(m, C)`, and pathwise vanishing of
+  the Fisher--Rao STL mean noise when the covariance is matched.
+- Common-random-number pairing determinism across algorithms.
+- Affine-equivariance regression at iterate level for FR--R and FR--KL.
+- A no-silent-clipping test: an unstable configuration is recorded as a failure.
+- Closed-form curvature constants against a brute-force sampled maximum, and their
+  invariance under an invertible change of variables.
+- The Section 5 metric family: `(omega, tau) = (1/2, 0)` reproduces the Fisher--Rao
+  retraction to `1e-13`, and the predicted modal rates are attained to 2%.
+- Config parsing, seed reproducibility, manifest atomicity and resume logic.
 
-## Cross-checks against theory-specific diagnostics
+## What each experiment establishes
 
-- Recorded hard-start covariance entry times track `log[1/(beta lambda_0)]` at the two completed core scales.
-- Gaussian rescue rows now contain one oracle pair and machine-precision objective gaps; no redundant post-rescue update is counted.
-- The local score operator uses the manuscript's `T`, `T*`, and `S` definition in optimizer-whitened coordinates. The one completed non-Gaussian core cell predicts `2 gamma_star=1.996`, bracketed by fitted FR rates 1.885 and 2.166.
-- Decreasing-step schedules are exactly `h_n=8 kappa_star/(n+n0)` with `n0>=64 kappa_star^2`; fitted tail exponents are -0.903 and -0.891.
+| Claim | Evidence | Outcome |
+|---|---|---|
+| Affine equivariance of the flow and both schemes | Experiment B, iterate-level, `K` up to `1e8` | Fisher--Rao error at roundoff, growing only in proportion to the conditioning of the map; FB--GVI `O(1)` |
+| Affine invariance of `alpha_star`, `beta_star`, `kappa_star` | closed-form constants under a random change of variables | invariant to `1e-9`; original-coordinate `kappa` is not |
+| Covariance burn-in `log[1/(beta_star lambda_{0,star})]` | Experiment A, 18 cells | measured/predicted ratio near one, independent of `kappa` |
+| Global convergence of both discretizations | Experiments C, D, L with per-method certified sweeps | convergence to machine precision at admissible steps; certified steps conservative by orders of magnitude |
+| Exact Gaussian core rate `q_G` (Lemma 2.24) | Experiment F, `d` up to 100 | measured instantaneous rate on the identity |
+| Sharp Gaussian threshold (Corollary 2.26) | Experiment F, extremal initialization | measured energy equals the closed-form threshold |
+| Linearized local rate (Proposition 3.5, Theorem 3.7) | Experiment G, `rho` over three decades | per-step rate settles onto the exact one-step prediction; all measurements inside the spectral bracket |
+| Gaussian STL pathwise cancellation (Corollary 4.20) | Experiment H, 30 seeds | across-seed spread at floating-point scale versus `O(1)` for the native BW estimator |
+| STL variance bound (Lemma 4.7) | Experiment I, direct comparison | bound holds at every state and batch size |
+| Minibatch floor `O(Delta t * V / B)` (Theorems 4.16, 4.17) | Experiment J, 8 cells, `B` to 64, 30 seeds | fitted `1/B` exponent near `-1.00` in every cell; floor also proportional to `Delta t` |
+| Decreasing-step `O(1/N)` (Theorem 4.21) | Experiment K, 20000 iterations, 30 seeds | tail log--log slope near `-1`, no additive floor |
+| Section 5 classification and modal rates | Experiment M, `(omega, tau)` grid, step refinement | predicted rates attained; residual is the `O(Delta t)` retraction bias and vanishes under refinement |
 
-## Plot audit
+## Corrections made during the campaign
 
-The plotting protocol from the referenced Academic Plotting conversation influenced the final output: Matplotlib-first styling, colorblind-safe colors, redundant line/marker encodings, seed medians with 10--90% bands, exact manuscript width, paired PDF/PNG files, embedded fonts, and caption drafts.
+Three design errors were found and fixed by inspecting intermediate results
+rather than by accepting the first output.
 
-All 16 figures are exactly 7.0 inches wide. PDFs are 504 points wide; PNGs are 1540 pixels wide at 220 dpi. Font embedding checks pass. The five composite manuscript figures were visually inspected at rasterized resolution; two clipped titles were shortened and rerendered. The audit tool still marks visual inspection as a separate human gate for regenerated artifacts.
+1. **Experiment F was testing the wrong quantity.** Corollary 2.26 is a uniform
+   bound on an energy sublevel, not an asymptotic rate, so comparing a fitted
+   decay rate against `2 * ell_delta` failed by construction as `ell_delta` grows
+   toward 1 along the trajectory. The experiment now tests the exact identity of
+   Lemma 2.24 (`q_G`) and the sharp threshold, both of which hold tightly.
+2. **Experiment J never reached its floor.** At the certified step, which scales
+   like `1/kappa_star`, 600 iterations left the high-`kappa_star` cells inside the
+   deterministic transient, so their measured floors were flat in `B` — a false
+   negative for Theorems 4.16 and 4.17. With the step capped at `0.02` and 6000
+   iterations, the `1/B` exponent is `-1.00` in every cell.
+3. **Experiment G was measured before the asymptotic regime.** The slowest and
+   fastest linearized modes differ by only a few percent, so the earlier horizon
+   mixed them. The horizon was extended to the largest value float64 permits.
 
-## Unresolved concerns
+## Known limitations
 
-- Experiment E is blocked because the bump-train formula and constants are missing. The skip is intentional and manifested at both tiers.
-- Full stepsize, condition-number, dimensional, feature-conditioning, and 30-seed grids remain unrun. Single-cell stability/performance panels are labeled as pilots.
-- The logistic reference uses finite QMC and has squared FR residual `2.34e-5` and squared BW residual `2.99e-4`. Logistic gaps are approximate relative gaps.
-- Wall-clock numbers are CPU and environment specific. They are stored for within-run comparison, not universal performance claims.
+- **Experiment G, FR--KL at small `rho`.** The whitened parameter error saturates
+  near `1e-26`, capping the usable horizon at about `t = 30`. With a `5%` mode gap
+  that leaves a few percent of faster-mode contamination, so the measured rate sits
+  slightly above the slowest-mode prediction while visibly decreasing toward it.
+  This is a floating-point resolution limit, not a discrepancy with the theory, and
+  the figure shows the approach rather than asserting equality.
+- **Quadrature resolution floor.** For the logistic cells the deterministic methods
+  solve a fixed-design discretization of the true problem. Their gaps are exact for
+  that problem; the offset between it and the true objective is recorded per cell in
+  `results/tables/reference_quality.csv` and is far below any gap the figures resolve.
+- **Stability censoring.** Where a method survives the entire multiplier grid, the
+  largest stable step is a lower bound, and those points are marked as censored on
+  the figure rather than reported as if the boundary had been found.
+- **Wall-clock.** Timings are CPU and environment specific, recorded for within-run
+  comparison only.
+- **Experiment E** is not run; see `reports/BLOCKED_EXPERIMENTS.md`.
 
+## Failures
+
+Failures are data, not defects. The step sweeps deliberately extend past each
+method's stability boundary, and every divergent run is recorded as a failure with
+its reason and iteration, retained in the manifests and plotted. No run was ever
+stabilized by clipping covariance eigenvalues or by silently reducing a step. The
+only permitted repair is a roundoff-scale eigenvalue correction bounded by
+`100 * eps * max(spectral_scale, 1)`, and each one is written into the trajectory.

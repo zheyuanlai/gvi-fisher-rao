@@ -10,6 +10,42 @@
       "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
       "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
       "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x0p125_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x0p25:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x0p25_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x0p5:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x0p5_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x1:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x1_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x2:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x2_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x4:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x4_seed0.json",
+      "status": "completed"
+    },
+    "L_logistic_d50_lam1_fc1e2:fr-kl-x8:seed0": {
+      "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+      "config_hash": "e05f9a4b882ace29d00b746005d1b3709f0c336a5e38eb3a1399ad3bff5d4e45",
+      "manifest": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x8_seed0.json",
       "status": "running"
     },
     "L_logistic_d50_lam1_fc1e2:fr-r-x0p0625:seed0": {
