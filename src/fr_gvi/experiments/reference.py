@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from numpy.polynomial.hermite import hermgauss
+from numpy.polynomial.legendre import leggauss
 from numpy.typing import NDArray
 from scipy.optimize import least_squares, minimize
 
@@ -32,9 +32,12 @@ class ReferenceSolution:
 
 
 def _logcosh_reference(target: ShiftedLogCoshTarget, order: int) -> GaussianState:
-    nodes, weights = hermgauss(order)
-    nodes = np.sqrt(2.0) * nodes
-    weights = weights / np.sqrt(np.pi)
+    # Truncated Gauss--Legendre against the Gaussian density, for the same reason
+    # as in the expectation engine: Gauss--Hermite cannot resolve the unit-width
+    # sech^2 peak inside the very wide marginals of the small-curvature
+    # coordinates, and its answer drifts rather than converging with order.
+    truncation = 12.0
+    raw_nodes, raw_weights = leggauss(max(64, 16 * order))
     means = np.zeros(target.dimension, dtype=np.float64)
     variances = np.ones(target.dimension, dtype=np.float64)
     for index in range(target.dimension):
@@ -45,7 +48,13 @@ def _logcosh_reference(target: ShiftedLogCoshTarget, order: int) -> GaussianStat
         def conditions(parameters: FloatArray) -> FloatArray:
             mean = parameters[0]
             variance = np.exp(parameters[1])
-            samples = mean + np.sqrt(variance) * nodes
+            deviation = np.sqrt(variance)
+            half_width = truncation * deviation
+            samples = mean + half_width * raw_nodes
+            density = np.exp(-0.5 * (truncation * raw_nodes) ** 2) / (
+                deviation * np.sqrt(2.0 * np.pi)
+            )
+            weights = raw_weights * half_width * density
             tanh = np.tanh(samples - offset)
             expected_gradient = float(weights @ (nu * samples + rho * tanh))
             expected_hessian = float(weights @ (nu + rho * (1.0 - tanh**2)))
@@ -91,6 +100,13 @@ def _state_to_parameter(state: GaussianState) -> FloatArray:
     return np.concatenate([np.asarray(state.mean, dtype=np.float64), entries])
 
 
+def _foc_residual(target: Target, engine: FixedNormalExpectation, state: GaussianState) -> float:
+    """Squared first-order-condition residual at a state, on the fixed design."""
+
+    expectation = engine.evaluate(target, state.mean, state.covariance)
+    return float(residuals(state, expectation).fisher_rao_squared)
+
+
 def _foc_newton(
     target: Target,
     engine: FixedNormalExpectation,
@@ -98,7 +114,7 @@ def _foc_newton(
     *,
     iterations: int = 200,
     tolerance: float = 1e-14,
-) -> GaussianState:
+) -> tuple[GaussianState, float]:
     """Solve the fixed-design first-order conditions by damped Newton.
 
     The stationarity conditions of the Gaussian variational problem are
@@ -110,22 +126,49 @@ def _foc_newton(
     is used purely as a solver for the reference; the resulting point is
     certified afterwards by *both* the Fisher--Rao and Bures--Wasserstein
     residuals, so no geometry is privileged by the choice of solver.
+
+    The undamped iteration diverges on near-separable logistic posteriors with a
+    weak prior, where one full Newton step throws the mean hundreds of units away
+    and the iteration then cycles.  Each step is therefore accepted only if it
+    decreases the residual, and backtracked along the segment to the proposal
+    otherwise.  The achieved residual is returned so the caller can fall back to
+    direct minimization when the solve does not converge.
     """
 
     state = initial
+    residual = _foc_residual(target, engine, state)
     for _ in range(iterations):
         expectation = engine.evaluate(target, state.mean, state.covariance)
         hessian = np.asarray(expectation.hessian, dtype=np.float64)
         proposal_mean = state.mean - spd_solve(hessian, np.asarray(expectation.grad))
         proposal_covariance = spd_inverse(hessian)
-        movement = max(
-            float(np.max(np.abs(proposal_mean - state.mean))),
-            float(np.max(np.abs(proposal_covariance - state.covariance))),
-        )
-        state = GaussianState(proposal_mean, proposal_covariance)
-        if movement <= tolerance:
+
+        accepted = None
+        step = 1.0
+        for _ in range(30):
+            try:
+                candidate = GaussianState(
+                    (1.0 - step) * state.mean + step * proposal_mean,
+                    (1.0 - step) * state.covariance + step * proposal_covariance,
+                )
+                candidate_residual = _foc_residual(target, engine, candidate)
+            except (ValueError, np.linalg.LinAlgError):
+                step *= 0.5
+                continue
+            if candidate_residual < residual:
+                accepted = (candidate, candidate_residual)
+                break
+            step *= 0.5
+        if accepted is None:
             break
-    return state
+        movement = max(
+            float(np.max(np.abs(accepted[0].mean - state.mean))),
+            float(np.max(np.abs(accepted[0].covariance - state.covariance))),
+        )
+        state, residual = accepted
+        if movement <= tolerance or residual <= 1e-24:
+            break
+    return state, residual
 
 
 def _qmc_reference(
@@ -169,7 +212,7 @@ def _qmc_reference(
     # directly and take the smaller of the two objective values as the reference
     # objective, which keeps every reported gap non-negative.  The difference is
     # recorded as the quadrature resolution floor of the cell.
-    newton_state = _foc_newton(target, engine, initial)
+    newton_state, newton_residual = _foc_newton(target, engine, initial)
     if not certify:
         # Curvature constants only need the reference state, so the surrogate
         # minimization used for the resolution floor is skipped.
@@ -178,11 +221,11 @@ def _qmc_reference(
             "points": points,
             "certified": False,
         }
-    # The Newton point is already stationary, so a single polish from it is
-    # normally enough; the extra starts exist only as a guard when it stalls.
+    # The Newton point is normally already stationary, so a single polish from it
+    # is enough; the extra starts exist as a guard when it stalls.
     candidates: list[FloatArray] = [_state_to_parameter(newton_state)]
     _, newton_gradient = value_gradient(candidates[0])
-    if float(np.linalg.norm(newton_gradient)) > 1.0e-3:
+    if float(np.linalg.norm(newton_gradient)) > 1.0e-3 or newton_residual > 1.0e-8:
         if isinstance(target, LogisticRegressionTarget):
             candidates.append(_state_to_parameter(laplace_approximation(target)))
         candidates.append(_state_to_parameter(initial))
@@ -204,9 +247,21 @@ def _qmc_reference(
         raise RuntimeError(
             f"QMC Gaussian-VI reference failed: {best.message}; grad={gradient_norm:.3e}"
         )
+    # If the damped Newton solve did not reach a stationary point -- which happens
+    # on near-separable logistic posteriors with a weak prior -- the directly
+    # minimized surrogate is used as the reference state instead, and the switch
+    # is recorded.  The state is certified by its residuals either way.
+    surrogate_state = _parameter_to_state(np.asarray(best.x, dtype=np.float64), dimension)
+    surrogate_residual = _foc_residual(target, engine, surrogate_state)
+    if surrogate_residual < newton_residual:
+        newton_state, newton_residual = surrogate_state, surrogate_residual
+        solver = "fixed_qmc_surrogate_lbfgs"
+    else:
+        solver = "fixed_qmc_foc_newton"
     newton_objective, _ = value_gradient(_state_to_parameter(newton_state))
     metadata = {
-        "backend": "fixed_qmc_foc_newton",
+        "backend": solver,
+        "foc_residual_squared": newton_residual,
         "points": points,
         "surrogate_parameter_gradient_norm": gradient_norm,
         "surrogate_objective": float(best.fun),
@@ -232,9 +287,9 @@ def solve_reference(
         objective_value, _ = objective(target, state, exact)
         return ReferenceSolution(state, objective_value, 0.0, 0.0, {"backend": "exact"})
     if isinstance(target, ShiftedLogCoshTarget):
-        order = max(80, min(160, points // 8))
+        order = max(32, min(64, points // 32))
         state = _logcosh_reference(target, order)
-        quadrature = GaussHermiteLogCoshExpectation(order=min(200, 2 * order))
+        quadrature = GaussHermiteLogCoshExpectation(order=min(128, 2 * order))
         objective_value, expectation = objective(target, state, quadrature)
         certificate = residuals(state, expectation)
         return ReferenceSolution(

@@ -196,9 +196,10 @@ def engines(
         exact = ExactGaussianExpectation()
         return exact, exact
     if isinstance(target, ShiftedLogCoshTarget):
-        # Order 80 makes the separable quadrature exact to float64 for these
-        # potentials; order 48 leaves a 2e-12 error in the expected Hessian.
-        return GaussHermiteLogCoshExpectation(80), GaussHermiteLogCoshExpectation(160)
+        # The panelled rule holds ~1e-13 relative accuracy from order 24 upward,
+        # uniformly in the marginal width, so these orders are comfortably
+        # converged; a doubling test is in the unit suite.
+        return GaussHermiteLogCoshExpectation(32), GaussHermiteLogCoshExpectation(64)
     # Nonseparable targets share one fixed quadrature design between the
     # deterministic updates, the objective evaluation and the reference solve.
     # The discretized problem is then internally exact, and the quadrature error
