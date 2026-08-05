@@ -1,0 +1,23 @@
+{
+  "id": "H_stl_cancellation_smoke",
+  "experiment": "H",
+  "tier": "smoke",
+  "master_seed": 2026080508,
+  "target": {
+    "kind": "gaussian",
+    "dimension": 4,
+    "condition": 10.0,
+    "rotation": true,
+    "mean_scale": 0.3,
+    "initial_mean_scale": 1.0,
+    "initial_covariance": "target"
+  },
+  "iterations": 18,
+  "seeds": 2,
+  "methods": [
+    {"name": "FR--R--STL", "step_size": 0.2, "batch_size": 1, "seeds": 2},
+    {"name": "FR--KL--STL", "step_size": 0.2, "batch_size": 1, "seeds": 2},
+    {"name": "S--FB--GVI", "step_size": 0.1, "batch_size": 1, "seeds": 2}
+  ]
+}
+

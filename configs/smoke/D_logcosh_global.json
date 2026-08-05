@@ -1,0 +1,21 @@
+{
+  "id": "D_logcosh_global_smoke",
+  "experiment": "D",
+  "tier": "smoke",
+  "master_seed": 2026080504,
+  "target": {
+    "kind": "logcosh",
+    "dimension": 2,
+    "condition": 10.0,
+    "rho": 1.0,
+    "affine_condition": 2.0,
+    "initial_covariance_scale": 0.5
+  },
+  "iterations": 35,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.12, "normalized_step_size": 0.12},
+    {"name": "FR--KL", "step_size": 0.12, "normalized_step_size": 0.12},
+    {"name": "FB--GVI", "step_size": 0.02, "normalized_step_size": 0.04}
+  ]
+}
+

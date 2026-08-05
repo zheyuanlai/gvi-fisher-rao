@@ -1,0 +1,22 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Core/full campaigns can be regenerated; keep smoke artifacts and manifests.
+results/raw/core/
+results/raw/full/
+results/raw/appendix/
+results/logs/*.log
+results/processed/*.csv
+results/figures/*.png
+results/figures/*.pdf
+!results/processed/.gitkeep
+!results/figures/.gitkeep
+

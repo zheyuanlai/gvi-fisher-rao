@@ -1,0 +1,21 @@
+{
+  "id": "C_diao_gaussian_smoke",
+  "experiment": "C",
+  "tier": "smoke",
+  "master_seed": 2026080503,
+  "target": {
+    "kind": "gaussian",
+    "dimension": 10,
+    "diao_spectrum": true,
+    "rotation": true,
+    "mean_distribution": "uniform",
+    "initial_covariance_scale": 1.0
+  },
+  "iterations": 24,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.5, "normalized_step_size": 0.5},
+    {"name": "FR--KL", "step_size": 0.5, "normalized_step_size": 0.5},
+    {"name": "FB--GVI", "step_size": 1.0, "normalized_step_size": 1.0}
+  ]
+}
+

@@ -1,0 +1,21 @@
+{
+  "id": "F_gaussian_local_smoke",
+  "experiment": "F",
+  "tier": "smoke",
+  "master_seed": 2026080506,
+  "target": {
+    "kind": "gaussian",
+    "dimension": 2,
+    "condition": 1.0,
+    "rotation": false,
+    "mean_scale": 0.0,
+    "initial_covariance_diagonal": [0.25, 1.0]
+  },
+  "iterations": 24,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.25, "normalized_step_size": 0.25},
+    {"name": "FR--KL", "step_size": 0.25, "normalized_step_size": 0.25},
+    {"name": "FB--GVI", "step_size": 0.25, "normalized_step_size": 0.25}
+  ]
+}
+

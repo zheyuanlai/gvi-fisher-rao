@@ -1,0 +1,20 @@
+{
+  "id": "K_decreasing_steps_smoke",
+  "experiment": "K",
+  "tier": "smoke",
+  "master_seed": 2026080511,
+  "target": {
+    "kind": "logcosh",
+    "dimension": 2,
+    "condition": 1.0,
+    "rho": 0.3,
+    "affine_condition": 1.0,
+    "initial_covariance_scale": 0.8
+  },
+  "iterations": 100,
+  "methods": [
+    {"name": "FR--R--STL", "schedule": "manuscript_decreasing", "kappa_star": 1.0, "n0": 64, "batch_size": 4, "quadratic_rescue": true, "seeds": 2},
+    {"name": "FR--KL--STL", "schedule": "manuscript_decreasing", "kappa_star": 1.0, "n0": 64, "batch_size": 4, "quadratic_rescue": true, "seeds": 2}
+  ]
+}
+

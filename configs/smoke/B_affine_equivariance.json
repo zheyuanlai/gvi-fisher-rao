@@ -1,0 +1,18 @@
+{
+  "id": "B_affine_equivariance_smoke",
+  "experiment": "B",
+  "tier": "smoke",
+  "master_seed": 2026080502,
+  "target": {
+    "kind": "gaussian",
+    "dimension": 3,
+    "affine_condition": 100.0
+  },
+  "iterations": 12,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.2, "normalized_step_size": 0.2},
+    {"name": "FR--KL", "step_size": 0.2, "normalized_step_size": 0.2},
+    {"name": "FB--GVI", "step_size": 0.05, "normalized_step_size": 0.05}
+  ]
+}
+

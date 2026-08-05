@@ -1,0 +1,10 @@
+{
+  "id": "E_bump_train_smoke_blocked",
+  "experiment": "E",
+  "tier": "smoke",
+  "master_seed": 2026080505,
+  "target": {"kind": "gaussian", "dimension": 1, "condition": 1.0, "mean_scale": 0.0},
+  "blocked_reason": "The attached manuscript defers fixed-step sharpness lower-bound constructions but supplies no bump-train potential formula or constants; the protocol forbids inventing them.",
+  "methods": []
+}
+

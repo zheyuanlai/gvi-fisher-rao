@@ -1,0 +1,21 @@
+{
+  "id": "G_local_spectral_smoke",
+  "experiment": "G",
+  "tier": "smoke",
+  "master_seed": 2026080507,
+  "target": {
+    "kind": "logcosh",
+    "dimension": 2,
+    "condition": 1.0,
+    "rho": 0.05,
+    "affine_condition": 1.0,
+    "initial_covariance_scale": 0.8
+  },
+  "local_operator_points": 1024,
+  "iterations": 28,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.2, "normalized_step_size": 0.2},
+    {"name": "FR--KL", "step_size": 0.2, "normalized_step_size": 0.2}
+  ]
+}
+
