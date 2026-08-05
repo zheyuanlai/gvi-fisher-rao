@@ -392,7 +392,7 @@ def main_figure_4() -> None:
     axes[0].set_ylim(floor / 3.0, None)
     axes[0].set_xlabel(r"$\kappa_\star$")
     axes[0].set_ylabel("best gap at fixed budget")
-    panel_letter(axes[0], "a", "Log-cosh, 27 cells")
+    panel_letter(axes[0], "a", "Log-cosh grid")
 
     if not logistic.empty:
         job = "L_logistic_d50_lam1_fc1e2"
@@ -433,11 +433,11 @@ def main_figure_4() -> None:
                              linestyle=":", linewidth=1.1, label="Laplace")
         axes[1].set_xlabel("oracle pairs")
         axes[1].set_ylabel("objective gap")
-        panel_letter(axes[1], "b", "Logistic, deterministic")
+        panel_letter(axes[1], "b", "Deterministic logistic")
         axes[2].set_xscale("log")
         axes[2].set_xlabel("oracle pairs")
         axes[2].set_ylabel("objective gap")
-        panel_letter(axes[2], "c", r"Logistic, stochastic $B=16$")
+        panel_letter(axes[2], "c", r"Stochastic, $B=16$")
 
     tidy_log_axes(*axes)
     _legend(figure, axes)

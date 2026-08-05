@@ -20,12 +20,11 @@ def _command(*arguments: str) -> str:
     return result.stdout
 
 
-def audit_figure_pair(png: Path, expected_width_inches: float, tolerance: float = 0.06) -> dict[str, object]:
+def audit_figure_pair(png: Path, expected_width_inches: float, tolerance: float = 0.002) -> dict[str, object]:
     """Check a PDF/PNG pair for physical width, font embedding and consistency.
 
-    Figures are saved with ``bbox_inches="tight"``, which trims whitespace, so the
-    physical width is checked against the nominal text width within a relative
-    tolerance rather than exactly.
+    Figures retain their fixed manuscript-width canvas, so the PDF page width is
+    checked against the nominal text width with only a small serialization tolerance.
     """
 
     pdf = png.with_suffix(".pdf")

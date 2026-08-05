@@ -80,7 +80,7 @@ def configure_style() -> None:
             "legend.frameon": False,
             "figure.dpi": 150,
             "savefig.dpi": 400,
-            "savefig.bbox": "tight",
+            "savefig.bbox": None,
             "savefig.pad_inches": 0.02,
             "axes.grid": True,
             "grid.alpha": 0.20,
