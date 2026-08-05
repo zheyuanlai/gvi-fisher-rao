@@ -66,6 +66,14 @@ def stepsize_table() -> None:
         initial = frame[frame["iteration"] == 0].groupby(["job_id", "method"])[
             "objective_gap"
         ].median()
+        # Diao et al., Corollary D.2, certifies eta <= 1/beta only when the
+        # initialization also satisfies beta^{-1} I <= Sigma_0.  All methods share
+        # one initialization here, so that hypothesis is recorded rather than
+        # engineered away.
+        start_covariance = frame[frame["iteration"] == 0].groupby("job_id")[
+            "covariance_min_eigenvalue"
+        ].min()
+        beta_by_job = frame.groupby("job_id")["beta"].first()
         terminal = _terminal(frame)
         for (job, method), subset in terminal.groupby(["job_id", "method"]):
             start = float(initial.get((job, method), np.inf))
@@ -88,6 +96,12 @@ def stepsize_table() -> None:
                     "best_terminal_gap": float(best["objective_gap"]),
                     "oracle_pairs": float(best["oracle_pairs"]),
                     "wall_time_seconds": float(best["wall_time_seconds"]),
+                    "diao_initialization_satisfied": bool(
+                        float(start_covariance.get(job, 0.0))
+                        >= 1.0 / float(beta_by_job.get(job, np.inf))
+                    )
+                    if method in {"FB--GVI", "S--FB--GVI"}
+                    else "",
                 }
             )
     if not records:

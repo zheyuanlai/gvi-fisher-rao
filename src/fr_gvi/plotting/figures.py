@@ -496,7 +496,12 @@ def figure_d(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         "fixed oracle budget against the affine-invariant condition number $\\kappa_\\star$. "
         "(c) Largest stable step as a multiple of the certified step; certified steps are "
         "conservative for all three methods, and every divergent run is recorded as a "
-        "failure rather than stabilized."
+        "failure rather than stabilized. The FB--GVI certificate $\\eta\\le1/\\beta$ of "
+        "Diao et al. also assumes $\\beta^{-1}I\\preceq\\Sigma_0$, which the shared "
+        "initialization $C_0=0.5\\,I$ does not satisfy in every cell; whether it holds is "
+        "recorded per cell in \\texttt{results/tables/stepsize\\_summary.csv}, and the "
+        "handful of FB--GVI divergences at or below its certified step all occur in cells "
+        "where it fails."
     )
     return figure, caption, table
 
