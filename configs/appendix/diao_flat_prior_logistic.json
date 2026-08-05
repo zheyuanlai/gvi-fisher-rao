@@ -1,0 +1,18 @@
+{
+  "id": "diao_flat_prior_logistic_appendix",
+  "experiment": "L",
+  "tier": "appendix",
+  "master_seed": 2026080801,
+  "target": {"kind": "logistic", "dimension": 2, "samples": 50, "test_samples": 200, "feature_condition": 1.0, "prior_precision": 0.0},
+  "update_points": 512,
+  "evaluation_points": 2048,
+  "reference_points": 4096,
+  "iterations": 100,
+  "methods": [
+    {"name": "S--FB--GVI", "step_size": 0.01, "batch_size": 1, "seeds": 5},
+    {"name": "FR--R--STL", "step_size": 0.01, "batch_size": 1, "seeds": 5},
+    {"name": "FR--KL--STL", "step_size": 0.01, "batch_size": 1, "seeds": 5},
+    {"name": "Laplace"}
+  ]
+}
+

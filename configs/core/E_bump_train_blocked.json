@@ -1,0 +1,10 @@
+{
+  "id": "E_bump_train_core_blocked",
+  "experiment": "E",
+  "tier": "core",
+  "master_seed": 2026080606,
+  "target": {"kind": "gaussian", "dimension": 1, "condition": 1.0, "mean_scale": 0.0},
+  "blocked_reason": "Exact bump-train potential and theorem constants are absent from the supplied manuscript and downloaded authoritative references.",
+  "methods": []
+}
+

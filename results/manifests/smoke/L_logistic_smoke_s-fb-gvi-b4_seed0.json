@@ -1,0 +1,124 @@
+{
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "65999f029fc33ece3ab66bc16cb1cf00ab31d3f5c16cfea29b11b0383cd09004",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py /home/zheyuanlai/gvi-fisher-rao/configs/smoke --budget-hours 0.5",
+  "config": {
+    "evaluation_points": 512,
+    "experiment": "L",
+    "id": "L_logistic_smoke",
+    "iterations": 28,
+    "master_seed": 2026080512,
+    "methods": [
+      {
+        "name": "FR--R",
+        "step_size": 0.04
+      },
+      {
+        "name": "FR--KL",
+        "step_size": 0.04
+      },
+      {
+        "name": "FB--GVI",
+        "step_size": 0.03
+      },
+      {
+        "batch_size": 4,
+        "name": "FR--R--STL",
+        "step_size": 0.02
+      },
+      {
+        "batch_size": 4,
+        "name": "FR--KL--STL",
+        "step_size": 0.02
+      },
+      {
+        "batch_size": 4,
+        "name": "S--FB--GVI",
+        "step_size": 0.015
+      },
+      {
+        "name": "Laplace"
+      }
+    ],
+    "reference_points": 2048,
+    "target": {
+      "dimension": 2,
+      "feature_condition": 10.0,
+      "kind": "logistic",
+      "prior_precision": 1.0,
+      "samples": 20,
+      "test_samples": 100
+    },
+    "tier": "smoke",
+    "update_points": 128
+  },
+  "config_hash": "671f0e3ecac12b0f7158471ad946845353a3985fa1168b929b8c4ac08be767de",
+  "config_path": "/home/zheyuanlai/gvi-fisher-rao/configs/smoke/L_logistic.json",
+  "cpu_count": 256,
+  "end_utc": "2026-08-05T06:44:30.212747+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 0.06320930237752975,
+  "git_commit": "fcd147df6b960fe7c4e4fbd92b0208a573601b71",
+  "git_dirty": true,
+  "git_status": "M pyproject.toml\n M requirements-lock.txt\n M src/fr_gvi/experiments/campaign.py\n M src/fr_gvi/experiments/factories.py\n M src/fr_gvi/plotting/figures.py\n?? configs/appendix/\n?? configs/core/\n?? configs/full/\n?? reports/AUDIT_RESULTS.json\n?? results/figures/experiment_A.md\n?? results/figures/experiment_B.md\n?? results/figures/experiment_C.md\n?? results/figures/experiment_D.md\n?? results/figures/experiment_F.md\n?? results/figures/experiment_G.md\n?? results/figures/experiment_H.md\n?? results/figures/experiment_I.md\n?? results/figures/experiment_J.md\n?? results/figures/experiment_K.md\n?? results/figures/experiment_L.md\n?? results/manifests/\n?? results/raw/\n?? results/tables/\n?? tests/regression/test_factories.py\n?? tests/unit/test_campaign_ids.py",
+  "iterations_completed": 28,
+  "method_specification": {
+    "batch_size": 4,
+    "name": "S--FB--GVI",
+    "step_size": 0.015
+  },
+  "minimum_covariance_eigenvalue": 0.17681348753588955,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 56,
+    "expectation_evaluations": 0,
+    "gradient_evaluations": 112,
+    "hessian_evaluations": 112,
+    "iterations": 28,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 56,
+    "oracle_pairs": 112,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/smoke/L/L_logistic_smoke/s-fb-gvi-b4_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 106496,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_metadata": {
+    "feature_condition": 10.0,
+    "prior_precision": 1.0,
+    "samples": 20,
+    "true_parameter_norm": 1.9316313226039883
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 1.04297247860866e-05,
+    "fisher_rao_residual_squared": 1.4354224408273211e-06,
+    "objective": 13.477321237291296,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_L_logistic_smoke.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "02686eebce9a0147cf97a711f7ab7fd2076f99323ce6e4c45be91a740fc23ab7",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8"
+  },
+  "run_seed": 594425521,
+  "schema_version": 1,
+  "start_utc": "2026-08-05T06:44:30.168870+00:00",
+  "status": "completed",
+  "target_seed": 2594992994,
+  "wall_time_seconds": 0.04313218896277249
+}

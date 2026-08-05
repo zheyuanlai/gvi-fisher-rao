@@ -54,7 +54,16 @@ def _gaussian(config: dict[str, Any], rng: np.random.Generator) -> BuiltProblem:
     initial_mean = np.zeros(dimension, dtype=np.float64)
     if "initial_mean_scale" in config:
         initial_mean = float(config["initial_mean_scale"]) * np.ones(dimension, dtype=np.float64)
-    initial = GaussianState(initial_mean, covariance_scale * np.eye(dimension, dtype=np.float64))
+    if config.get("initial_covariance") == "target":
+        initial_covariance = target.covariance
+    elif "initial_covariance_diagonal" in config:
+        diagonal = np.asarray(config["initial_covariance_diagonal"], dtype=np.float64)
+        if diagonal.shape != (dimension,):
+            raise ValueError("initial_covariance_diagonal must have length d")
+        initial_covariance = np.diag(diagonal)
+    else:
+        initial_covariance = covariance_scale * np.eye(dimension, dtype=np.float64)
+    initial = GaussianState(initial_mean, initial_covariance)
     return BuiltProblem(
         target,
         initial,

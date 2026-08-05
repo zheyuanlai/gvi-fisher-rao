@@ -1,0 +1,14 @@
+{
+  "id": "J_floor_d8_B1_core",
+  "experiment": "J",
+  "tier": "core",
+  "master_seed": 2026080611,
+  "target": {"kind": "logcosh", "dimension": 8, "condition": 10.0, "rho": 0.5, "affine_condition": 1.0, "initial_covariance_scale": 0.7},
+  "iterations": 200,
+  "methods": [
+    {"name": "FR--R--STL", "step_size": 0.03, "batch_size": 1, "quadratic_rescue": true, "seeds": 5},
+    {"name": "FR--KL--STL", "step_size": 0.03, "batch_size": 1, "quadratic_rescue": true, "seeds": 5},
+    {"name": "S--FB--GVI", "step_size": 0.015, "batch_size": 1, "seeds": 5}
+  ]
+}
+

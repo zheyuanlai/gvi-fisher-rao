@@ -1,0 +1,23 @@
+{
+  "bures_wasserstein_residual_squared": 0.0,
+  "covariance": [
+    [
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0
+    ]
+  ],
+  "fisher_rao_residual_squared": 0.0,
+  "job_id": "F_gaussian_local_smoke",
+  "mean": [
+    0.0,
+    0.0
+  ],
+  "metadata": {
+    "backend": "exact"
+  },
+  "objective": 1.0
+}

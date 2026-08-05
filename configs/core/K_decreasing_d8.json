@@ -1,0 +1,13 @@
+{
+  "id": "K_decreasing_d8_core",
+  "experiment": "K",
+  "tier": "core",
+  "master_seed": 2026080612,
+  "target": {"kind": "logcosh", "dimension": 8, "condition": 1.0, "rho": 0.3, "affine_condition": 1.0, "initial_covariance_scale": 0.8},
+  "iterations": 500,
+  "methods": [
+    {"name": "FR--R--STL", "schedule": "manuscript_decreasing", "kappa_star": 1.0, "n0": 64, "batch_size": 8, "quadratic_rescue": true, "seeds": 5},
+    {"name": "FR--KL--STL", "schedule": "manuscript_decreasing", "kappa_star": 1.0, "n0": 64, "batch_size": 8, "quadratic_rescue": true, "seeds": 5}
+  ]
+}
+

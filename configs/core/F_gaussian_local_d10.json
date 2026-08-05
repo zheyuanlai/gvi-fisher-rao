@@ -1,0 +1,14 @@
+{
+  "id": "F_gaussian_local_d10_core",
+  "experiment": "F",
+  "tier": "core",
+  "master_seed": 2026080607,
+  "target": {"kind": "gaussian", "dimension": 10, "condition": 1.0, "rotation": false, "mean_scale": 0.0, "initial_covariance_diagonal": [0.25, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]},
+  "iterations": 40,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.25},
+    {"name": "FR--KL", "step_size": 0.25},
+    {"name": "FB--GVI", "step_size": 0.25}
+  ]
+}
+

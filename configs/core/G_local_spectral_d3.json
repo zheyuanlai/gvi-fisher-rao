@@ -1,0 +1,14 @@
+{
+  "id": "G_local_spectral_d3_core",
+  "experiment": "G",
+  "tier": "core",
+  "master_seed": 2026080608,
+  "target": {"kind": "logcosh", "dimension": 3, "condition": 1.0, "rho": 0.01, "affine_condition": 1.0, "initial_covariance_scale": 0.8},
+  "local_operator_points": 4096,
+  "iterations": 60,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.15},
+    {"name": "FR--KL", "step_size": 0.15}
+  ]
+}
+

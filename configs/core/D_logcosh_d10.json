@@ -1,0 +1,14 @@
+{
+  "id": "D_logcosh_d10_k100_core",
+  "experiment": "D",
+  "tier": "core",
+  "master_seed": 2026080605,
+  "target": {"kind": "logcosh", "dimension": 10, "condition": 100.0, "rho": 1.0, "affine_condition": 10.0, "initial_covariance_scale": 0.5},
+  "iterations": 100,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.04},
+    {"name": "FR--KL", "step_size": 0.04},
+    {"name": "FB--GVI", "step_size": 0.02}
+  ]
+}
+

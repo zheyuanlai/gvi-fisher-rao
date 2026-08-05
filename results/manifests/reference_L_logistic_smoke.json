@@ -1,0 +1,25 @@
+{
+  "bures_wasserstein_residual_squared": 1.04297247860866e-05,
+  "covariance": [
+    [
+      0.26501857277176033,
+      -0.2114259821709487
+    ],
+    [
+      -0.2114259821709487,
+      0.6718689848943155
+    ]
+  ],
+  "fisher_rao_residual_squared": 1.4354224408273211e-06,
+  "job_id": "L_logistic_smoke",
+  "mean": [
+    0.9792361745130347,
+    -0.10874920813995903
+  ],
+  "metadata": {
+    "backend": "fixed_qmc_lbfgs",
+    "evaluation_points": 4096,
+    "points": 2048
+  },
+  "objective": 13.477321237291296
+}

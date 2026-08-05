@@ -1,0 +1,24 @@
+{
+  "bures_wasserstein_residual_squared": 2.0359464118340543e-25,
+  "covariance": [
+    [
+      0.9723645746522871,
+      3.6545067117086806e-16
+    ],
+    [
+      3.6545067117086806e-16,
+      0.9723645746522863
+    ]
+  ],
+  "fisher_rao_residual_squared": 9.928625046238888e-26,
+  "job_id": "G_local_spectral_smoke",
+  "mean": [
+    -0.3432422943442436,
+    -0.16167608432776384
+  ],
+  "metadata": {
+    "backend": "gauss_hermite_foc",
+    "order": 96
+  },
+  "objective": 1.044328981376549
+}

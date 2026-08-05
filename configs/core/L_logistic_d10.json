@@ -1,0 +1,21 @@
+{
+  "id": "L_logistic_d10_n100_core",
+  "experiment": "L",
+  "tier": "core",
+  "master_seed": 2026080613,
+  "target": {"kind": "logistic", "dimension": 10, "samples": 100, "test_samples": 300, "feature_condition": 100.0, "prior_precision": 1.0},
+  "update_points": 256,
+  "evaluation_points": 512,
+  "reference_points": 4096,
+  "iterations": 50,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.015},
+    {"name": "FR--KL", "step_size": 0.015},
+    {"name": "FB--GVI", "step_size": 0.01},
+    {"name": "FR--R--STL", "step_size": 0.008, "batch_size": 16, "seeds": 3},
+    {"name": "FR--KL--STL", "step_size": 0.008, "batch_size": 16, "seeds": 3},
+    {"name": "S--FB--GVI", "step_size": 0.006, "batch_size": 16, "seeds": 3},
+    {"name": "Laplace"}
+  ]
+}
+

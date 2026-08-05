@@ -1,0 +1,5 @@
+tier,experiment,job_id,method,seed,iteration,interpolation_level,optimizer_relative_distance,raw_intrinsic_variance,stl_intrinsic_variance,stl_raw_variance_ratio
+smoke,I,I_variance_ablation_smoke,raw-vs-STL-ablation,3309000958,0,0.0,1.957058289433823,1.018335381170264,0.44904855647856246,0.4409633258175896
+smoke,I,I_variance_ablation_smoke,raw-vs-STL-ablation,3309000958,1,0.5,0.9785291447169114,0.9024982790508111,0.11977675191089236,0.13271687568963095
+smoke,I,I_variance_ablation_smoke,raw-vs-STL-ablation,3309000958,2,0.9,0.19570582894338226,0.7705368296853249,0.004509609799661781,0.005852555810347747
+smoke,I,I_variance_ablation_smoke,raw-vs-STL-ablation,3309000958,3,1.0,1.0303683289748176e-15,0.6992286627545348,5.790082189225204e-07,8.280670541187212e-07

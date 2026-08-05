@@ -1,0 +1,24 @@
+{
+  "bures_wasserstein_residual_squared": 2.889878694038414e-26,
+  "covariance": [
+    [
+      0.8476349591057655,
+      -4.070551459809698e-17
+    ],
+    [
+      -4.070551459809698e-17,
+      0.8476349591057654
+    ]
+  ],
+  "fisher_rao_residual_squared": 1.2471388209540412e-26,
+  "job_id": "K_decreasing_steps_smoke",
+  "mean": [
+    0.20685875650166602,
+    0.20427371297556143
+  ],
+  "metadata": {
+    "backend": "gauss_hermite_foc",
+    "order": 96
+  },
+  "objective": 1.24903624162036
+}

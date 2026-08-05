@@ -1,0 +1,10 @@
+{
+  "id": "boundary_targets_appendix_blocked",
+  "experiment": "boundary",
+  "tier": "appendix",
+  "master_seed": 2026080802,
+  "target": {"kind": "gaussian", "dimension": 1, "condition": 1.0, "mean_scale": 0.0},
+  "blocked_reason": "Exact double-well, convex-ridge, and logarithmic-spiral potentials are absent from the supplied manuscript; no substitute is permitted.",
+  "methods": []
+}
+

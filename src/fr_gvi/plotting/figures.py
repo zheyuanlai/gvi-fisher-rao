@@ -52,7 +52,7 @@ def read_rows(raw_root: Path) -> dict[str, list[dict[str, str]]]:
     for path in sorted(raw_root.rglob("*.csv")):
         with path.open(encoding="utf-8", newline="") as handle:
             for row in csv.DictReader(handle):
-                row["source_file"] = str(path.relative_to(ROOT))
+                row["source_file"] = str(path.resolve().relative_to(ROOT))
                 by_experiment[row["experiment"]].append(row)
     return by_experiment
 
@@ -79,10 +79,15 @@ def write_processed(experiment: str, rows: list[dict[str, str]]) -> Path:
     return path
 
 
-def group_trajectories(rows: list[dict[str, str]]) -> dict[tuple[str, str, str], list[dict[str, str]]]:
-    groups: dict[tuple[str, str, str], list[dict[str, str]]] = defaultdict(list)
+def group_trajectories(rows: list[dict[str, str]]) -> dict[tuple[str, str, str, str], list[dict[str, str]]]:
+    groups: dict[tuple[str, str, str, str], list[dict[str, str]]] = defaultdict(list)
     for row in rows:
-        key = (row.get("job_id", ""), row.get("method", ""), row.get("seed", ""))
+        key = (
+            row.get("job_id", ""),
+            row.get("method", ""),
+            row.get("seed", ""),
+            Path(row.get("source_file", "")).stem,
+        )
         groups[key].append(row)
     for values in groups.values():
         values.sort(key=lambda row: number(row, "iteration", 0.0))
@@ -96,9 +101,11 @@ def positive(values: list[float]) -> np.ndarray:
     return np.where(np.isfinite(array), np.maximum(array, floor), np.nan)
 
 
-def label_for(key: tuple[str, str, str], multiple_jobs: bool) -> str:
-    job, method, seed = key
+def label_for(key: tuple[str, str, str, str], multiple_jobs: bool) -> str:
+    job, method, seed, variant = key
     label = method
+    if "-qr_" in variant or "-qr-" in variant:
+        label += "+QR"
     if multiple_jobs:
         label += f" ({job})"
     if seed not in {"", "0"}:
@@ -108,7 +115,7 @@ def label_for(key: tuple[str, str, str], multiple_jobs: bool) -> str:
 
 def line_panel(
     axis: plt.Axes,
-    groups: dict[tuple[str, str, str], list[dict[str, str]]],
+    groups: dict[tuple[str, str, str, str], list[dict[str, str]]],
     y_key: str,
     ylabel: str,
     *,

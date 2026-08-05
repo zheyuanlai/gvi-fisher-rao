@@ -1,0 +1,16 @@
+{
+  "id": "C_diao_gaussian_core",
+  "experiment": "C",
+  "tier": "core",
+  "master_seed": 2026080604,
+  "target": {"kind": "gaussian", "dimension": 10, "diao_spectrum": true, "rotation": true, "mean_distribution": "uniform", "initial_covariance_scale": 1.0},
+  "iterations": 80,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.5},
+    {"name": "FR--KL", "step_size": 0.5},
+    {"name": "FB--GVI", "step_size": 1.0},
+    {"name": "FR--R", "step_size": 0.5, "quadratic_rescue": true, "iterations": 1},
+    {"name": "FR--KL", "step_size": 0.5, "quadratic_rescue": true, "iterations": 1}
+  ]
+}
+

@@ -1,0 +1,15 @@
+{
+  "id": "A_burnin_d20_extreme_full",
+  "experiment": "A",
+  "tier": "full",
+  "master_seed": 2026080701,
+  "target": {"kind": "gaussian", "dimension": 20, "condition": 1000.0, "rotation": true, "mean_scale": 0.2, "initial_covariance_scale": 1e-12},
+  "iterations": 420,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.05, "normalized_step_size": 0.05, "tag": "h005"},
+    {"name": "FR--KL", "step_size": 0.05, "normalized_step_size": 0.05, "tag": "h005"},
+    {"name": "FR--R", "step_size": 0.1, "normalized_step_size": 0.1, "tag": "h01"},
+    {"name": "FR--KL", "step_size": 0.1, "normalized_step_size": 0.1, "tag": "h01"}
+  ]
+}
+

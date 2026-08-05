@@ -71,6 +71,8 @@ def hash_file(path: Path) -> str:
 def code_hash() -> str:
     digest = hashlib.sha256()
     paths = sorted((ROOT / "src").rglob("*.py")) + sorted((ROOT / "scripts").glob("*.sh"))
+    paths += [ROOT / "pyproject.toml", ROOT / "requirements-lock.txt"]
+    paths = sorted(paths)
     for path in paths:
         digest.update(str(path.relative_to(ROOT)).encode())
         digest.update(path.read_bytes())
@@ -183,6 +185,11 @@ def _method_slug(method: Method, specification: dict[str, Any]) -> str:
         slug += "-raw"
     if "batch_size" in specification:
         slug += f"-b{int(specification['batch_size'])}"
+    if "tag" in specification:
+        tag = str(specification["tag"]).lower().replace("_", "-")
+        if not tag or any(not (character.isalnum() or character == "-") for character in tag):
+            raise ValueError("method tag must contain only letters, digits, underscores, or hyphens")
+        slug += f"-{tag}"
     return slug
 
 

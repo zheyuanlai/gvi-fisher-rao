@@ -1,0 +1,14 @@
+{
+  "id": "B_affine_K1e8_full",
+  "experiment": "B",
+  "tier": "full",
+  "master_seed": 2026080702,
+  "target": {"kind": "gaussian", "dimension": 10, "affine_condition": 100000000.0},
+  "iterations": 40,
+  "methods": [
+    {"name": "FR--R", "step_size": 0.1},
+    {"name": "FR--KL", "step_size": 0.1},
+    {"name": "FB--GVI", "step_size": 0.02}
+  ]
+}
+

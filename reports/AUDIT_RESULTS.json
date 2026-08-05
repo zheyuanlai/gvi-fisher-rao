@@ -1,0 +1,11 @@
+{
+  "errors": [],
+  "figure_png_count": 11,
+  "manifest_count": 47,
+  "manifest_statuses": {
+    "completed": 46,
+    "skipped": 1
+  },
+  "raw_csv_count": 46,
+  "warnings": []
+}
