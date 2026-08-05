@@ -11,8 +11,12 @@ from scipy.optimize import least_squares, minimize
 
 from fr_gvi.algorithms.core import GaussianState
 from fr_gvi.diagnostics.core import objective, residuals
-from fr_gvi.expectations.core import FixedNormalExpectation, GaussHermiteLogCoshExpectation
-from fr_gvi.linear_algebra.spd import spd_inverse
+from fr_gvi.expectations.core import (
+    ExactGaussianExpectation,
+    FixedNormalExpectation,
+    GaussHermiteLogCoshExpectation,
+)
+from fr_gvi.linear_algebra.spd import spd_inverse, spd_solve
 from fr_gvi.targets.core import GaussianTarget, LogisticRegressionTarget, ShiftedLogCoshTarget, Target
 
 FloatArray = NDArray[np.float64]
@@ -57,59 +61,119 @@ def _logcosh_reference(target: ShiftedLogCoshTarget, order: int) -> GaussianStat
     return GaussianState(mean, covariance)
 
 
-def _parameter_to_state(parameters: FloatArray, dimension: int) -> GaussianState:
-    mean = parameters[:dimension]
+def _triangular_indices(dimension: int) -> tuple[FloatArray, FloatArray, FloatArray]:
+    """Row/column indices of the lower triangle in row-major order, plus a diagonal mask."""
+
+    rows, columns = np.tril_indices(dimension)
+    return rows, columns, rows == columns
+
+
+def _lower_from_parameters(parameters: FloatArray, dimension: int) -> FloatArray:
+    rows, columns, diagonal = _triangular_indices(dimension)
+    entries = parameters[dimension:].copy()
+    entries[diagonal] = np.exp(entries[diagonal])
     lower = np.zeros((dimension, dimension), dtype=np.float64)
-    cursor = dimension
-    for row in range(dimension):
-        for column in range(row + 1):
-            value = parameters[cursor]
-            lower[row, column] = np.exp(value) if row == column else value
-            cursor += 1
-    return GaussianState(mean, lower @ lower.T)
+    lower[rows, columns] = entries
+    return lower
+
+
+def _parameter_to_state(parameters: FloatArray, dimension: int) -> GaussianState:
+    lower = _lower_from_parameters(parameters, dimension)
+    return GaussianState(parameters[:dimension], lower @ lower.T)
 
 
 def _state_to_parameter(state: GaussianState) -> FloatArray:
     dimension = state.mean.size
     lower = np.linalg.cholesky(state.covariance)
-    values = list(state.mean)
-    for row in range(dimension):
-        for column in range(row + 1):
-            values.append(float(np.log(lower[row, column])) if row == column else float(lower[row, column]))
-    return np.asarray(values, dtype=np.float64)
+    rows, columns, diagonal = _triangular_indices(dimension)
+    entries = lower[rows, columns].copy()
+    entries[diagonal] = np.log(entries[diagonal])
+    return np.concatenate([np.asarray(state.mean, dtype=np.float64), entries])
+
+
+def _foc_newton(
+    target: Target,
+    engine: FixedNormalExpectation,
+    initial: GaussianState,
+    *,
+    iterations: int = 200,
+    tolerance: float = 1e-14,
+) -> GaussianState:
+    """Solve the fixed-design first-order conditions by damped Newton.
+
+    The stationarity conditions of the Gaussian variational problem are
+
+        E_q[grad V] = 0,        C^{-1} = E_q[grad^2 V],
+
+    and the map ``(m, C) -> (m - H^{-1} g, H^{-1})`` with ``H = E_q[grad^2 V]``
+    is the corresponding Newton step when third derivatives are neglected.  It
+    is used purely as a solver for the reference; the resulting point is
+    certified afterwards by *both* the Fisher--Rao and Bures--Wasserstein
+    residuals, so no geometry is privileged by the choice of solver.
+    """
+
+    state = initial
+    for _ in range(iterations):
+        expectation = engine.evaluate(target, state.mean, state.covariance)
+        hessian = np.asarray(expectation.hessian, dtype=np.float64)
+        proposal_mean = state.mean - spd_solve(hessian, np.asarray(expectation.grad))
+        proposal_covariance = spd_inverse(hessian)
+        movement = max(
+            float(np.max(np.abs(proposal_mean - state.mean))),
+            float(np.max(np.abs(proposal_covariance - state.covariance))),
+        )
+        state = GaussianState(proposal_mean, proposal_covariance)
+        if movement <= tolerance:
+            break
+    return state
 
 
 def _qmc_reference(
     target: Target,
     initial: GaussianState,
+    engine: FixedNormalExpectation,
     *,
-    points: int,
     seed: int,
-) -> GaussianState:
+) -> tuple[GaussianState, dict[str, float | int | str | bool]]:
+    """Minimize the fixed-design Gaussian VI objective to high accuracy."""
+
     dimension = initial.mean.size
-    engine = FixedNormalExpectation.qmc(dimension, points, seed)
+    points = engine.normals.shape[0]
+    rows, columns, diagonal_mask = _triangular_indices(dimension)
 
     def value_gradient(parameters: FloatArray) -> tuple[float, FloatArray]:
-        state = _parameter_to_state(parameters, dimension)
-        lower = np.linalg.cholesky(state.covariance)
-        samples = state.mean + engine.normals @ lower.T
+        # The Cholesky factor is rebuilt directly from the parameters rather than
+        # re-factorizing L L^T, which is both faster and exactly consistent with
+        # the reparameterization gradient below.
+        lower = _lower_from_parameters(parameters, dimension)
+        mean = parameters[:dimension]
+        samples = mean + engine.normals @ lower.T
         values = np.asarray(target.value(samples), dtype=np.float64)
         gradients = np.asarray(target.grad(samples), dtype=np.float64)
         objective_value = float(np.mean(values) - np.log(np.diag(lower)).sum())
         mean_gradient = np.mean(gradients, axis=0)
-        lower_gradient = np.einsum("si,sj->ij", gradients, engine.normals) / points
-        parameter_gradient = list(mean_gradient)
-        for row in range(dimension):
-            for column in range(row + 1):
-                if row == column:
-                    parameter_gradient.append(float(lower_gradient[row, column] * lower[row, row] - 1.0))
-                else:
-                    parameter_gradient.append(float(lower_gradient[row, column]))
-        return objective_value, np.asarray(parameter_gradient, dtype=np.float64)
+        lower_gradient = (gradients.T @ engine.normals) / points
+        entries = lower_gradient[rows, columns].copy()
+        entries[diagonal_mask] = entries[diagonal_mask] * np.diag(lower) - 1.0
+        return objective_value, np.concatenate([mean_gradient, entries])
 
-    start = _state_to_parameter(initial)
-    candidates = [start]
-    candidates.append(start + np.random.default_rng(seed + 1).normal(0.0, 0.03, start.size))
+    # The reference *state* is the fixed-design first-order-condition point,
+    # because that is the common fixed point of every deterministic method in
+    # the comparison: FR--R, FR--KL and FB--GVI all consume (E[grad V],
+    # E[grad^2 V]) and all stall exactly at E[grad V] = 0, C^{-1} = E[grad^2 V].
+    #
+    # On a finite quadrature design the Bonnet/Price identities hold only up to
+    # the design error, so this point is not exactly the argmin of the
+    # reparameterized surrogate.  We therefore also minimize the surrogate
+    # directly and take the smaller of the two objective values as the reference
+    # objective, which keeps every reported gap non-negative.  The difference is
+    # recorded as the quadrature resolution floor of the cell.
+    newton_state = _foc_newton(target, engine, initial)
+    candidates: list[FloatArray] = [_state_to_parameter(newton_state)]
+    if isinstance(target, LogisticRegressionTarget):
+        candidates.append(_state_to_parameter(laplace_approximation(target)))
+    candidates.append(_state_to_parameter(initial))
+
     best = None
     for candidate in candidates:
         result = minimize(
@@ -117,14 +181,27 @@ def _qmc_reference(
             candidate,
             method="L-BFGS-B",
             jac=True,
-            options={"maxiter": 400, "ftol": 1e-13, "gtol": 1e-9, "maxls": 50},
+            options={"maxiter": 5000, "ftol": 1e-16, "gtol": 1e-12, "maxls": 60},
         )
         if best is None or result.fun < best.fun:
             best = result
     assert best is not None
-    if not best.success and np.linalg.norm(best.jac) > 2.0e-5:
-        raise RuntimeError(f"QMC Gaussian-VI reference failed: {best.message}; grad={np.linalg.norm(best.jac):.3e}")
-    return _parameter_to_state(np.asarray(best.x, dtype=np.float64), dimension)
+    gradient_norm = float(np.linalg.norm(best.jac))
+    if gradient_norm > 1.0e-4:
+        raise RuntimeError(
+            f"QMC Gaussian-VI reference failed: {best.message}; grad={gradient_norm:.3e}"
+        )
+    newton_objective, _ = value_gradient(_state_to_parameter(newton_state))
+    metadata = {
+        "backend": "fixed_qmc_foc_newton",
+        "points": points,
+        "surrogate_parameter_gradient_norm": gradient_norm,
+        "surrogate_objective": float(best.fun),
+        "foc_objective": float(newton_objective),
+        "quadrature_resolution_floor": float(newton_objective - best.fun),
+        "lbfgs_message": str(best.message),
+    }
+    return newton_state, metadata
 
 
 def solve_reference(
@@ -133,17 +210,18 @@ def solve_reference(
     *,
     points: int,
     seed: int,
+    engine: FixedNormalExpectation | None = None,
 ) -> ReferenceSolution:
     if isinstance(target, GaussianTarget):
         state = GaussianState(target.mean, target.covariance)
-        engine = FixedNormalExpectation.qmc(target.dimension, max(points, 256), seed + 101)
-        objective_value, expectation = objective(target, state, engine)
+        exact = ExactGaussianExpectation()
+        objective_value, _ = objective(target, state, exact)
         return ReferenceSolution(state, objective_value, 0.0, 0.0, {"backend": "exact"})
     if isinstance(target, ShiftedLogCoshTarget):
-        order = max(32, min(96, points // 8))
+        order = max(48, min(120, points // 8))
         state = _logcosh_reference(target, order)
-        engine = GaussHermiteLogCoshExpectation(order=min(128, 2 * order))
-        objective_value, expectation = objective(target, state, engine)
+        quadrature = GaussHermiteLogCoshExpectation(order=min(160, 2 * order))
+        objective_value, expectation = objective(target, state, quadrature)
         certificate = residuals(state, expectation)
         return ReferenceSolution(
             state,
@@ -152,16 +230,39 @@ def solve_reference(
             certificate.bures_wasserstein_squared,
             {"backend": "gauss_hermite_foc", "order": order},
         )
-    state = _qmc_reference(target, initial, points=points, seed=seed)
-    evaluation = FixedNormalExpectation.qmc(target.dimension, 2 * points, seed + 104729)
-    objective_value, expectation = objective(target, state, evaluation)
+    # Nonseparable targets are handled on one fixed quadrature design that is
+    # shared with the deterministic updates and with the objective evaluation.
+    # The reference is then the exact minimizer of the *same* discretized
+    # problem the algorithms solve, so deterministic objective gaps are exact
+    # rather than being contaminated by a design mismatch.  The residual of the
+    # reference against an independent, larger design is reported separately as
+    # the honest quadrature-transfer error.
+    if engine is None:
+        engine = FixedNormalExpectation.qmc(target.dimension, points, seed)
+    state, metadata = _qmc_reference(target, initial, engine, seed=seed)
+    _, expectation = objective(target, state, engine)
     certificate = residuals(state, expectation)
+    # Non-negative gaps: measure against the smaller of the FOC objective and
+    # the directly minimized surrogate objective.
+    objective_value = float(min(metadata["foc_objective"], metadata["surrogate_objective"]))
+    independent = FixedNormalExpectation.qmc(target.dimension, 4 * engine.normals.shape[0], seed + 104729)
+    independent_objective, independent_expectation = objective(target, state, independent)
+    independent_certificate = residuals(state, independent_expectation)
+    metadata = {
+        **metadata,
+        "design_transfer_objective_difference": float(independent_objective - objective_value),
+        "design_transfer_fisher_rao_residual_squared": independent_certificate.fisher_rao_squared,
+        "design_transfer_bures_wasserstein_residual_squared": (
+            independent_certificate.bures_wasserstein_squared
+        ),
+        "independent_points": int(4 * engine.normals.shape[0]),
+    }
     return ReferenceSolution(
         state,
         objective_value,
         certificate.fisher_rao_squared,
         certificate.bures_wasserstein_squared,
-        {"backend": "fixed_qmc_lbfgs", "points": points, "evaluation_points": 2 * points},
+        metadata,
     )
 
 

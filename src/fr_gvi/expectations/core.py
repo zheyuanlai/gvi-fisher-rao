@@ -12,7 +12,7 @@ from scipy.special import ndtri
 from scipy.stats import qmc
 
 from fr_gvi.linear_algebra.spd import spd_sqrt
-from fr_gvi.targets.core import GaussianTarget, ShiftedLogCoshTarget, Target
+from fr_gvi.targets.core import GaussianTarget, ShiftedLogCoshTarget, Target, mean_hessian
 
 FloatArray = NDArray[np.float64]
 
@@ -67,11 +67,10 @@ class FixedNormalExpectation:
         samples = mean + self.normals @ root.T
         values = np.asarray(target.value(samples), dtype=np.float64)
         gradients = np.asarray(target.grad(samples), dtype=np.float64)
-        hessians = np.asarray(target.hessian(samples), dtype=np.float64)
         return ExpectationResult(
             float(self.weights @ values),
             np.asarray(np.einsum("s,si->i", self.weights, gradients), dtype=np.float64),
-            np.asarray(np.einsum("s,sij->ij", self.weights, hessians), dtype=np.float64),
+            mean_hessian(target, samples, self.weights),
         )
 
 

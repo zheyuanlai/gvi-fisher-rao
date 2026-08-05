@@ -19,7 +19,7 @@ from fr_gvi.linear_algebra.spd import (
     spd_sqrt,
     symmetrize,
 )
-from fr_gvi.targets.core import Target
+from fr_gvi.targets.core import Target, mean_hessian
 from fr_gvi.utils.accounting import OperationCounts
 
 FloatArray = NDArray[np.float64]
@@ -123,7 +123,7 @@ def _sampled(
     normals = rng.standard_normal((batch_size, state.mean.size), dtype=np.float64)
     samples = state.mean + normals @ root.T
     gradients = np.asarray(target.grad(samples), dtype=np.float64)
-    hessians = np.asarray(target.hessian(samples), dtype=np.float64)
+    averaged_hessian = mean_hessian(target, samples)
     counts.gradient_evaluations += batch_size
     counts.hessian_evaluations += batch_size
     counts.oracle_pairs += batch_size
@@ -135,7 +135,7 @@ def _sampled(
         mean_direction = np.mean(-gradients + score, axis=0)
     else:
         mean_direction = np.mean(gradients, axis=0)
-    return np.asarray(mean_direction), np.asarray(np.mean(hessians, axis=0))
+    return np.asarray(mean_direction), averaged_hessian
 
 
 def step(

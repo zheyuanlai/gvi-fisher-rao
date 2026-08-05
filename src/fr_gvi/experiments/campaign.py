@@ -15,7 +15,8 @@ import subprocess
 import sys
 import time
 import traceback
-from dataclasses import asdict
+from concurrent.futures import ProcessPoolExecutor
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from importlib import metadata
 from pathlib import Path
@@ -24,12 +25,22 @@ from typing import Any, Iterable
 import numpy as np
 from scipy.special import expit
 
+from fr_gvi.algorithms.affine_metric import (
+    AffineMetric,
+    modal_decomposition,
+    retraction_step,
+)
 from fr_gvi.algorithms.core import (
     AlgorithmFailure,
     GaussianState,
     Method,
     quadratic_rescue,
     step,
+)
+from fr_gvi.diagnostics.curvature import (
+    certified_step_sizes,
+    curvature_constants,
+    whitened_initialization,
 )
 from fr_gvi.diagnostics.core import (
     gaussian_kl_gap,
@@ -47,7 +58,7 @@ from fr_gvi.expectations.core import (
 )
 from fr_gvi.experiments.factories import BuiltProblem, build_problem
 from fr_gvi.experiments.reference import ReferenceSolution, laplace_approximation, solve_reference
-from fr_gvi.linear_algebra.spd import spd_solve, spd_sqrt
+from fr_gvi.linear_algebra.spd import spd_solve, spd_sqrt, symmetrize as symmetrize_matrix
 from fr_gvi.targets.core import GaussianTarget, LogisticRegressionTarget, ShiftedLogCoshTarget, Target
 from fr_gvi.utils.accounting import OperationCounts
 
@@ -175,11 +186,14 @@ def engines(
         exact = ExactGaussianExpectation()
         return exact, exact
     if isinstance(target, ShiftedLogCoshTarget):
-        return GaussHermiteLogCoshExpectation(32), GaussHermiteLogCoshExpectation(80)
-    return (
-        FixedNormalExpectation.qmc(target.dimension, update_points, update_seed),
-        FixedNormalExpectation.qmc(target.dimension, evaluation_points, evaluation_seed),
-    )
+        return GaussHermiteLogCoshExpectation(48), GaussHermiteLogCoshExpectation(120)
+    # Nonseparable targets share one fixed quadrature design between the
+    # deterministic updates, the objective evaluation and the reference solve.
+    # The discretized problem is then internally exact, and the quadrature error
+    # is reported separately by the reference's design-transfer diagnostics.
+    del evaluation_points, evaluation_seed
+    shared = FixedNormalExpectation.qmc(target.dimension, update_points, update_seed)
+    return shared, shared
 
 
 def _method_slug(method: Method, specification: dict[str, Any]) -> str:
@@ -324,6 +338,8 @@ def _run_trajectory(
     update_engine: ExpectationEngine,
     evaluation_engine: ExpectationEngine,
     output_path: Path,
+    instance: int = 0,
+    curvature: dict[str, Any] | None = None,
 ) -> tuple[str, dict[str, Any]]:
     method = Method(method_specification["name"])
     iterations = int(method_specification.get("iterations", config.get("iterations", 50)))
@@ -412,7 +428,14 @@ def _run_trajectory(
         rows[-1]["normalized_step_size"] = float(
             method_specification.get("normalized_step_size", actual_step)
         )
+        rows[-1]["problem_instance"] = int(instance)
+        for key in ("alpha", "beta", "alpha_star", "beta_star", "kappa_star",
+                    "lambda_0_star", "lambda_0_star_max", "lambda_max_star"):
+            rows[-1][key] = float((curvature or {}).get(key, np.nan))
+        for key, value in config.get("grid", {}).items():
+            rows[-1][f"grid_{key}"] = value
 
+    record_every = max(1, int(config.get("record_every", 1)))
     add_row(0, 0.0, None)
     initial_objective = float(rows[0]["objective"])
     failure_reason = ""
@@ -450,13 +473,16 @@ def _run_trajectory(
                     batch_size=batch_size,
                     counts=base_counts,
                 )
-            add_row(iteration + 1, actual_step, diagnostics.repair)
-            current_objective = float(rows[-1]["objective"])
-            explosion_limit = max(initial_objective + 1.0e6, 1.0e6 * max(abs(initial_objective), 1.0))
-            if not np.isfinite(current_objective) or current_objective > explosion_limit:
-                raise AlgorithmFailure(
-                    f"explosive objective: {current_objective:.6e} > {explosion_limit:.6e}"
+            if (iteration + 1) % record_every == 0 or iteration + 1 == iterations:
+                add_row(iteration + 1, actual_step, diagnostics.repair)
+                current_objective = float(rows[-1]["objective"])
+                explosion_limit = max(
+                    initial_objective + 1.0e6, 1.0e6 * max(abs(initial_objective), 1.0)
                 )
+                if not np.isfinite(current_objective) or current_objective > explosion_limit:
+                    raise AlgorithmFailure(
+                        f"explosive objective: {current_objective:.6e} > {explosion_limit:.6e}"
+                    )
         except Exception as exc:
             status = "failed"
             failure_iteration = iteration
@@ -555,6 +581,123 @@ def _run_variance_ablation(
     }
 
 
+def _fit_log_rate(iterations: np.ndarray, values: np.ndarray, step_size: float) -> float:
+    """Least-squares decay rate ``r`` in ``value ~ exp(-r * t)`` with ``t = n h``."""
+
+    iterations = np.asarray(iterations, dtype=np.float64)
+    values = np.asarray(values, dtype=np.float64)
+    finite = np.isfinite(values) & (values > 0.0)
+    if finite.sum() < 3:
+        return float("nan")
+    times = iterations[finite] * step_size
+    slope = np.polyfit(times, np.log(values[finite]), 1)[0]
+    return float(-slope)
+
+
+def _run_affine_metric(
+    *,
+    config: dict[str, Any],
+    problem: BuiltProblem,
+    run_seed: int,
+    output_path: Path,
+) -> tuple[str, dict[str, Any]]:
+    """Experiment M: modal rates of the Section 5 affine-invariant metric family."""
+
+    target = problem.target
+    if not isinstance(target, GaussianTarget):
+        raise ValueError("the Section 5 modal-rate verification uses a Gaussian target")
+    dimension = target.dimension
+    engine = ExactGaussianExpectation()
+    step_size = float(config.get("step_size", 0.02))
+    iterations = int(config.get("iterations", 400))
+    perturbation = float(config.get("perturbation", 1.0e-3))
+    fit_fraction = float(config.get("fit_fraction", 0.5))
+
+    rng = np.random.default_rng(run_seed)
+    # A fixed traceless direction plus an isotropic direction, so both modes are
+    # excited and can be separated along the trajectory.
+    raw = rng.standard_normal((dimension, dimension))
+    traceless = symmetrize_matrix(raw)
+    traceless -= (np.trace(traceless) / dimension) * np.eye(dimension)
+    traceless /= np.linalg.norm(traceless, ord="fro")
+    isotropic = np.eye(dimension) / np.sqrt(dimension)
+    root_target = spd_sqrt(target.covariance)
+
+    rows: list[dict[str, Any]] = []
+    started = time.perf_counter()
+    failures = 0
+    for entry in config.get("metrics", []):
+        omega = float(entry["omega"])
+        tau = float(entry["tau"])
+        metric = AffineMetric(omega, tau, dimension)
+        # Whitened perturbation transported to the target's coordinates, so the
+        # experiment is run in genuinely non-standard coordinates while the
+        # predicted rates remain the optimizer-whitened ones.
+        whitened = np.eye(dimension) + perturbation * (traceless + isotropic)
+        state = GaussianState(
+            target.mean + perturbation * root_target @ np.ones(dimension) / np.sqrt(dimension),
+            symmetrize_matrix(root_target @ whitened @ root_target),
+        )
+        history: list[tuple[int, float, float, float]] = []
+        status_entry = "completed"
+        for iteration in range(iterations + 1):
+            relative = optimizer_relative(state, GaussianState(target.mean, target.covariance))
+            whitened_covariance = np.linalg.solve(
+                root_target, np.linalg.solve(root_target, state.covariance).T
+            ).T
+            traceless_norm, trace_value = modal_decomposition(whitened_covariance)
+            history.append((iteration, traceless_norm, abs(trace_value), relative.mean_norm))
+            if iteration == iterations:
+                break
+            try:
+                state = retraction_step(metric, target, state, step_size, engine=engine)
+            except AlgorithmFailure as exc:
+                status_entry = f"failed: {exc}"
+                failures += 1
+                break
+
+        array = np.asarray(history, dtype=np.float64)
+        window = max(3, int(fit_fraction * array.shape[0]))
+        tail = array[:window]
+        fitted_traceless = _fit_log_rate(tail[:, 0], tail[:, 1], step_size)
+        fitted_trace = _fit_log_rate(tail[:, 0], tail[:, 2], step_size)
+        fitted_mean = _fit_log_rate(tail[:, 0], tail[:, 3], step_size)
+        for iteration, traceless_norm, trace_value, mean_norm in history:
+            rows.append(
+                {
+                    "tier": config["tier"],
+                    "experiment": config["experiment"],
+                    "job_id": config["id"],
+                    "method": f"affine-metric-omega{omega:g}-tau{tau:g}",
+                    "seed": run_seed,
+                    "iteration": int(iteration),
+                    "step_size": step_size,
+                    "omega": omega,
+                    "tau": tau,
+                    "dimension": dimension,
+                    "traceless_norm": traceless_norm,
+                    "trace_absolute": trace_value,
+                    "mean_norm": mean_norm,
+                    "predicted_traceless_rate": metric.traceless_rate,
+                    "predicted_trace_rate": metric.trace_rate,
+                    "fitted_traceless_rate": fitted_traceless,
+                    "fitted_trace_rate": fitted_trace,
+                    "fitted_mean_rate": fitted_mean,
+                    "is_fisher_rao": metric.is_fisher_rao,
+                    "status": status_entry,
+                }
+            )
+    write_rows(output_path, rows)
+    return ("failed" if failures else "completed"), {
+        "status": "failed" if failures else "completed",
+        "metrics": len(config.get("metrics", [])),
+        "rows": len(rows),
+        "failures": failures,
+        "wall_time_seconds": time.perf_counter() - started,
+        "peak_rss_kib": int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss),
+    }
+
+
 def _manifest_base(
     *,
     config: dict[str, Any],
@@ -589,6 +732,17 @@ def _manifest_base(
     }
 
 
+@dataclass(frozen=True)
+class _PreparedInstance:
+    problem: BuiltProblem
+    update_engine: ExpectationEngine
+    evaluation_engine: ExpectationEngine
+    reference: ReferenceSolution
+    reference_path: Path
+    target_seed: int
+    curvature: dict[str, Any]
+
+
 def run_config(
     config_path: Path,
     config: dict[str, Any],
@@ -602,44 +756,81 @@ def run_config(
     config_digest = hash_bytes(config_bytes)
     source_digest = code_hash()
     master_seed = int(config.get("master_seed", 20260805))
-    target_seed = seed_for(master_seed, 0)
-    problem = build_problem(config["target"], target_seed, str(config["experiment"]))
-    update_seed = seed_for(master_seed, 1)
-    evaluation_seed = seed_for(master_seed, 2)
-    update_engine, evaluation_engine = engines(
-        problem.target,
-        update_points=int(config.get("update_points", 256)),
-        evaluation_points=int(config.get("evaluation_points", 1024)),
-        update_seed=update_seed,
-        evaluation_seed=evaluation_seed,
-    )
-    reference = solve_reference(
-        problem.target,
-        problem.initial_state,
-        points=int(config.get("reference_points", max(1024, int(config.get("evaluation_points", 1024))))),
-        seed=seed_for(master_seed, 3),
-    )
-    reference_objective, _ = objective(problem.target, reference.state, evaluation_engine)
-    reference = ReferenceSolution(
-        reference.state,
-        reference_objective,
-        reference.fisher_rao_residual_squared,
-        reference.bures_wasserstein_residual_squared,
-        reference.metadata,
-    )
-    reference_path = RESULTS / "manifests" / f"reference_{config['id']}.json"
-    save_json(
-        reference_path,
-        {
-            "job_id": config["id"],
-            "mean": reference.state.mean.tolist(),
-            "covariance": reference.state.covariance.tolist(),
-            "objective": reference.objective,
-            "fisher_rao_residual_squared": reference.fisher_rao_residual_squared,
-            "bures_wasserstein_residual_squared": reference.bures_wasserstein_residual_squared,
-            "metadata": reference.metadata,
-        },
-    )
+    instance_per_seed = bool(config.get("instance_per_seed", False))
+    prepared: dict[int, _PreparedInstance] = {}
+
+    def prepare(instance: int) -> _PreparedInstance:
+        """Build the target, engines and certified reference for one instance.
+
+        With ``instance_per_seed`` the target itself is redrawn per repeat, so a
+        grid cell aggregates over random problem instances rather than over
+        algorithm randomness alone.
+        """
+
+        if instance in prepared:
+            return prepared[instance]
+        target_seed = seed_for(master_seed, 0, instance)
+        problem = build_problem(config["target"], target_seed, str(config["experiment"]))
+        update_engine, evaluation_engine = engines(
+            problem.target,
+            update_points=int(config.get("update_points", 256)),
+            evaluation_points=int(config.get("evaluation_points", 1024)),
+            update_seed=seed_for(master_seed, 1, instance),
+            evaluation_seed=seed_for(master_seed, 2, instance),
+        )
+        reference = solve_reference(
+            problem.target,
+            problem.initial_state,
+            points=int(
+                config.get("reference_points", max(1024, int(config.get("evaluation_points", 1024))))
+            ),
+            seed=seed_for(master_seed, 3, instance),
+            engine=evaluation_engine if isinstance(evaluation_engine, FixedNormalExpectation) else None,
+        )
+        reference_objective, _ = objective(problem.target, reference.state, evaluation_engine)
+        reference = ReferenceSolution(
+            reference.state,
+            reference_objective,
+            reference.fisher_rao_residual_squared,
+            reference.bures_wasserstein_residual_squared,
+            reference.metadata,
+        )
+        suffix = f"_instance{instance}" if instance_per_seed else ""
+        reference_path = RESULTS / "manifests" / f"reference_{config['id']}{suffix}.json"
+        save_json(
+            reference_path,
+            {
+                "job_id": config["id"],
+                "instance": instance,
+                "mean": reference.state.mean.tolist(),
+                "covariance": reference.state.covariance.tolist(),
+                "objective": reference.objective,
+                "fisher_rao_residual_squared": reference.fisher_rao_residual_squared,
+                "bures_wasserstein_residual_squared": reference.bures_wasserstein_residual_squared,
+                "metadata": reference.metadata,
+            },
+        )
+        constants = curvature_constants(problem.target, reference.state)
+        whitened = whitened_initialization(
+            problem.initial_state, reference.state, constants.alpha_star
+        )
+        curvature = {
+            **constants.to_dict(),
+            **whitened.to_dict(),
+            "certified_step_sizes": certified_step_sizes(constants, whitened),
+        }
+        prepared[instance] = _PreparedInstance(
+            problem,
+            update_engine,
+            evaluation_engine,
+            reference,
+            reference_path,
+            target_seed,
+            curvature,
+        )
+        return prepared[instance]
+
+    target_seed = seed_for(master_seed, 0, 0)
 
     if config.get("blocked_reason"):
         key = f"{config['id']}:blocked"
@@ -669,6 +860,8 @@ def run_config(
 
     if config["experiment"] == "I":
         specifications = [{"name": "variance-ablation", "seeds": int(config.get("seeds", 1))}]
+    elif config["experiment"] == "M":
+        specifications = [{"name": "affine-metric-family", "seeds": int(config.get("seeds", 1))}]
     else:
         specifications = list(config.get("methods", []))
     for specification_index, specification in enumerate(specifications):
@@ -680,6 +873,8 @@ def run_config(
             run_seed = seed_for(master_seed, 10, repeat)
             if config["experiment"] == "I":
                 slug = "raw-vs-stl"
+            elif config["experiment"] == "M":
+                slug = "affine-metric-family"
             else:
                 method = Method(specification["name"])
                 slug = _method_slug(method, specification)
@@ -701,19 +896,28 @@ def run_config(
             ):
                 counts["skipped"] += 1
                 continue
+            instance = repeat if instance_per_seed else 0
+            prepared_instance = prepare(instance)
+            problem = prepared_instance.problem
+            reference = prepared_instance.reference
+            reference_path = prepared_instance.reference_path
+            update_engine = prepared_instance.update_engine
+            evaluation_engine = prepared_instance.evaluation_engine
             manifest = _manifest_base(
                 config=config,
                 config_path=config_path,
                 config_digest=config_digest,
                 source_digest=source_digest,
-                target_seed=target_seed,
+                target_seed=prepared_instance.target_seed,
                 run_seed=run_seed,
                 output_path=output_path,
             )
             manifest.update(
                 {
                     "method_specification": specification,
+                    "problem_instance": instance,
                     "problem_metadata": problem.metadata,
+                    "curvature": prepared_instance.curvature,
                     "reference": {
                         "path": str(reference_path),
                         "objective": reference.objective,
@@ -741,6 +945,13 @@ def run_config(
                         run_seed=run_seed,
                         output_path=output_path,
                     )
+                elif config["experiment"] == "M":
+                    status_name, summary = _run_affine_metric(
+                        config=config,
+                        problem=problem,
+                        run_seed=run_seed,
+                        output_path=output_path,
+                    )
                 else:
                     status_name, summary = _run_trajectory(
                         config=config,
@@ -751,6 +962,8 @@ def run_config(
                         update_engine=update_engine,
                         evaluation_engine=evaluation_engine,
                         output_path=output_path,
+                        instance=instance,
+                        curvature=prepared_instance.curvature,
                     )
             except KeyboardInterrupt:
                 status_name = "interrupted"
@@ -774,11 +987,63 @@ def run_config(
     return counts
 
 
+SHARD_DIRECTORY = RESULTS / "manifests" / "state_shards"
+
+
+def _shard_path(config_id: str) -> Path:
+    safe = "".join(character if character.isalnum() or character in "-_" else "_" for character in config_id)
+    return SHARD_DIRECTORY / f"{safe}.json"
+
+
+def _worker(payload: tuple[str, dict[str, Any], bool, float]) -> tuple[str, dict[str, int], str]:
+    """Run one config in its own process against a private state shard.
+
+    Each worker owns exactly one shard file, so no two processes ever write the
+    same JSON.  The parent merges the shards into ``campaign_state.json``.
+    """
+
+    config_path_text, config, force, seconds_remaining = payload
+    global STATE_PATH
+    STATE_PATH = _shard_path(str(config["id"]))
+    state = load_state()
+    try:
+        counts = run_config(
+            Path(config_path_text),
+            config,
+            state=state,
+            force=force,
+            deadline=time.monotonic() + max(0.0, seconds_remaining),
+        )
+        return str(config["id"]), counts, ""
+    except Exception as exc:  # pragma: no cover - defensive; surfaced to the parent
+        return (
+            str(config["id"]),
+            {"completed": 0, "failed": 1, "skipped": 0, "interrupted": 0, "pending": 0},
+            f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}",
+        )
+
+
+def _merge_shards(state: dict[str, Any]) -> dict[str, Any]:
+    for shard in sorted(SHARD_DIRECTORY.glob("*.json")):
+        try:
+            shard_state = json.loads(shard.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        state.setdefault("runs", {}).update(shard_state.get("runs", {}))
+    return state
+
+
 def parse_args(arguments: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("configs", nargs="+", help="JSON config files or directories")
     parser.add_argument("--budget-hours", type=float, default=None)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=1,
+        help="number of worker processes; each pins BLAS to a single thread",
+    )
     return parser.parse_args(arguments)
 
 
@@ -790,19 +1055,39 @@ def main(arguments: list[str] | None = None) -> int:
     deadline = time.monotonic() + max(0.0, budget) * 3600.0
     state = load_state()
     aggregate = {"completed": 0, "failed": 0, "skipped": 0, "interrupted": 0, "pending": 0}
-    for config_path, config in load_configs(args.configs):
-        if time.monotonic() >= deadline:
-            aggregate["pending"] += 1
-            continue
-        outcome = run_config(
-            config_path,
-            config,
-            state=state,
-            force=bool(args.force),
-            deadline=deadline,
-        )
-        for key, value in outcome.items():
-            aggregate[key] = aggregate.get(key, 0) + value
+    configs = load_configs(args.configs)
+
+    if args.jobs > 1:
+        SHARD_DIRECTORY.mkdir(parents=True, exist_ok=True)
+        payloads = [
+            (str(path), config, bool(args.force), max(0.0, deadline - time.monotonic()))
+            for path, config in configs
+        ]
+        errors: list[str] = []
+        with ProcessPoolExecutor(max_workers=args.jobs) as pool:
+            for config_id, counts, error in pool.map(_worker, payloads):
+                for key, value in counts.items():
+                    aggregate[key] = aggregate.get(key, 0) + value
+                if error:
+                    errors.append(f"{config_id}: {error}")
+        state = _merge_shards(state)
+        for error in errors:
+            print(error, file=sys.stderr)
+    else:
+        for config_path, config in configs:
+            if time.monotonic() >= deadline:
+                aggregate["pending"] += 1
+                continue
+            outcome = run_config(
+                config_path,
+                config,
+                state=state,
+                force=bool(args.force),
+                deadline=deadline,
+            )
+            for key, value in outcome.items():
+                aggregate[key] = aggregate.get(key, 0) + value
+
     state["last_campaign"] = {"end_utc": utc_now(), "summary": aggregate, "command": " ".join(sys.argv)}
     save_state(state)
     print(json.dumps(aggregate, sort_keys=True))

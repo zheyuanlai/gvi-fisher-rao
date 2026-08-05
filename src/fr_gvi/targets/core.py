@@ -24,6 +24,27 @@ class Target(Protocol):
     def hessian(self, x: FloatArray) -> FloatArray: ...
 
 
+def mean_hessian(target: Target, samples: FloatArray, weights: FloatArray | None = None) -> FloatArray:
+    """Weighted mean of ``grad^2 V`` over a sample batch.
+
+    Targets may expose a ``weighted_hessian`` fast path that avoids materializing
+    one ``d x d`` Hessian per sample.  For the logistic model this turns an
+    ``O(S n d^2)`` contraction into ``O(S n + n d^2)``, which is what makes the
+    ``d = 100`` cells tractable.  The fallback is the generic per-sample average,
+    and the two agree to floating-point precision.
+    """
+
+    samples = np.asarray(samples, dtype=np.float64)
+    if weights is None:
+        weights = np.full(samples.shape[0], 1.0 / samples.shape[0], dtype=np.float64)
+    weights = np.asarray(weights, dtype=np.float64)
+    fast = getattr(target, "weighted_hessian", None)
+    if callable(fast):
+        return np.asarray(fast(samples, weights), dtype=np.float64)
+    hessians = np.asarray(target.hessian(samples), dtype=np.float64)
+    return np.asarray(np.einsum("s,sij->ij", weights, hessians), dtype=np.float64)
+
+
 @dataclass(frozen=True)
 class GaussianTarget:
     mean: FloatArray
@@ -58,6 +79,9 @@ class GaussianTarget:
         if x.ndim == 1:
             return self.precision.copy()
         return np.broadcast_to(self.precision, x.shape[:-1] + self.precision.shape).copy()
+
+    def weighted_hessian(self, samples: FloatArray, weights: FloatArray) -> FloatArray:
+        return self.precision * float(np.sum(weights))
 
 
 @dataclass(frozen=True)
@@ -140,6 +164,13 @@ class ShiftedLogCoshTarget:
         inverse = self.inverse_transform
         return np.asarray(np.einsum("ki,...k,kj->...ij", inverse, diagonal, inverse), dtype=np.float64)
 
+    def weighted_hessian(self, samples: FloatArray, weights: FloatArray) -> FloatArray:
+        z = self._z(samples)
+        diagonal = self.nu + self.rho * (1.0 - np.tanh(z - self.offset) ** 2)
+        averaged = np.asarray(weights, dtype=np.float64) @ diagonal
+        inverse = self.inverse_transform
+        return np.asarray(inverse.T @ np.diag(averaged) @ inverse, dtype=np.float64)
+
 
 @dataclass(frozen=True)
 class LogisticRegressionTarget:
@@ -185,4 +216,20 @@ class LogisticRegressionTarget:
         hessian = np.einsum("...n,ni,nj->...ij", weights, self.features, self.features)
         identity = np.eye(self.dimension, dtype=np.float64)
         return np.asarray(hessian + self.prior_precision * identity, dtype=np.float64)
+
+    def weighted_hessian(self, samples: FloatArray, sample_weights: FloatArray) -> FloatArray:
+        """Average Hessian without forming one d x d matrix per sample."""
+
+        samples = np.asarray(samples, dtype=np.float64)
+        sample_weights = np.asarray(sample_weights, dtype=np.float64)
+        logits = samples @ self.features.T
+        probabilities = expit(logits)
+        curvature = sample_weights @ (probabilities * (1.0 - probabilities))
+        weighted_features = self.features * curvature[:, None]
+        identity = np.eye(self.dimension, dtype=np.float64)
+        gram = self.features.T @ weighted_features
+        return np.asarray(
+            0.5 * (gram + gram.T) + float(np.sum(sample_weights)) * self.prior_precision * identity,
+            dtype=np.float64,
+        )
 
