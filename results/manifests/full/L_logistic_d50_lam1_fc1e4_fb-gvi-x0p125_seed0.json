@@ -1,0 +1,496 @@
+{
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/full --jobs 120 --budget-hours 8",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.008564885909019538,
+      "FR--KL": 0.007543520403222162,
+      "FR--KL--STL": 0.0009429400504027702,
+      "FR--R": 0.003771760201611081,
+      "FR--R--STL": 0.007543520403222162,
+      "S--FB--GVI": 0.008564885909019538
+    },
+    "curvature": {
+      "alpha": 1.0,
+      "alpha_star": 0.0097879074909498,
+      "beta": 116.75578759863184,
+      "beta_star": 1.2975251563936863,
+      "certified_step_sizes": {
+        "FB--GVI": 0.008564885909019538,
+        "FR--KL": 0.007543520403222162,
+        "FR--KL--STL": 0.0009429400504027702,
+        "FR--R": 0.003771760201611081,
+        "FR--R--STL": 0.007543520403222162,
+        "S--FB--GVI": 0.008564885909019538
+      },
+      "condition": 116.75578759863184,
+      "exact": true,
+      "kappa_star": 132.56410091670952,
+      "lambda_0_star": 1.0108153205278168,
+      "lambda_0_star_max": 102.16688305693798,
+      "lambda_max_star": 102.16688305693845,
+      "source": "logistic_interval_exact"
+    },
+    "evaluation_points": 4096,
+    "experiment": "L",
+    "grid": {
+      "dimension": 50,
+      "feature_condition": 10000.0,
+      "prior_precision": 1.0
+    },
+    "id": "L_logistic_d50_lam1_fc1e4",
+    "iterations": 200,
+    "master_seed": 20262214,
+    "methods": [
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.00023573501260069256,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 0.125,
+        "step_size": 0.0004714700252013851,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 0.25,
+        "step_size": 0.0009429400504027702,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 0.5,
+        "step_size": 0.0018858801008055405,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 1.0,
+        "step_size": 0.003771760201611081,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 2.0,
+        "step_size": 0.007543520403222162,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 4.0,
+        "step_size": 0.015087040806444324,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 8.0,
+        "step_size": 0.030174081612888648,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 16.0,
+        "step_size": 0.060348163225777296,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 32.0,
+        "step_size": 0.12069632645155459,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 64.0,
+        "step_size": 0.24139265290310918,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 128.0,
+        "step_size": 0.48278530580621837,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 256.0,
+        "step_size": 0.9655706116124367,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 512.0,
+        "step_size": 1.9311412232248735,
+        "tag": "x512"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 1024.0,
+        "step_size": 3.862282446449747,
+        "tag": "x1024"
+      },
+      {
+        "certified_step_size": 0.003771760201611081,
+        "name": "FR--R",
+        "normalized_step_size": 2048.0,
+        "step_size": 7.724564892899494,
+        "tag": "x2048"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0004714700252013851,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 0.125,
+        "step_size": 0.0009429400504027702,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 0.25,
+        "step_size": 0.0018858801008055405,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 0.5,
+        "step_size": 0.003771760201611081,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 1.0,
+        "step_size": 0.007543520403222162,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 2.0,
+        "step_size": 0.015087040806444324,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 4.0,
+        "step_size": 0.030174081612888648,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 8.0,
+        "step_size": 0.060348163225777296,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 16.0,
+        "step_size": 0.12069632645155459,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 32.0,
+        "step_size": 0.24139265290310918,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 64.0,
+        "step_size": 0.48278530580621837,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 128.0,
+        "step_size": 0.9655706116124367,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 256.0,
+        "step_size": 1.9311412232248735,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 512.0,
+        "step_size": 3.862282446449747,
+        "tag": "x512"
+      },
+      {
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--KL",
+        "normalized_step_size": 1024.0,
+        "step_size": 7.724564892899494,
+        "tag": "x1024"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.0625,
+        "step_size": 0.0005353053693137211,
+        "tag": "x0p0625"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.125,
+        "step_size": 0.0010706107386274422,
+        "tag": "x0p125"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.25,
+        "step_size": 0.0021412214772548845,
+        "tag": "x0p25"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.5,
+        "step_size": 0.004282442954509769,
+        "tag": "x0p5"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 1.0,
+        "step_size": 0.008564885909019538,
+        "tag": "x1"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 2.0,
+        "step_size": 0.017129771818039076,
+        "tag": "x2"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 4.0,
+        "step_size": 0.03425954363607815,
+        "tag": "x4"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 8.0,
+        "step_size": 0.0685190872721563,
+        "tag": "x8"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 16.0,
+        "step_size": 0.1370381745443126,
+        "tag": "x16"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 32.0,
+        "step_size": 0.2740763490886252,
+        "tag": "x32"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 64.0,
+        "step_size": 0.5481526981772504,
+        "tag": "x64"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 128.0,
+        "step_size": 1.0963053963545009,
+        "tag": "x128"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 256.0,
+        "step_size": 2.1926107927090017,
+        "tag": "x256"
+      },
+      {
+        "certified_step_size": 0.008564885909019538,
+        "name": "FB--GVI",
+        "normalized_step_size": 512.0,
+        "step_size": 4.385221585418003,
+        "tag": "x512"
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.007543520403222162,
+        "name": "FR--R--STL",
+        "normalized_step_size": 33.14102522917738,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.0009429400504027702,
+        "name": "FR--KL--STL",
+        "normalized_step_size": 64.0,
+        "seeds": 10,
+        "step_size": 0.060348163225777296
+      },
+      {
+        "batch_size": 16,
+        "certified_step_size": 0.008564885909019538,
+        "name": "S--FB--GVI",
+        "normalized_step_size": 29.18894689965796,
+        "seeds": 10,
+        "step_size": 0.25
+      },
+      {
+        "name": "Laplace"
+      }
+    ],
+    "record_every": 1,
+    "reference_points": 4096,
+    "target": {
+      "dimension": 50,
+      "feature_condition": 10000.0,
+      "kind": "logistic",
+      "prior_precision": 1.0,
+      "samples": 500,
+      "test_samples": 1000
+    },
+    "tier": "full",
+    "update_points": 4096
+  },
+  "config_hash": "a665a20b323405bf509b1a0ab145813144e53e2081dc4a57961bf60da85b5973",
+  "config_path": "configs/full/L_logistic_d50_lam1_fc1e4.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.009787545788946575,
+    "beta": 116.75578759863184,
+    "beta_star": 1.297515473098831,
+    "certified_step_sizes": {
+      "FB--GVI": 0.008564885909019538,
+      "FR--KL": 0.007543297935068992,
+      "FR--KL--STL": 0.0009429122418836333,
+      "FR--R": 0.003771648967534496,
+      "FR--R--STL": 0.0075432979350690665,
+      "S--FB--GVI": 0.008564885909019538
+    },
+    "condition": 116.75578759863184,
+    "exact": true,
+    "kappa_star": 132.56801051844494,
+    "lambda_0_star": 1.0108154307238013,
+    "lambda_0_star_max": 102.17065866801315,
+    "lambda_max_star": 102.17065866801315,
+    "source": "logistic_interval_exact"
+  },
+  "end_utc": "2026-08-05T09:45:58.993864+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 2.7096839804592037,
+  "git_commit": "29d36780c9ba61bbbae18c3252d74cc38495fa8b",
+  "git_dirty": true,
+  "git_status": "M reports/AUDIT_RESULTS.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed24.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed25.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed26.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed27.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed28.json\n M results/manifests/full/J_floor_d32_k100_rho0.5_B64_s-fb-gvi-b64_seed29.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed22.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed23.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed24.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed25.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed26.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed27.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed28.json\n M results/manifests/full/J_floor_d32_k100_rho1_B64_s-fb-gvi-b64_seed29.json\n M results/manifests/full/J_floor_d32_k10_rho0.5_B64_s-fb-gvi-b64_seed25.json\n M results/manifests/full/J_floor_d32_k10_rho0.5_B64_s-fb-gvi-b64_seed26.json\n M results/manifests/full/J_floor_d32_k10_rho0.5_B64_s-fb-gvi-b64_seed27.json\n M results/manifests/full/J_floor_d32_k10_rho0.5_B64_s-fb-gvi-b64_seed28.json\n M results/manifests/full/J_floor_d32_k10_rho0.5_B64_s-fb-gvi-b64_seed29.json\n M results/manifests/full/J_floor_d32_k10_rho1_B64_s-fb-gvi-b64_seed25.json\n M results/manifests/full/J_floor_d32_k10_rho1_B64_s-fb-gvi-b64_seed26.json\n M results/manifests/full/J_floor_d32_k10_rho1_B64_s-fb-gvi-b64_seed27.json\n M results/manifests/full/J_floor_d32_k10_rho1_B64_s-fb-gvi-b64_seed28.json\n M results/manifests/full/J_floor_d32_k10_rho1_B64_s-fb-gvi-b64_seed29.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fr-kl-x16384_seed0.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x2_seed0.json\n M results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x0p125_seed0.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x2_seed0.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e2_fb-gvi-x128_seed0.json\n M results/manifests/full/L_logistic_d100_lam1_fc1e4_fb-gvi-x128_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x8_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x16_seed0.json\n M results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x16_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x32_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x128_seed0.json\n M results/manifests/full/L_logistic_d50_lam1_fc1e4_fr-kl-x128_seed0.json\n M results/manifests/state_shards/J_floor_d32_k100_rho0_5_B64.json\n M results/manifests/state_shards/J_floor_d32_k100_rho1_B64.json\n M results/manifests/state_shards/J_floor_d32_k10_rho0_5_B64.json\n M results/manifests/state_shards/J_floor_d32_k10_rho1_B64.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d100_lam0_1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d100_lam1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d50_lam0_1_fc1e4.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e0.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e2.json\n M results/manifests/state_shards/L_logistic_d50_lam1_fc1e4.json\n M src/fr_gvi/experiments/audit.py\n?? results/manifests/campaign_state.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fb-gvi-x0p0625_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fr-kl-x131072_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fr-kl-x262144_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fr-kl-x32768_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e0_fr-kl-x65536_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x4_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e2_fb-gvi-x8_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x0p25_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x0p5_seed0.json\n?? results/manifests/full/L_logistic_d100_lam0.1_fc1e4_fb-gvi-x1_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x32_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x4_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e0_fb-gvi-x8_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fb-gvi-x1024_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fb-gvi-x2048_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fb-gvi-x256_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fb-gvi-x512_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-r-stl-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-r-stl-b16_seed1.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-r-stl-b16_seed2.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e2_fr-r-stl-b16_seed3.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fb-gvi-x1024_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fb-gvi-x2048_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fb-gvi-x256_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fb-gvi-x512_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-r-stl-b16_seed0.json\n?? results/manifests/full/L_logistic_d100_lam1_fc1e4_fr-r-stl-b16_seed1.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x16_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x32_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e0_fr-kl-x64_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x32_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e2_fr-kl-x64_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x32_seed0.json\n?? results/manifests/full/L_logistic_d50_lam0.1_fc1e4_fr-kl-x64_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x128_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e0_fr-kl-x64_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fb-gvi-x0p0625_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x256_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e2_fr-kl-x512_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fb-gvi-x0p0625_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fr-kl-x1024_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fr-kl-x256_seed0.json\n?? results/manifests/full/L_logistic_d50_lam1_fc1e4_fr-kl-x512_seed0.json",
+  "iterations_completed": 200,
+  "method_specification": {
+    "certified_step_size": 0.008564885909019538,
+    "name": "FB--GVI",
+    "normalized_step_size": 0.125,
+    "step_size": 0.0010706107386274422,
+    "tag": "x0p125"
+  },
+  "minimum_covariance_eigenvalue": 0.009793727398075009,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 200,
+    "expectation_evaluations": 200,
+    "gradient_evaluations": 200,
+    "hessian_evaluations": 200,
+    "iterations": 200,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 200,
+    "oracle_pairs": 200,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/full/L/L_logistic_d50_lam1_fc1e4/fb-gvi-x0p125_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 300276,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "feature_condition": 10000.0,
+    "prior_precision": 1.0,
+    "samples": 500,
+    "true_parameter_norm": 1.0883405262480905
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 6.49572842734992e-27,
+    "fisher_rao_residual_squared": 2.122760221975971e-27,
+    "objective": 386.50737971201136,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_L_logistic_d50_lam1_fc1e4.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 3717205900,
+  "schema_version": 1,
+  "start_utc": "2026-08-05T09:44:28.447720+00:00",
+  "status": "completed",
+  "target_seed": 1484813765,
+  "wall_time_seconds": 90.54537583200727
+}

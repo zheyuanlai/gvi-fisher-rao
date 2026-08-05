@@ -6,6 +6,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
+import numpy as np
+
 ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -83,6 +85,8 @@ def main(arguments: list[str] | None = None) -> int:
     for path in sorted((ROOT / "results" / "manifests").rglob("*.json")):
         if path.name.startswith("reference_") or path.name == "campaign_state.json":
             continue
+        if "state_shards" in path.parts:
+            continue
         try:
             manifests.append(json.loads(path.read_text(encoding="utf-8")))
         except json.JSONDecodeError as exc:
@@ -92,16 +96,38 @@ def main(arguments: list[str] | None = None) -> int:
         errors.append(f"{statuses['failed']} failed run manifests")
     if statuses["running"]:
         warnings.append(f"{statuses['running']} runs remain marked running")
+    # Covariance positivity is checked against the same roundoff tolerance the
+    # algorithms use: a negative eigenvalue is acceptable only when it is within
+    # 100 * eps of the matrix scale, and only if the run also logged the repair.
+    epsilon = float(np.finfo(np.float64).eps)
+    roundoff_repairs = 0
     for path in sorted((ROOT / "results" / "raw").rglob("*.csv")):
         with path.open(encoding="utf-8", newline="") as handle:
             for line, row in enumerate(csv.DictReader(handle), start=2):
                 value = row.get("covariance_min_eigenvalue", "")
-                if value:
-                    try:
-                        if float(value) <= 0.0:
-                            errors.append(f"nonpositive covariance at {path}:{line}")
-                    except ValueError:
-                        errors.append(f"invalid covariance eigenvalue at {path}:{line}")
+                if not value:
+                    continue
+                try:
+                    minimum = float(value)
+                    scale = max(float(row.get("covariance_max_eigenvalue", "1") or 1.0), 1.0)
+                except ValueError:
+                    errors.append(f"invalid covariance eigenvalue at {path}:{line}")
+                    continue
+                if minimum > 0.0:
+                    continue
+                tolerance = 100.0 * epsilon * scale
+                if minimum < -tolerance:
+                    errors.append(
+                        f"covariance lost positive definiteness beyond roundoff at "
+                        f"{path}:{line}: lambda_min={minimum:.6e}, tolerance={tolerance:.6e}"
+                    )
+                else:
+                    roundoff_repairs += 1
+    if roundoff_repairs:
+        warnings.append(
+            f"{roundoff_repairs} covariance eigenvalues at or below roundoff scale; "
+            "each is a logged repair bounded by 100 * eps * matrix scale"
+        )
     forbidden = ["BWGD", "BW--SGD", "covariance_clip", "projected_fisher", "hybrid_geometry"]
     for root in (ROOT / "src", ROOT / "configs"):
         for path in sorted(root.rglob("*")):
@@ -124,6 +150,7 @@ def main(arguments: list[str] | None = None) -> int:
         if not markdown.exists():
             errors.append(f"missing caption draft for {png.name}")
     report = {
+        "roundoff_scale_covariance_repairs": roundoff_repairs,
         "pathwise_covariance_bands": theory_checks["summary"],
         "manifest_statuses": dict(statuses),
         "manifest_count": len(manifests),

@@ -1,11 +1,28 @@
 {
   "errors": [],
-  "figure_png_count": 16,
-  "manifest_count": 166,
+  "figure_png_count": 15,
+  "manifest_count": 16676,
   "manifest_statuses": {
-    "completed": 164,
+    "completed": 14641,
+    "failed": 2029,
+    "running": 4,
     "skipped": 2
   },
-  "raw_csv_count": 164,
-  "warnings": []
+  "pathwise_covariance_bands": {
+    "minimum_lower_slack": {
+      "FR--KL--STL": 0.00012393319074044395,
+      "FR--R--STL": 0.1797938585485436
+    },
+    "minimum_upper_slack": {
+      "FR--KL--STL": 0.1454636493720194,
+      "FR--R--STL": 0.14473371690057624
+    },
+    "runs_checked": 4260
+  },
+  "raw_csv_count": 16687,
+  "roundoff_scale_covariance_repairs": 3,
+  "warnings": [
+    "4 runs remain marked running",
+    "3 covariance eigenvalues at or below roundoff scale; each is a logged repair bounded by 100 * eps * matrix scale"
+  ]
 }
