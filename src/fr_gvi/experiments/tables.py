@@ -31,8 +31,24 @@ def _write(frame: pd.DataFrame, name: str, caption: str, formats: dict[str, str]
                 and np.isfinite(float(value))
                 else "--"
             )
-    body = formatted.to_latex(index=False, escape=True)
-    (TABLES / f"{name}.tex").write_text(f"% {caption}\n{body}", encoding="utf-8")
+    # A plain booktabs body, written directly so the package does not depend on
+    # jinja2 through pandas' styler path.
+    columns = list(formatted.columns)
+    lines = [
+        f"% {caption}",
+        r"\begin{tabular}{" + "l" * len(columns) + "}",
+        r"\toprule",
+        " & ".join(column.replace("_", r"\_") for column in columns) + r" \\",
+        r"\midrule",
+    ]
+    for _, row in formatted.iterrows():
+        lines.append(
+            # Method names deliberately keep their en-dash form, matching the
+            # manuscript's FR--R / FB--GVI nomenclature.
+            " & ".join(str(value).replace("_", r"\_") for value in row) + r" \\"
+        )
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    (TABLES / f"{name}.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"  {name}: {len(frame)} rows")
 
 

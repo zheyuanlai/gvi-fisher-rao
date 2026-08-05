@@ -1,55 +1,135 @@
-# Overnight campaign summary
+# Campaign summary
 
-## Execution status
+## Scope
 
-The active smoke-plus-core campaign finished on 2026-08-05 with 164 completed jobs, zero failed, zero interrupted, zero pending, and two intentional skips. The smoke tier accounts for 45 completed jobs and one skip; the core tier accounts for 119 completed jobs and one skip. The final resumability pass reproduced that exact accounting in `results/manifests/campaign_state.json`.
+The full-tier campaign covers every experiment of the plan except E, which is
+deliberately not run because the manuscript defers its lower-bound construction to
+an appendix that does not exist yet (see `reports/BLOCKED_EXPERIMENTS.md`).
+Experiment M was added to verify the Section 5 classification, which the original
+plan left as theory only.
 
-The two skips are the smoke and core forms of Experiment E. The supplied manuscript and numerical plan name a bump-train construction but do not provide its potential, smoothing rule, or constants. No surrogate target was invented. See `reports/BLOCKED_EXPERIMENTS.md`.
+Every comparison is stepsize-fair: each method is swept over multiples of its own
+certified step, computed from the closed-form optimizer-whitened curvature
+constants of that cell, and the sweep extends past the certified scale until the
+stability boundary is located. Divergent runs are recorded as failures with their
+reason and iteration; none is stabilized by clipping or by silently reducing a
+step.
 
-The expanded `full` and `appendix` grids have not been run. In particular, the complete condition-number, dimension, stepsize-stability, feature-conditioning, and 30-seed stochastic sweeps remain future work. Composite figures label single-cell pilot panels and pending grids explicitly.
+Exact run counts, statuses and failure reasons are in
+`results/manifests/campaign_state.json` and the per-run manifests under
+`results/manifests/full/`.
 
-## Main numerical observations
+## Principal findings
 
-These are core-pilot observations, not claims about the unrun full grids.
+These are statements about what was measured, with the caveats attached.
 
-- Covariance burn-in is logarithmic at the tested hard starts. For FR--R, `N_cov h` is 11.5 and 20.7 at initial covariance scales `1e-8` and `1e-12`, compared with `log[1/(beta lambda_0)]` values 11.513 and 20.723. FR--KL gives 12.1 and 21.8.
-- In the transformed Gaussian test with `cond(A A^T)=1e4`, maximum covariance discrepancies are `1.22e-13` for FR--R and `3.82e-13` for FR--KL, versus `5.19e-1` for FB--GVI. This is a direct iterate-level affine-equivariance test, not a cross-geometry gradient-norm comparison.
-- On the single Diao anisotropic Gaussian instance and chosen core stepsizes, terminal exact KL gaps are `6.17e-16` (FR--R), `1.70e-11` (FR--KL), and `2.73e1` (FB--GVI). The ordering is conditional on this stepsize and 80-pair budget. FR--R+QR and FR--KL+QR both recover the Gaussian solution after exactly one gradient--Hessian query and are kept out of the competitive curves.
-- On the shifted log-cosh core cell, terminal objective gaps after 100 iterations are 1.30 (FR--R), 1.40 (FR--KL), and 4.22 (FB--GVI). The complete stepsize grid is unrun, so this is not a general performance ranking.
-- In the exact-Gaussian local experiment, terminal KL gaps are `3.53e-10` (FR--R) and `3.97e-8` (FR--KL). In the near-Gaussian spectral pilot, the predicted `2 gamma_star` is 1.996; fitted tail rates are 2.166 and 1.885.
-- With covariance matched to a Gaussian target, maximum across-seed objective spreads are below `8.0e-15` for the two FR--STL methods, while S--FB--GVI retains a spread of 0.354. This compares complete algorithms with their native estimators; it is not a geometry-only comparison.
-- The STL/raw intrinsic variance ratio ranges from 0.0358 to 0.1867 over the tested optimizer-relative distances. FR--STL tail floors fall from about `5.1e-3` at `B=1` to `1.3e-4` at `B=64`; the S--FB--GVI core cell falls from 0.0459 to 0.0306 under its fixed selected step.
-- Decreasing-step log--log tail slopes are -0.903 (FR--R--STL) and -0.891 (FR--KL--STL), consistent with but not proof of the predicted inverse-iteration regime.
-- In the single logistic core cell, Laplace has the smallest approximate Gaussian-VI objective gap (0.0302). The lowest terminal predictive NLL is obtained by FR--R--STL (0.6813), closely followed by FR--KL--STL (0.6815), while their 50-iteration objective gaps remain larger than those of the deterministic methods. The reference is a finite-QMC optimizer with squared FR residual `2.34e-5`; small objective differences should therefore not be overinterpreted.
+**Affine invariance (Proposition 2.3).** The optimizer-whitened constants
+`alpha_star`, `beta_star` and `kappa_star` are unchanged to `1e-9` under a random
+invertible change of variables whose original-coordinate condition number changes
+by more than two orders of magnitude. At iterate level, transformed Fisher--Rao
+runs match the transported reference to `2.0e-9` (FR--R) and `6.7e-9` (FR--KL) in
+the worst case over `K` up to `1e8`; the residual grows in proportion to the
+conditioning of the map, which is floating-point amplification rather than a loss
+of equivariance. FB--GVI departs by `0.39` as soon as the map is non-orthogonal.
 
-The machine-readable values, including every terminal metric and stochastic quantile, are in `reports/PILOT_RESULTS.json`.
+**Covariance burn-in (Theorem 2.9).** Over 18 cells spanning
+`kappa` in `{10, 10^2, 10^3}` and `lambda_0` from `1e-2` to `1e-12`, the measured
+entry time into the whitened covariance band divided by the predicted
+`log[1/(beta_star lambda_{0,star})]` has median `1.024` and lies in
+`[0.999, 1.064]`. The ratio is flat in `kappa`, as affine invariance requires.
 
-## Failures and numerical concerns
+**Anisotropic Gaussian benchmark.** On the target of Diao et al.
+(`d = 10`, `kappa = 1e9`, but `kappa_star = 1`), the best terminal exact KL gap
+over the sweep is `3.1e-17` for both Fisher--Rao schemes and `2.1e1` for FB--GVI at
+500 iterations. This is the regime the affine-invariant rate predicts the
+Fisher--Rao schemes to be insensitive to, and it is the most favourable case for
+them; it should not be read as a general performance ranking. The quadratic rescue
+recovers the target to `2.5e-17` after exactly one gradient--Hessian query, and is
+reported separately rather than inside the competitive curves.
 
-No active smoke or core algorithm job failed, no job was interrupted, and no pending job remains. Strict SPD checks were active throughout. Roundoff-scale negative Gaussian gaps (approximately `-8e-16`) in the rescue verification are numerical zero, not negative KL values.
+**Exact Gaussian local region (Lemma 2.24, Corollary 2.26).** Across
+`d` in `{2, 10, 100}` and four initial covariance eigenvalues, the measured
+instantaneous decay rate of the whitened parameter error coincides with the exact
+Gaussian-core rate `q_G` along the whole trajectory, and the energy of the extremal
+initialization equals the closed-form sharp threshold
+`Delta_G^sharp(rho) = (rho/2 - 1 - log(rho/2))/2`.
 
-Unresolved scientific limitations are the missing theorem-specific bump-train formula, the finite-QMC logistic reference residual, and the unrun full/appendix sweeps. These limitations are visible in captions and reports rather than hidden.
+**Near-Gaussian local rate (Proposition 3.5, Theorem 3.7).** The linearized
+generator is assembled numerically from the manuscript's score operators. The
+per-step contraction rate settles onto the exact one-step prediction
+`-2 log(1 - dt gamma)/dt`, and every measurement lies inside the spectral bracket
+between the slowest and fastest linearized modes. For FR--KL at small `rho` the
+measured value sits a few percent above the slow end and is still decreasing when
+the trajectory reaches the float64 resolution floor of the whitened error near
+`1e-26`; this is a precision limit, not a discrepancy.
+
+**Sticking-the-landing cancellation (Corollary 4.20).** With the covariance matched
+to a Gaussian target and `B = 1`, the two Fisher--Rao STL schemes produce
+across-seed objective spreads of at most `1.4e-14` over 30 seeds and
+`d` in `{2, 10, 50}`, and are bit-identical across seeds at most recorded
+iterations. S--FB--GVI retains a spread of `4.0`. This compares complete algorithms
+together with their native estimators, not geometry alone.
+
+**STL variance bound (Lemma 4.7).** The measured Fisher--Rao tangent variance stays
+below `(2 |grad E|_a^2 + (3/2) Psi(a)) / B` at every state and batch size tested.
+The STL-to-raw variance ratio collapses toward the optimizer on a Gaussian target
+and plateaus on a non-Gaussian one, which is the mechanism behind the cancellation
+result.
+
+**Minibatch floors (Theorems 4.16, 4.17).** The terminal objective-gap floor decays
+like `1/B` with fitted exponent within one percent of `-1` in every cell of the
+`d x kappa x rho` grid. Its dependence on the step is steeper than linear and lies
+between the `Delta t` and `Delta t^2` references, which is what the STL structure
+predicts: the Gaussian-core part of the noise is itself proportional to
+`C_n - C_star`, whose stationary size is already `O(Delta t)`. The quadratic rescue
+leaves the floor unchanged and instead removes the transient.
+
+**Decreasing stepsizes (Theorem 4.21).** With the exact schedule
+`Delta t_n = 8 kappa_star / (n + n_0)`, `n_0 = ceil(64 kappa_star^2)`, run for 20000
+iterations with 30 seeds, the tail log--log slope of the expected gap is `-0.98`
+over the final decade and `-1.01` over the final half, with no additive floor.
+
+**Section 5 classification.** Over 48 members `(omega, tau)` of the classified
+family and `N` in `{2, 5, 10}`, the traceless and trace covariance modes decay at
+the predicted `1/(2 omega)` and `1/(2 (omega + tau N))` with maximum relative error
+`5.1e-3` and `1.0e-2` at the finest step. The residual is the `O(Delta t)` bias of
+the retraction and vanishes under step refinement.
+
+**Log-cosh and logistic applications.** Both Fisher--Rao schemes reach machine-zero
+objective gaps at admissible steps on the log-cosh grid and on the logistic cells,
+while FB--GVI's best gap at the same oracle budget is orders of magnitude larger on
+the ill-conditioned cells. The certified Fisher--Rao steps are conservative by
+between one and four orders of magnitude, which the sweeps quantify per cell in
+`results/tables/stepsize_summary.csv`.
+
+## Corrections made during the campaign
+
+Three design errors were found by inspecting intermediate results and fixed; they
+are described in `reports/NUMERICAL_AUDIT.md`. In brief: Experiment F was
+comparing a fitted rate against a uniform sublevel bound; Experiment J's horizon
+was too short for the high-`kappa_star` cells to leave their deterministic
+transient, which produced a false negative on the `1/B` floor law; and Experiment
+G was measured before its asymptotic regime.
 
 ## Artifacts
 
-- Manuscript figures: `results/figures/main_figure_1.{pdf,png}` through `main_figure_5.{pdf,png}`.
-- Caption drafts: `results/figures/main_figure_1.md` through `main_figure_5.md`.
-- Figure-level processed inputs: `results/processed/main_figure_1.csv` through `main_figure_5.csv`.
-- Individual experiment figures and captions: `results/figures/experiment_*`.
-- Terminal tables: `results/tables/terminal_summary.csv` and `terminal_summary.tex`.
-- Numerical and plot audits: `reports/AUDIT_RESULTS.json`, `reports/PLOT_AUDIT.json`, and `reports/NUMERICAL_AUDIT.md`.
+- Manuscript figures: `results/figures/main_figure_1.{pdf,png}` through
+  `main_figure_5.{pdf,png}`.
+- Per-experiment figures: `results/figures/experiment_*.{pdf,png}`.
+- Caption drafts alongside each figure as `.md`, and the exact processed input CSV
+  under `results/processed/`.
+- Tables: `results/tables/stepsize_summary.*`, `headline_summary.*`,
+  `reference_quality.*`.
+- Audits: `reports/AUDIT_RESULTS.json`, `reports/PLOT_AUDIT.json`.
 
-## Resume commands
-
-The active core campaign is complete, so this command now verifies hashes and skips matching jobs:
-
-```bash
-OVERNIGHT_BUDGET_HOURS=10 ./scripts/resume_campaign.sh
-```
-
-Run the expanded and appendix configurations with:
+## Reproducing or extending
 
 ```bash
-OVERNIGHT_BUDGET_HOURS=10 ./scripts/run_full.sh
+make test
+CAMPAIGN_JOBS=64 make full      # resumable; skips jobs whose hashes match
+make figures                    # regenerates every figure and table from saved data
+make audit
 ```
 
+Editing a hashed source file invalidates previous runs by design. Editing a
+plotting module does not, so figures can be restyled without recomputation.

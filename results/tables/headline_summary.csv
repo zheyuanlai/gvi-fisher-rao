@@ -1,0 +1,10 @@
+quantity,value,worst_case,runs
+burn-in time / predicted log envelope (median),1.0242111531551696,0.06402148066296687,36
+"max affine equivariance error, FR--R",2.016344030009888e-09,,5
+"max affine equivariance error, FR--KL",6.7446356603403704e-09,,5
+"max affine equivariance error, FB--GVI",0.3895436248842855,,5
+"max across-seed objective spread, FR--KL--STL",1.0658141036401503e-14,,3
+"max across-seed objective spread, FR--R--STL",1.4210854715202004e-14,,3
+"max across-seed objective spread, S--FB--GVI",4.001993315337053,,3
+"max relative rate error, traceless mode (finest step)",0.0050774923965755114,,48
+"max relative rate error, trace mode (finest step)",0.01017476929312755,,48
