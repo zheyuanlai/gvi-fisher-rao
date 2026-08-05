@@ -1,12 +1,11 @@
 {
   "errors": [],
-  "figure_png_count": 15,
-  "manifest_count": 16676,
+  "figure_png_count": 17,
+  "manifest_count": 17230,
   "manifest_statuses": {
-    "completed": 14641,
-    "failed": 2029,
-    "running": 4,
-    "skipped": 2
+    "completed": 15182,
+    "failed": 2045,
+    "skipped": 3
   },
   "pathwise_covariance_bands": {
     "minimum_lower_slack": {
@@ -19,10 +18,9 @@
     },
     "runs_checked": 4260
   },
-  "raw_csv_count": 16687,
+  "raw_csv_count": 17227,
   "roundoff_scale_covariance_repairs": 3,
   "warnings": [
-    "4 runs remain marked running",
     "3 covariance eigenvalues at or below roundoff scale; each is a logged repair bounded by 100 * eps * matrix scale"
   ]
 }

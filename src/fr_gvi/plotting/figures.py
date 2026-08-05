@@ -510,9 +510,20 @@ def figure_d(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
 
 def figure_l(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     failures = failed_runs("L")
-    iterative = frame[frame["method"] != "Laplace"]
+    # Deterministic sweeps live in the L_* cells; the stochastic arms live in the
+    # Lstoch_* cells, where each method runs at a quarter of the largest step its
+    # own deterministic counterpart tolerated on that cell.
+    # The L_* cells also contain a first pass of stochastic arms that placed every
+    # method at the same multiple of its own certified step; that put S--FB--GVI
+    # far outside its stable range, so those runs are superseded by the Lstoch_*
+    # cells and are excluded here.
+    deterministic = frame[
+        frame["job_id"].str.startswith("L_logistic")
+        & frame["method"].isin(["FR--R", "FR--KL", "FB--GVI"])
+    ]
+    stochastic = frame[frame["job_id"].str.startswith("Lstoch_")]
     laplace = frame[frame["method"] == "Laplace"]
-    table = stability_table(iterative, failures)
+    table = stability_table(deterministic, failures)
     table = table.merge(
         frame.groupby("job_id")[
             ["grid_dimension", "grid_prior_precision", "grid_feature_condition"]
@@ -521,76 +532,80 @@ def figure_l(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     )
 
     figure, axes = plt.subplots(1, 3, figsize=(TEXT_WIDTH, 2.6), constrained_layout=True)
-    representative = frame[frame["job_id"] == "L_logistic_d50_lam1_fc1e2"]
-    if representative.empty:
-        representative = frame[frame["job_id"] == frame["job_id"].iloc[0]]
-    job = representative["job_id"].iloc[0]
+    job = "L_logistic_d50_lam1_fc1e2"
+    if job not in set(deterministic["job_id"]):
+        job = sorted(deterministic["job_id"].unique())[0]
+    cell = deterministic[deterministic["job_id"] == job]
 
-    for method in ordered_methods(representative[representative["method"] != "Laplace"]):
+    for method in ordered_methods(cell):
         best = table[(table["job_id"] == job) & (table["method"] == method)]
         if best.empty:
             continue
-        subset = representative[
-            (representative["method"] == method)
-            & np.isclose(representative["normalized_step_size"],
-                         float(best["best_normalized_step"].iloc[0]))
+        subset = cell[
+            (cell["method"] == method)
+            & np.isclose(cell["normalized_step_size"], float(best["best_normalized_step"].iloc[0]))
         ]
         plot_median_band(
             axes[0], subset, "oracle_pairs", "objective_gap",
             label=method, style=method_style(method),
         )
-        plot_median_band(
-            axes[1], subset, "oracle_pairs", "predictive_nll",
-            label=method, style=method_style(method), log_y=False,
-        )
     laplace_cell = laplace[laplace["job_id"] == job]
     if not laplace_cell.empty:
-        axes[0].axhline(
-            float(laplace_cell["objective_gap"].iloc[-1]),
-            color=COLORS["Laplace"], linestyle=":", linewidth=1.1, label="Laplace",
-        )
-        axes[1].axhline(
-            float(laplace_cell["predictive_nll"].iloc[-1]),
-            color=COLORS["Laplace"], linestyle=":", linewidth=1.1, label="Laplace",
-        )
+        axes[0].axhline(float(laplace_cell["objective_gap"].iloc[-1]), color=COLORS["Laplace"],
+                        linestyle=":", linewidth=1.1, label="Laplace")
     axes[0].set_xlabel("gradient--Hessian oracle pairs")
     axes[0].set_ylabel("Gaussian-VI objective gap")
-    panel_letter(axes[0], "a", job.replace("_", " "))
-    axes[1].set_xlabel("gradient--Hessian oracle pairs")
-    axes[1].set_ylabel("held-out predictive NLL")
-    # The early transient is orders of magnitude above the converged level, so the
-    # axis is clipped to the region where the methods can actually be told apart.
-    converged = representative[
-        (representative["iteration"] >= 0.5 * representative["iteration"].max())
-    ]["predictive_nll"].dropna()
-    if len(converged):
-        low, high = float(converged.min()), float(converged.max())
-        margin = max(0.02 * abs(low), 1.5 * (high - low), 1e-3)
-        axes[1].set_ylim(low - margin, high + margin)
-    panel_letter(axes[1], "b", "Predictive quality")
+    panel_letter(axes[0], "a", "Deterministic, best step each")
 
+    stochastic_cell = stochastic[stochastic["job_id"] == job.replace("L_logistic", "Lstoch_logistic")]
+    for method in ordered_methods(stochastic_cell):
+        subset = stochastic_cell[stochastic_cell["method"] == method]
+        plot_median_band(
+            axes[1], subset, "oracle_pairs", "objective_gap",
+            label=method, style=method_style(method),
+        )
+    if not laplace_cell.empty:
+        axes[1].axhline(float(laplace_cell["objective_gap"].iloc[-1]), color=COLORS["Laplace"],
+                        linestyle=":", linewidth=1.1)
+    axes[1].set_xscale("log")
+    axes[1].set_xlabel("gradient--Hessian oracle pairs")
+    axes[1].set_ylabel("objective gap")
+    panel_letter(axes[1], "b", r"Stochastic, $B=16$")
+
+    # A converged deterministic run can land marginally below the reference, so
+    # the gap is floored at a marked machine-zero level rather than dropped.
+    floor = 1e-13
+    table["plotted_gap"] = np.maximum(table["best_terminal_gap"], floor)
     for method in ordered_methods(table):
         subset = table[table["method"] == method].sort_values("kappa_star")
-        axes[2].plot(
-            subset["kappa_star"], positive(subset["best_terminal_gap"]),
-            linestyle="none", label=method,
-            **{k: v for k, v in method_style(method).items() if k != "linestyle"},
+        axes[2].scatter(
+            subset["kappa_star"], subset["plotted_gap"],
+            s=24.0, facecolors="none", edgecolors=COLORS.get(method), linewidths=0.9,
+            marker=MARKERS.get(method), label=method,
         )
+    axes[2].axhline(floor, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+                    label="machine zero")
     axes[2].set_xscale("log")
     axes[2].set_yscale("log")
+    axes[2].set_ylim(floor / 3.0, None)
     axes[2].set_xlabel(r"$\kappa_\star$")
     axes[2].set_ylabel("best terminal gap")
-    panel_letter(axes[2], "c", "All logistic cells")
+    panel_letter(axes[2], "c", "All 18 logistic cells")
 
     legend_below(figure, axes)
     caption = (
         "Bayesian logistic regression with a proper Gaussian prior, "
         "$d\\in\\{10,50,100\\}$, $n=10d$, $\\lambda\\in\\{0.1,1\\}$ and feature-covariance "
-        "conditioning in $\\{1,10^2,10^4\\}$, using exact full-data derivatives. "
-        "Each cell uses one fixed quadrature design shared by the updates, the objective "
-        "evaluation and the reference, so deterministic gaps are exact for the discretized "
-        "problem; the quadrature resolution floor of each cell is recorded in its reference "
-        "manifest. Laplace appears only as a non-iterative approximation-quality baseline."
+        "conditioning in $\\{1,10^2,10^4\\}$, using exact full-data derivatives. Each cell "
+        "uses one fixed quadrature design shared by the updates, the objective evaluation "
+        "and the reference, so deterministic gaps are exact for the discretized problem; "
+        "the quadrature resolution floor of each cell is recorded in its reference "
+        "manifest. (a) Deterministic methods, each at its own best swept step. "
+        "(b) Stochastic methods at $B=16$, each run at a quarter of the largest step its "
+        "own deterministic counterpart was measured to tolerate on that cell, so that no "
+        "method is placed outside its stable range. (c) Best terminal gap across all 18 "
+        "cells against the affine-invariant condition number. Laplace appears only as a "
+        "non-iterative approximation-quality baseline."
     )
     return figure, caption, table
 

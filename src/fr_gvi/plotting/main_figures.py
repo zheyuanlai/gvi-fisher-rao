@@ -375,55 +375,69 @@ def main_figure_4() -> None:
     terminal = _terminal(logcosh)
     best = terminal.loc[terminal.groupby(["job_id", "method"])["objective_gap"].idxmin()]
     sizes = {2: 12.0, 10: 22.0, 50: 38.0}
+    floor = 1e-14
+    best = best.assign(plotted_gap=np.maximum(best["objective_gap"], floor))
     for method in ordered_methods(best):
         subset = best[best["method"] == method]
         axes[0].scatter(
-            subset["kappa_star"], positive(subset["objective_gap"]),
+            subset["kappa_star"], subset["plotted_gap"],
             s=[sizes.get(int(d), 20.0) for d in subset["grid_dimension"]],
             facecolors="none", edgecolors=COLORS.get(method), linewidths=0.9,
             marker=MARKERS.get(method), label=method,
         )
+    axes[0].axhline(floor, color=REFERENCE_GREY, linestyle=":", linewidth=1.0,
+                    label="machine zero")
     axes[0].set_xscale("log")
     axes[0].set_yscale("log")
+    axes[0].set_ylim(floor / 3.0, None)
     axes[0].set_xlabel(r"$\kappa_\star$")
     axes[0].set_ylabel("best gap at fixed budget")
     panel_letter(axes[0], "a", "Log-cosh, 27 cells")
 
     if not logistic.empty:
         job = "L_logistic_d50_lam1_fc1e2"
-        cell = logistic[logistic["job_id"] == job]
-        if cell.empty:
-            job = sorted(logistic["job_id"].unique())[0]
-            cell = logistic[logistic["job_id"] == job]
-        iterative = cell[cell["method"] != "Laplace"]
-        terminal_cell = _terminal(iterative)
-        for method in ordered_methods(iterative):
+        deterministic = logistic[
+            logistic["job_id"].str.startswith("L_logistic")
+            & logistic["method"].isin(["FR--R", "FR--KL", "FB--GVI"])
+        ]
+        if job not in set(deterministic["job_id"]):
+            job = sorted(deterministic["job_id"].unique())[0]
+        cell = deterministic[deterministic["job_id"] == job]
+        terminal_cell = _terminal(cell)
+        for method in ordered_methods(cell):
             subset = terminal_cell[terminal_cell["method"] == method]
             if subset.empty:
                 continue
             best_step = float(
                 subset.groupby("normalized_step_size")["objective_gap"].median().idxmin()
             )
-            trajectory = iterative[
-                (iterative["method"] == method)
-                & np.isclose(iterative["normalized_step_size"], best_step)
+            trajectory = cell[
+                (cell["method"] == method)
+                & np.isclose(cell["normalized_step_size"], best_step)
             ]
             plot_median_band(axes[1], trajectory, "oracle_pairs", "objective_gap",
                              label=method, style=method_style(method))
-            plot_median_band(axes[2], trajectory, "oracle_pairs", "predictive_nll",
-                             label=method, style=method_style(method), log_y=False)
-        laplace = cell[cell["method"] == "Laplace"]
+        stochastic = logistic[
+            logistic["job_id"] == job.replace("L_logistic", "Lstoch_logistic")
+        ]
+        for method in ordered_methods(stochastic):
+            subset = stochastic[stochastic["method"] == method]
+            plot_median_band(axes[2], subset, "oracle_pairs", "objective_gap",
+                             label=method, style=method_style(method))
+        laplace = logistic[
+            (logistic["method"] == "Laplace") & (logistic["job_id"] == job)
+        ]
         if not laplace.empty:
-            axes[1].axhline(float(laplace["objective_gap"].iloc[-1]), color=COLORS["Laplace"],
-                            linestyle=":", linewidth=1.1, label="Laplace")
-            axes[2].axhline(float(laplace["predictive_nll"].iloc[-1]), color=COLORS["Laplace"],
-                            linestyle=":", linewidth=1.1, label="Laplace")
+            for axis in (axes[1], axes[2]):
+                axis.axhline(float(laplace["objective_gap"].iloc[-1]), color=COLORS["Laplace"],
+                             linestyle=":", linewidth=1.1, label="Laplace")
         axes[1].set_xlabel("oracle pairs")
         axes[1].set_ylabel("objective gap")
-        panel_letter(axes[1], "b", job.replace("_", " "))
+        panel_letter(axes[1], "b", "Logistic, deterministic")
+        axes[2].set_xscale("log")
         axes[2].set_xlabel("oracle pairs")
-        axes[2].set_ylabel("held-out predictive NLL")
-        panel_letter(axes[2], "c", "Predictive quality")
+        axes[2].set_ylabel("objective gap")
+        panel_letter(axes[2], "c", r"Logistic, stochastic $B=16$")
 
     tidy_log_axes(*axes)
     _legend(figure, axes)
@@ -434,10 +448,11 @@ def main_figure_4() -> None:
         "shifted log-cosh grid ($d\\in\\{2,10,50\\}$, $\\kappa_{\\rm base}\\in\\{1,10,10^2\\}$, "
         "$\\rho\\in\\{0.1,1,5\\}$), each method at its own best swept step, plotted against "
         "the affine-invariant condition number $\\kappa_\\star$; marker size encodes the "
-        "dimension. (b, c) Bayesian logistic regression with a proper Gaussian prior: "
-        "objective gap and held-out predictive negative log-likelihood against the number "
-        "of gradient--Hessian oracle pairs, with the non-iterative Laplace baseline shown "
-        "for reference.",
+        "dimension. (b) Bayesian logistic regression with a proper Gaussian prior, "
+        "deterministic methods at their own best swept step. (c) The stochastic methods at "
+        "$B=16$, each run at a quarter of the largest step its own deterministic "
+        "counterpart was measured to tolerate on that cell, so no method is placed outside "
+        "its stable range. The non-iterative Laplace baseline is shown for reference.",
         best,
     )
 

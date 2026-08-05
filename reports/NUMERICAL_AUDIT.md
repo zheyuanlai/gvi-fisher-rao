@@ -48,8 +48,8 @@ The suite must pass before any campaign runs. It contains:
 
 ## Corrections made during the campaign
 
-Three design errors were found and fixed by inspecting intermediate results
-rather than by accepting the first output.
+Four design errors were found and fixed by inspecting intermediate results rather
+than by accepting the first output.
 
 1. **Experiment F was testing the wrong quantity.** Corollary 2.26 is a uniform
    bound on an energy sublevel, not an asymptotic rate, so comparing a fitted
@@ -64,6 +64,13 @@ rather than by accepting the first output.
 3. **Experiment G was measured before the asymptotic regime.** The slowest and
    fastest linearized modes differ by only a few percent, so the earlier horizon
    mixed them. The horizon was extended to the largest value float64 permits.
+4. **The stochastic logistic comparison used an unfair step rule.** Placing all
+   three methods at the same multiple of their own certified step put S--FB--GVI
+   about 32 times beyond its stable range, because the Fisher--Rao certified steps
+   are conservative by one to two orders of magnitude and FB--GVI's is not. It made
+   no progress in any of the 18 cells. The arms were re-run at a quarter of the
+   largest step each method's own deterministic counterpart was measured to
+   tolerate on that cell, after which all three converge in all 18 cells.
 
 ## Known limitations
 

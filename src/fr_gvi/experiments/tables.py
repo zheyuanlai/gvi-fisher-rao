@@ -61,6 +61,14 @@ def stepsize_table() -> None:
         if frame.empty:
             continue
         frame = frame[frame["method"] != "Laplace"]
+        if experiment == "L":
+            # Superseded first-pass stochastic arms; see the Lstoch_* cells.
+            frame = frame[
+                ~(
+                    frame["job_id"].str.startswith("L_logistic")
+                    & ~frame["method"].isin(["FR--R", "FR--KL", "FB--GVI"])
+                )
+            ]
         if experiment == "C":
             frame = frame[~frame["variant"].str.contains("rescue", na=False)]
         initial = frame[frame["iteration"] == 0].groupby(["job_id", "method"])[

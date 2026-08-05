@@ -118,6 +118,16 @@ to the same value for every iterative method, as it must once they share an
 optimizer; the Laplace approximation sits at a different point, with a nonzero
 Gaussian-VI objective gap.
 
+The stochastic logistic arms were run twice. The first pass put all three methods
+at the same multiple of their own certified step. Because the Fisher--Rao certified
+steps are conservative by one to two orders of magnitude while FB--GVI's is not,
+that placed S--FB--GVI roughly 32 times beyond its stable range and it made no
+progress in any of the 18 cells — an artefact of the step rule, not a property of
+the method. The comparison was re-run in the `Lstoch_*` cells with each method at a
+quarter of the largest step its own deterministic counterpart was measured to
+tolerate on that exact cell. All three then converge in all 18 cells; the reported
+figures use the corrected runs and the first pass is excluded.
+
 ## Corrections made during the campaign
 
 Three design errors were found by inspecting intermediate results and fixed; they

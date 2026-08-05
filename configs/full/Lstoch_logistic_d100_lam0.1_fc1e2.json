@@ -1,0 +1,83 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0037233548334253594,
+    "FR--KL": 0.00026329101811522267,
+    "FR--KL--STL": 3.291137726440284e-05,
+    "FR--R": 0.00013164550905761134,
+    "FR--R--STL": 0.0002632910181152227,
+    "S--FB--GVI": 0.0037233548334253594
+  },
+  "curvature": {
+    "alpha": 0.1,
+    "alpha_star": 0.00047901027337776995,
+    "beta": 268.57499345020364,
+    "beta_star": 1.8193187021979729,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0037233548334253594,
+      "FR--KL": 0.00026329101811522267,
+      "FR--KL--STL": 3.291137726440284e-05,
+      "FR--R": 0.00013164550905761134,
+      "FR--R--STL": 0.0002632910181152227,
+      "S--FB--GVI": 0.0037233548334253594
+    },
+    "condition": 2685.749934502036,
+    "exact": true,
+    "kappa_star": 3798.0786703569775,
+    "lambda_0_star": 1.7092602247312043,
+    "lambda_0_star_max": 208.7637897509878,
+    "lambda_max_star": 2087.637897509879,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_points": 2048,
+  "experiment": "L",
+  "grid": {
+    "dimension": 100,
+    "feature_condition": 100.0,
+    "prior_precision": 0.1
+  },
+  "id": "Lstoch_logistic_d100_lam0.1_fc1e2",
+  "iterations": 120,
+  "master_seed": 20262703,
+  "methods": [
+    {
+      "batch_size": 16,
+      "certified_step_size": 0.0002632910181152227,
+      "name": "FR--R--STL",
+      "normalized_step_size": 511.99999999995583,
+      "seeds": 10,
+      "stable_step_of_counterpart": 0.5392200050999296,
+      "step_size": 0.1348050012749824
+    },
+    {
+      "batch_size": 16,
+      "certified_step_size": 3.291137726440284e-05,
+      "name": "FR--KL--STL",
+      "normalized_step_size": 4095.9999999996467,
+      "seeds": 10,
+      "stable_step_of_counterpart": 0.5392200050999296,
+      "step_size": 0.1348050012749824
+    },
+    {
+      "batch_size": 16,
+      "certified_step_size": 0.0037233548334253594,
+      "name": "S--FB--GVI",
+      "normalized_step_size": 1.999999999999968,
+      "seeds": 10,
+      "stable_step_of_counterpart": 0.0297868386674024,
+      "step_size": 0.0074467096668506
+    }
+  ],
+  "note": "Stochastic arms only. Each method runs at a quarter of the largest step its deterministic counterpart was measured to tolerate on this cell, so no method is placed outside its own stable range.",
+  "record_every": 2,
+  "reference_points": 2048,
+  "target": {
+    "dimension": 100,
+    "feature_condition": 100.0,
+    "kind": "logistic",
+    "prior_precision": 0.1,
+    "samples": 1000,
+    "test_samples": 2000
+  },
+  "tier": "full",
+  "update_points": 2048
+}
