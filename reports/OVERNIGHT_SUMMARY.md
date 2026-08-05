@@ -95,12 +95,28 @@ the predicted `1/(2 omega)` and `1/(2 (omega + tau N))` with maximum relative er
 `5.1e-3` and `1.0e-2` at the finest step. The residual is the `O(Delta t)` bias of
 the retraction and vanishes under step refinement.
 
-**Log-cosh and logistic applications.** Both Fisher--Rao schemes reach machine-zero
-objective gaps at admissible steps on the log-cosh grid and on the logistic cells,
-while FB--GVI's best gap at the same oracle budget is orders of magnitude larger on
-the ill-conditioned cells. The certified Fisher--Rao steps are conservative by
-between one and four orders of magnitude, which the sweeps quantify per cell in
-`results/tables/stepsize_summary.csv`.
+**Log-cosh application.** Over the 27 cells of the
+`d x kappa_base x rho` grid, with each method at its own best swept step and the
+same 400 gradient--Hessian pairs, the better of the two Fisher--Rao schemes reaches
+machine zero in 20 cells and FB--GVI in none; FB--GVI's best gap is larger in 26 of
+27 cells. The median largest stable step, as a multiple of each method's own
+certified step, is 32 for FR--R, 16 for FR--KL and 2 for FB--GVI, so the certified
+Fisher--Rao steps are conservative by one to two orders of magnitude. Per-cell
+numbers are in `results/tables/stepsize_summary.csv`.
+
+Two qualifications belong with that comparison. FB--GVI's certificate
+`eta <= 1/beta` assumes `beta^{-1} I <= Sigma_0`, which the shared initialization
+`C_0 = 0.5 I` fails in 17 of the 46 swept cells, and every FB--GVI divergence at or
+below its certified step falls in those cells. And the objective gap is measured in
+the Fisher--Rao problem's own terms; it is the quantity both geometries minimize,
+but a fixed oracle budget is not the only reasonable accounting.
+
+**Logistic application.** Both Fisher--Rao schemes reach machine-zero gaps at
+admissible steps; FB--GVI is several orders of magnitude behind at the same budget
+on the ill-conditioned cells. Held-out predictive negative log-likelihood converges
+to the same value for every iterative method, as it must once they share an
+optimizer; the Laplace approximation sits at a different point, with a nonzero
+Gaussian-VI objective gap.
 
 ## Corrections made during the campaign
 

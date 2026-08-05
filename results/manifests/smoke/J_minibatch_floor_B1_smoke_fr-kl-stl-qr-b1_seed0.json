@@ -1,7 +1,7 @@
 {
   "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
   "burn_in_iteration": null,
-  "code_hash": "17a0cd9688423fc8eb9a2f5c81bc9b5d190190882ced57439e903c35c9b29fe3",
+  "code_hash": "f1e0ad3f55c16d04963b9013c5695d13691f9dec933a952645b93615cc2d21fa",
   "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/smoke --jobs 8 --force",
   "config": {
     "experiment": "J",
@@ -65,14 +65,13 @@
     "lambda_max_star": 2.945561005925618,
     "source": "logcosh_separable_exact"
   },
-  "end_utc": "2026-08-05T08:59:54.031331+00:00",
+  "end_utc": "2026-08-05T10:09:04.284916+00:00",
   "failure_iteration": null,
   "failure_reason": "",
   "final_objective_gap": 0.004385726941467993,
-  "git_commit": "e45220de49e938080eba9fa063f34e97a3c1004a",
+  "git_commit": "004699fc35e45f4adc377e38ef35dfd451b42732",
   "git_dirty": true,
-  "git_status": "7584 dirty paths (listing omitted)",
-  "git_status_compacted": true,
+  "git_status": "M results/manifests/smoke/A_covariance_burnin_smoke_fr-kl_seed0.json\n M results/manifests/smoke/A_covariance_burnin_smoke_fr-r_seed0.json\n M results/manifests/smoke/B_affine_equivariance_smoke_fb-gvi_seed0.json\n M results/manifests/smoke/B_affine_equivariance_smoke_fr-kl_seed0.json\n M results/manifests/smoke/B_affine_equivariance_smoke_fr-r_seed0.json\n M results/manifests/smoke/C_diao_gaussian_smoke_fb-gvi_seed0.json\n M results/manifests/smoke/C_diao_gaussian_smoke_fr-kl_seed0.json\n M results/manifests/smoke/C_diao_gaussian_smoke_fr-r_seed0.json\n M results/manifests/smoke/D_logcosh_global_smoke_fb-gvi_seed0.json\n M results/manifests/smoke/D_logcosh_global_smoke_fr-kl_seed0.json\n M results/manifests/smoke/D_logcosh_global_smoke_fr-r_seed0.json\n M results/manifests/smoke/E_bump_train_smoke_blocked_blocked.json\n M results/manifests/smoke/F_gaussian_local_smoke_fr-kl_seed0.json\n M results/manifests/smoke/F_gaussian_local_smoke_fr-r_seed0.json\n M results/manifests/smoke/G_local_spectral_smoke_fr-kl_seed0.json\n M results/manifests/smoke/G_local_spectral_smoke_fr-r_seed0.json\n M results/manifests/smoke/H_stl_cancellation_smoke_fr-kl-stl-b1_seed0.json\n M results/manifests/smoke/H_stl_cancellation_smoke_fr-kl-stl-b1_seed1.json\n M results/manifests/smoke/H_stl_cancellation_smoke_fr-r-stl-b1_seed0.json\n M results/manifests/smoke/H_stl_cancellation_smoke_fr-r-stl-b1_seed1.json\n M results/manifests/smoke/H_stl_cancellation_smoke_s-fb-gvi-b1_seed0.json\n M results/manifests/smoke/H_stl_cancellation_smoke_s-fb-gvi-b1_seed1.json\n M results/manifests/smoke/I_variance_ablation_smoke_raw-vs-stl_seed0.json\n M results/manifests/smoke/J_minibatch_floor_B1_smoke_fr-r-stl-qr-b1_seed0.json\n M results/manifests/smoke/J_minibatch_floor_B1_smoke_fr-r-stl-qr-b1_seed1.json\n M results/manifests/smoke/J_minibatch_floor_B8_smoke_fr-r-stl-qr-b8_seed0.json\n M results/manifests/smoke/J_minibatch_floor_B8_smoke_fr-r-stl-qr-b8_seed1.json\n M results/manifests/smoke/K_decreasing_steps_smoke_fr-r-stl-qr-b4_seed0.json\n M results/manifests/smoke/K_decreasing_steps_smoke_fr-r-stl-qr-b4_seed1.json\n M results/manifests/smoke/L_logistic_smoke_fb-gvi_seed0.json\n M results/manifests/smoke/L_logistic_smoke_fr-kl-stl-b4_seed0.json\n M results/manifests/smoke/L_logistic_smoke_fr-kl_seed0.json\n M results/manifests/smoke/L_logistic_smoke_fr-r-stl-b4_seed0.json\n M results/manifests/smoke/L_logistic_smoke_fr-r_seed0.json\n M results/manifests/smoke/L_logistic_smoke_laplace_seed0.json\n M results/manifests/smoke/L_logistic_smoke_s-fb-gvi-b4_seed0.json\n M results/raw/smoke/A/A_covariance_burnin_smoke/fr-kl_seed0.csv\n M results/raw/smoke/A/A_covariance_burnin_smoke/fr-r_seed0.csv\n M results/raw/smoke/B/B_affine_equivariance_smoke/fb-gvi_seed0.csv\n M results/raw/smoke/B/B_affine_equivariance_smoke/fr-kl_seed0.csv\n M results/raw/smoke/B/B_affine_equivariance_smoke/fr-r_seed0.csv\n M results/raw/smoke/C/C_diao_gaussian_smoke/fb-gvi_seed0.csv\n M results/raw/smoke/C/C_diao_gaussian_smoke/fr-kl_seed0.csv\n M results/raw/smoke/C/C_diao_gaussian_smoke/fr-r_seed0.csv\n M results/raw/smoke/D/D_logcosh_global_smoke/fb-gvi_seed0.csv\n M results/raw/smoke/D/D_logcosh_global_smoke/fr-kl_seed0.csv\n M results/raw/smoke/D/D_logcosh_global_smoke/fr-r_seed0.csv\n M results/raw/smoke/F/F_gaussian_local_smoke/fr-kl_seed0.csv\n M results/raw/smoke/F/F_gaussian_local_smoke/fr-r_seed0.csv\n M results/raw/smoke/G/G_local_spectral_smoke/fr-kl_seed0.csv\n M results/raw/smoke/G/G_local_spectral_smoke/fr-r_seed0.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/fr-kl-stl-b1_seed0.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/fr-kl-stl-b1_seed1.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/fr-r-stl-b1_seed0.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/fr-r-stl-b1_seed1.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/s-fb-gvi-b1_seed0.csv\n M results/raw/smoke/H/H_stl_cancellation_smoke/s-fb-gvi-b1_seed1.csv\n M results/raw/smoke/J/J_minibatch_floor_B1_smoke/fr-r-stl-qr-b1_seed0.csv\n M results/raw/smoke/J/J_minibatch_floor_B1_smoke/fr-r-stl-qr-b1_seed1.csv\n M results/raw/smoke/J/J_minibatch_floor_B8_smoke/fr-r-stl-qr-b8_seed0.csv\n M results/raw/smoke/J/J_minibatch_floor_B8_smoke/fr-r-stl-qr-b8_seed1.csv\n M results/raw/smoke/K/K_decreasing_steps_smoke/fr-r-stl-qr-b4_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/fb-gvi_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/fr-kl-stl-b4_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/fr-kl_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/fr-r-stl-b4_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/fr-r_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/laplace_seed0.csv\n M results/raw/smoke/L/L_logistic_smoke/s-fb-gvi-b4_seed0.csv",
   "iterations_completed": 70,
   "method_specification": {
     "batch_size": 1,
@@ -104,7 +103,7 @@
     "pytest": "9.0.2",
     "scipy": "1.18.0"
   },
-  "peak_rss_kib": 82768,
+  "peak_rss_kib": 88436,
   "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
   "problem_instance": 0,
   "problem_metadata": {
@@ -131,8 +130,8 @@
   },
   "run_seed": 2563146674,
   "schema_version": 1,
-  "start_utc": "2026-08-05T08:59:53.817420+00:00",
+  "start_utc": "2026-08-05T10:09:04.080036+00:00",
   "status": "completed",
   "target_seed": 2798275874,
-  "wall_time_seconds": 0.21159361395984888
+  "wall_time_seconds": 0.2039379040361382
 }
