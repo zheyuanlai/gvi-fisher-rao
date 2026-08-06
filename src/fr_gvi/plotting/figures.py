@@ -71,6 +71,17 @@ def failed_runs(experiment: str) -> pd.DataFrame:
 
 
 def ordered_methods(frame: pd.DataFrame) -> list[str]:
+    """Methods present in ``frame``, in the manuscript's fixed order.
+
+    A panel's subset can be legitimately empty on a reduced tier -- the smoke
+    configs instantiate one small cell per experiment, so a panel keyed to a
+    particular grid cell finds nothing -- and an empty frame carries no columns at
+    all.  Returning no methods lets the panel draw nothing instead of raising, so
+    the smoke gate exercises the plotting path rather than dying in it.
+    """
+
+    if frame.empty or "method" not in frame.columns:
+        return []
     present = set(frame["method"].unique())
     return [method for method in METHOD_ORDER if method in present]
 

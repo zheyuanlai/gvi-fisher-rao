@@ -1,23 +1,40 @@
 {
-  "id": "H_stl_cancellation_smoke",
   "experiment": "H",
-  "tier": "smoke",
-  "master_seed": 2026080508,
-  "target": {
-    "kind": "gaussian",
-    "dimension": 4,
-    "condition": 10.0,
-    "rotation": true,
-    "mean_scale": 0.3,
-    "initial_mean_scale": 1.0,
-    "initial_covariance": "target"
+  "grid": {
+    "dimension": 4
   },
+  "id": "H_stl_cancellation_smoke",
   "iterations": 18,
-  "seeds": 2,
+  "master_seed": 2026080508,
   "methods": [
-    {"name": "FR--R--STL", "step_size": 0.2, "batch_size": 1, "seeds": 2},
-    {"name": "FR--KL--STL", "step_size": 0.2, "batch_size": 1, "seeds": 2},
-    {"name": "S--FB--GVI", "step_size": 0.1, "batch_size": 1, "seeds": 2}
-  ]
+    {
+      "batch_size": 1,
+      "name": "FR--R--STL",
+      "seeds": 2,
+      "step_size": 0.2
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--KL--STL",
+      "seeds": 2,
+      "step_size": 0.2
+    },
+    {
+      "batch_size": 1,
+      "name": "S--FB--GVI",
+      "seeds": 2,
+      "step_size": 0.1
+    }
+  ],
+  "seeds": 2,
+  "target": {
+    "condition": 10.0,
+    "dimension": 4,
+    "initial_covariance": "target",
+    "initial_mean_scale": 1.0,
+    "kind": "gaussian",
+    "mean_scale": 0.3,
+    "rotation": true
+  },
+  "tier": "smoke"
 }
-

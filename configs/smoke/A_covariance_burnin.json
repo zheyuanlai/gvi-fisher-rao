@@ -1,21 +1,32 @@
 {
-  "id": "A_covariance_burnin_smoke",
   "experiment": "A",
-  "tier": "smoke",
-  "master_seed": 2026080501,
-  "target": {
-    "kind": "gaussian",
-    "dimension": 4,
+  "grid": {
     "condition": 100.0,
-    "spectrum_scale": "unit_min",
-    "rotation": true,
-    "mean_scale": 0.2,
-    "initial_covariance_scale": 0.0001
+    "lambda0": 0.0001
   },
+  "id": "A_covariance_burnin_smoke",
   "iterations": 100,
+  "master_seed": 2026080501,
   "methods": [
-    {"name": "FR--R", "step_size": 0.1, "normalized_step_size": 0.1},
-    {"name": "FR--KL", "step_size": 0.1, "normalized_step_size": 0.1}
-  ]
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.1,
+      "step_size": 0.1
+    }
+  ],
+  "target": {
+    "condition": 100.0,
+    "dimension": 4,
+    "initial_covariance_scale": 0.0001,
+    "kind": "gaussian",
+    "mean_scale": 0.2,
+    "rotation": true,
+    "spectrum_scale": "unit_min"
+  },
+  "tier": "smoke"
 }
-

@@ -1,4 +1,4 @@
 job_id,method,largest_stable_normalized_step,smallest_failing_normalized_step,stability_censored,best_terminal_gap,best_normalized_step,oracle_pairs_at_best,kappa_star,failures
-C_diao_gaussian_d10,FB--GVI,1.0,4.0,False,21.310081388691025,1.0,500.0,1.0,40
-C_diao_gaussian_d10,FR--KL,2.0,4.0,False,5.7620582649737474e-18,1.0,500.0,1.0,40
-C_diao_gaussian_d10,FR--R,4.0,8.0,False,9.39498826430547e-18,2.0,500.0,1.0,40
+C_diao_gaussian_smoke,FB--GVI,1.0,,True,31.577007681428327,1.0,24.0,1.0,0
+C_diao_gaussian_smoke,FR--KL,0.5,,True,13.68327541478362,0.5,24.0,1.0,0
+C_diao_gaussian_smoke,FR--R,0.5,,True,8.718953537516896,0.5,24.0,1.0,0

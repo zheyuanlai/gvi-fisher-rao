@@ -91,6 +91,7 @@ def main(arguments: list[str] | None = None) -> int:
         {
             *args.figures.glob("experiment_*.png"),
             *args.figures.glob("main_figure_*.png"),
+            *args.figures.glob("figure_*.png"),
         }
     )
     pairs = [audit_figure_pair(path, args.width_inches) for path in paths]
@@ -103,7 +104,9 @@ def main(arguments: list[str] | None = None) -> int:
         "warnings": warnings,
         "visual_inspection": "required separately",
     }
-    output = ROOT / "reports" / "PLOT_AUDIT.json"
+    output = ROOT / "reports" / (
+        "PLOT_AUDIT_MANUSCRIPT.json" if args.figures != FIGURES else "PLOT_AUDIT.json"
+    )
     output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2, sort_keys=True))
     return 1 if errors else 0

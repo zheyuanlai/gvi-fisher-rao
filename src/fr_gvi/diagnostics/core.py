@@ -105,6 +105,39 @@ def gaussian_sharp_threshold(rate: float) -> float:
     return 0.5 * (half - 1.0 - float(np.log(half)))
 
 
+def certified_gap_bound(
+    *,
+    fisher_rao_squared: float,
+    bures_wasserstein_squared: float,
+    alpha_star: float,
+    covariance_min_eigenvalue: float,
+) -> float:
+    """A proved, reference-free upper bound on the energy gap at one state.
+
+    The manuscript supplies two gradient-domination inequalities, both with the
+    explicit constant ``alpha_star``:
+
+        ``|g(a)|^2 + Tr((C^{-1}-H)C(C^{-1}-H)) >= 2 alpha_star Delta(a)``
+            -- the Gaussian variational PL inequality, whose left side is exactly
+            the Bures--Wasserstein residual;
+        ``|grad E(a)|_a^2 >= alpha_star * l * Delta(a)``   for ``C >= l I``
+            -- Fisher--Rao gradient domination.
+
+    Either bounds ``Delta(a)`` by a quantity computable from the iterate alone, so
+    the smaller of the two certifies the gap without any reference solution.  This
+    is what makes the convergence claims independent of reference quality, and it
+    doubles as an honest floor detector: the certificate stops tracking the
+    measured gap exactly where the measurement reaches roundoff.
+    """
+
+    if not np.isfinite(alpha_star) or alpha_star <= 0.0:
+        return float("nan")
+    bound = bures_wasserstein_squared / (2.0 * alpha_star)
+    if np.isfinite(covariance_min_eigenvalue) and covariance_min_eigenvalue > 0.0:
+        bound = min(bound, fisher_rao_squared / (alpha_star * covariance_min_eigenvalue))
+    return float(bound)
+
+
 @dataclass(frozen=True)
 class ResidualDiagnostics:
     fisher_rao_squared: float

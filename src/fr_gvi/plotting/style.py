@@ -68,9 +68,19 @@ REFERENCE_GREY = "#4D4D4D"
 def configure_style() -> None:
     plt.rcParams.update(
         {
+            # Computer Modern, matching the manuscript's article class.  DejaVu's
+            # math glyphs are visibly wrong for the symbols this paper leans on:
+            # it draws kappa as a heavy near-upright letter and sets beta and
+            # lambda far too dark against the surrounding text.  The "cm" fontset
+            # ships with matplotlib, so this needs no LaTeX installation; the
+            # local toolchain has no dvipng, and requiring one would put a system
+            # dependency in the path of every figure regeneration.
             "font.family": "serif",
-            "font.serif": ["DejaVu Serif"],
-            "mathtext.fontset": "dejavuserif",
+            "font.serif": ["cmr10", "DejaVu Serif"],
+            "mathtext.fontset": "cm",
+            # cmr10 has no ASCII hyphen-minus, so tick labels must be typeset as
+            # mathtext for their signs and exponents to come out right.
+            "axes.formatter.use_mathtext": True,
             "font.size": 8.5,
             "axes.labelsize": 8.5,
             "axes.titlesize": 9.0,
@@ -133,15 +143,45 @@ def display_label(row: pd.Series | dict) -> str:
     return figure_text(method)
 
 
-def figure_text(value: object) -> str:
-    """Return manuscript-visible text with single-hyphen compound names.
+# Display names.  The stored identifiers stay as they are so raw data, configs and
+# manifests remain stable; only what a reader sees is renamed.
+#
+# ``FB--GVI`` is Diao et al.'s name for their algorithm, but it names only the
+# discretization, while the two Fisher--Rao entries name their geometry.  Setting
+# the baseline as ``BW-FB`` makes the three labels symmetric -- geometry first,
+# then discretization -- so the comparison the figures make is legible from the
+# legend alone.  It is deliberately not plain ``BW``: that would name the geometry
+# rather than the algorithm, and would suggest the comparison covers the
+# Bures--Wasserstein methods this study excludes by design.
+DISPLAY_NAMES = {
+    "FB--GVI": "BW-FB",
+    "FB-GVI": "BW-FB",
+    "S--FB--GVI": "S-BW-FB",
+    "S-FB-GVI": "S-BW-FB",
+}
 
-    Experiment data and plotting styles deliberately retain their established
-    double-hyphen method identifiers. Normalising only display text keeps those
-    identifiers stable while enforcing the manuscript typographic convention.
+
+def figure_text(value: object) -> str:
+    """Return manuscript-visible text with the repository's typographic fixes.
+
+    Three normalisations, all display-only so the underlying identifiers stay put:
+
+    * compound method names are set with single hyphens, while experiment data and
+      plotting styles keep their established double-hyphen identifiers;
+    * every ``\\star`` is braced.  TeX classes ``\\star`` as a binary operator, and
+      mathtext keeps that operator spacing wherever it appears, which opens a
+      visible gap in both ``\\kappa_\\star`` and ``\\lambda_{0,\\star}``.  Bracing
+      makes it an ordinary atom and closes the gap.  The braced form is identical
+      LaTeX, so caption drafts stay valid when pasted into the manuscript.
     """
 
-    return str(value).replace("--", "-")
+    text = str(value)
+    # Longest key first so ``S--FB--GVI`` is not partly rewritten by ``FB--GVI``.
+    for identifier in sorted(DISPLAY_NAMES, key=len, reverse=True):
+        text = text.replace(identifier, DISPLAY_NAMES[identifier])
+    text = text.replace("--", "-")
+    # Unbrace first so the rule is idempotent over repeated normalisation.
+    return text.replace(r"{\star}", r"\star").replace(r"\star", r"{\star}")
 
 
 def normalize_figure_text(figure: plt.Figure) -> None:

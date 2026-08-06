@@ -20,7 +20,7 @@
     },
     {
       "errors": [],
-      "font_count": 2,
+      "font_count": 3,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_B.pdf",
       "pdf_points": [
         468.0,
@@ -36,7 +36,7 @@
     },
     {
       "errors": [],
-      "font_count": 2,
+      "font_count": 3,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_C.pdf",
       "pdf_points": [
         468.0,
@@ -68,7 +68,7 @@
     },
     {
       "errors": [],
-      "font_count": 3,
+      "font_count": 4,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_F.pdf",
       "pdf_points": [
         468.0,
@@ -116,7 +116,7 @@
     },
     {
       "errors": [],
-      "font_count": 3,
+      "font_count": 4,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_I.pdf",
       "pdf_points": [
         468.0,
@@ -148,7 +148,7 @@
     },
     {
       "errors": [],
-      "font_count": 3,
+      "font_count": 4,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_K.pdf",
       "pdf_points": [
         468.0,
@@ -164,7 +164,7 @@
     },
     {
       "errors": [],
-      "font_count": 3,
+      "font_count": 4,
       "pdf": "/home/zheyuanlai/gvi-fisher-rao/results/figures/experiment_L.pdf",
       "pdf_points": [
         468.0,

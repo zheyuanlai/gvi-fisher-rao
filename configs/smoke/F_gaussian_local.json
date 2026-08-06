@@ -1,20 +1,35 @@
 {
-  "id": "F_gaussian_local_smoke",
   "experiment": "F",
-  "tier": "smoke",
-  "master_seed": 2026080506,
-  "target": {
-    "kind": "gaussian",
+  "grid": {
     "dimension": 2,
-    "condition": 1.0,
-    "rotation": false,
-    "mean_scale": 0.0,
-    "initial_covariance_diagonal": [0.25, 1.0]
+    "initial_eigenvalue": 0.25,
+    "rate": 0.5
   },
+  "id": "F_gaussian_local_smoke",
   "iterations": 24,
+  "master_seed": 2026080506,
   "methods": [
-    {"name": "FR--R", "step_size": 0.25, "normalized_step_size": 0.25},
-    {"name": "FR--KL", "step_size": 0.25, "normalized_step_size": 0.25}
-  ]
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.25,
+      "step_size": 0.25
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.25,
+      "step_size": 0.25
+    }
+  ],
+  "target": {
+    "condition": 1.0,
+    "dimension": 2,
+    "initial_covariance_diagonal": [
+      0.25,
+      1.0
+    ],
+    "kind": "gaussian",
+    "mean_scale": 0.0,
+    "rotation": false
+  },
+  "tier": "smoke"
 }
-

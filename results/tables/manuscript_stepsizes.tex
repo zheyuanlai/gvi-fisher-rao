@@ -1,0 +1,126 @@
+% Stepsize actually used by each method on each manuscript cell, beside the step its own convergence theorem certifies.
+\begin{tabular}{llllllll}
+\toprule
+job\_id & experiment & method & step\_size & certified\_step\_size & step\_over\_certified & step\_scale & protocol \\
+\midrule
+F1burnin\_d20\_lam1e-2 & A & FR--KL & 0.1 & 1 & 0.1 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-2 & A & FR--R & 0.1 & 0.5 & 0.2 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-4 & A & FR--KL & 0.1 & 1 & 0.1 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-4 & A & FR--R & 0.1 & 0.5 & 0.2 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-6 & A & FR--KL & 0.1 & 1 & 0.1 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-6 & A & FR--R & 0.1 & 0.5 & 0.2 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-8 & A & FR--KL & 0.1 & 1 & 0.1 & nan & theorem compatible \\
+F1burnin\_d20\_lam1e-8 & A & FR--R & 0.1 & 0.5 & 0.2 & nan & theorem compatible \\
+F1affine\_d10\_S1e0 & B & FB--GVI & 0.3846 & 0.7692 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e0 & B & FR--KL & 0.2404 & 0.4808 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e0 & B & FR--R & 0.1202 & 0.2404 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e2 & B & FB--GVI & 0.4849 & 0.9698 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e2 & B & FR--KL & 0.2404 & 0.4808 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e2 & B & FR--R & 0.1202 & 0.2404 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e4 & B & FB--GVI & 0.4642 & 0.9283 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e4 & B & FR--KL & 0.2404 & 0.4808 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e4 & B & FR--R & 0.1202 & 0.2404 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e6 & B & FB--GVI & 0.6103 & 1.221 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e6 & B & FR--KL & 0.2404 & 0.4808 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e6 & B & FR--R & 0.1202 & 0.2404 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e8 & B & FB--GVI & 0.5261 & 1.052 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e8 & B & FR--KL & 0.2385 & 0.4771 & 0.5 & nan & theorem compatible \\
+F1affine\_d10\_S1e8 & B & FR--R & 0.1193 & 0.2385 & 0.5 & nan & theorem compatible \\
+F1aniso\_d10\_kappa1e9 & C & FB--GVI & 1 & 1 & 1 & nan & theorem compatible \\
+F1aniso\_d10\_kappa1e9 & C & FR--KL & 1 & 1 & 1 & nan & theorem compatible \\
+F1aniso\_d10\_kappa1e9 & C & FR--R & 0.5 & 0.5 & 1 & nan & theorem compatible \\
+F2global\_d10\_k100\_rho0.1 & D & FB--GVI & 0.1966 & 0.1966 & 1 & 0.19658096344070336 & frozen practical, eta=1 \\
+F2global\_d10\_k100\_rho0.1 & D & FR--KL & 0.3932 & 0.09091 & 4.32 & 0.19658096344070336 & frozen practical, eta=2 \\
+F2global\_d10\_k100\_rho0.1 & D & FR--R & 0.3932 & 0.04545 & 8.65 & 0.19658096344070336 & frozen practical, eta=2 \\
+F2global\_d10\_k100\_rho1 & D & FB--GVI & 0.4796 & 0.4796 & 1 & 0.47963195270983233 & frozen practical, eta=1 \\
+F2global\_d10\_k100\_rho1 & D & FR--KL & 0.9593 & 0.009901 & 96.9 & 0.47963195270983233 & frozen practical, eta=2 \\
+F2global\_d10\_k100\_rho1 & D & FR--R & 0.9593 & 0.00495 & 194 & 0.47963195270983233 & frozen practical, eta=2 \\
+F2global\_d10\_k10\_rho0.1 & D & FB--GVI & 0.6342 & 0.6342 & 1 & 0.6341630582344736 & frozen practical, eta=1 \\
+F2global\_d10\_k10\_rho0.1 & D & FR--KL & 1.268 & 0.5 & 2.54 & 0.6341630582344736 & frozen practical, eta=2 \\
+F2global\_d10\_k10\_rho0.1 & D & FR--R & 1.268 & 0.25 & 5.07 & 0.6341630582344736 & frozen practical, eta=2 \\
+F2global\_d10\_k10\_rho1 & D & FB--GVI & 0.5608 & 0.5608 & 1 & 0.560833949925583 & frozen practical, eta=1 \\
+F2global\_d10\_k10\_rho1 & D & FR--KL & 1.122 & 0.09091 & 12.3 & 0.560833949925583 & frozen practical, eta=2 \\
+F2global\_d10\_k10\_rho1 & D & FR--R & 1.122 & 0.04545 & 24.7 & 0.560833949925583 & frozen practical, eta=2 \\
+F2global\_d10\_k1\_rho0.1 & D & FB--GVI & 0.9613 & 0.9613 & 1 & 0.9613412256297931 & frozen practical, eta=1 \\
+F2global\_d10\_k1\_rho0.1 & D & FR--KL & 1.923 & 0.9056 & 2.12 & 0.9613412256297931 & frozen practical, eta=2 \\
+F2global\_d10\_k1\_rho0.1 & D & FR--R & 1.923 & 0.4528 & 4.25 & 0.9613412256297931 & frozen practical, eta=2 \\
+F2global\_d10\_k1\_rho1 & D & FB--GVI & 0.8361 & 0.8361 & 1 & 0.836104451306727 & frozen practical, eta=1 \\
+F2global\_d10\_k1\_rho1 & D & FR--KL & 1.672 & 0.4921 & 3.4 & 0.836104451306727 & frozen practical, eta=2 \\
+F2global\_d10\_k1\_rho1 & D & FR--R & 1.672 & 0.2461 & 6.8 & 0.836104451306727 & frozen practical, eta=2 \\
+F2global\_d50\_k100\_rho0.1 & D & FB--GVI & 0.1966 & 0.1966 & 1 & 0.1965809634407034 & frozen practical, eta=1 \\
+F2global\_d50\_k100\_rho0.1 & D & FR--KL & 0.3932 & 0.09091 & 4.32 & 0.1965809634407034 & frozen practical, eta=2 \\
+F2global\_d50\_k100\_rho0.1 & D & FR--R & 0.3932 & 0.04545 & 8.65 & 0.1965809634407034 & frozen practical, eta=2 \\
+F2global\_d50\_k100\_rho1 & D & FB--GVI & 0.4796 & 0.4796 & 1 & 0.4796319527098317 & frozen practical, eta=1 \\
+F2global\_d50\_k100\_rho1 & D & FR--KL & 0.9593 & 0.009901 & 96.9 & 0.4796319527098317 & frozen practical, eta=2 \\
+F2global\_d50\_k100\_rho1 & D & FR--R & 0.9593 & 0.00495 & 194 & 0.4796319527098317 & frozen practical, eta=2 \\
+F2global\_d50\_k10\_rho0.1 & D & FB--GVI & 0.6342 & 0.6342 & 1 & 0.6341630582344729 & frozen practical, eta=1 \\
+F2global\_d50\_k10\_rho0.1 & D & FR--KL & 1.268 & 0.5 & 2.54 & 0.6341630582344729 & frozen practical, eta=2 \\
+F2global\_d50\_k10\_rho0.1 & D & FR--R & 1.268 & 0.25 & 5.07 & 0.6341630582344729 & frozen practical, eta=2 \\
+F2global\_d50\_k10\_rho1 & D & FB--GVI & 0.5608 & 0.5608 & 1 & 0.5608339499255819 & frozen practical, eta=1 \\
+F2global\_d50\_k10\_rho1 & D & FR--KL & 1.122 & 0.09091 & 12.3 & 0.5608339499255819 & frozen practical, eta=2 \\
+F2global\_d50\_k10\_rho1 & D & FR--R & 1.122 & 0.04545 & 24.7 & 0.5608339499255819 & frozen practical, eta=2 \\
+F2global\_d50\_k1\_rho0.1 & D & FB--GVI & 0.9613 & 0.9613 & 1 & 0.961341225629793 & frozen practical, eta=1 \\
+F2global\_d50\_k1\_rho0.1 & D & FR--KL & 1.923 & 0.9055 & 2.12 & 0.961341225629793 & frozen practical, eta=2 \\
+F2global\_d50\_k1\_rho0.1 & D & FR--R & 1.923 & 0.4528 & 4.25 & 0.961341225629793 & frozen practical, eta=2 \\
+F2global\_d50\_k1\_rho1 & D & FB--GVI & 0.8361 & 0.8361 & 1 & 0.8361044513067254 & frozen practical, eta=1 \\
+F2global\_d50\_k1\_rho1 & D & FR--KL & 1.672 & 0.492 & 3.4 & 0.8361044513067254 & frozen practical, eta=2 \\
+F2global\_d50\_k1\_rho1 & D & FR--R & 1.672 & 0.246 & 6.8 & 0.8361044513067254 & frozen practical, eta=2 \\
+F2local\_d10\_k10\_rho0p1\_r0p01 & G & FR--KL & 0.5 & 0.5 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho0p1\_r0p01 & G & FR--R & 0.25 & 0.25 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho0p1\_r0p05 & G & FR--KL & 0.5 & 0.5 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho0p1\_r0p05 & G & FR--R & 0.25 & 0.25 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho0p1\_r0p1 & G & FR--KL & 0.5 & 0.5 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho0p1\_r0p1 & G & FR--R & 0.25 & 0.25 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p01 & G & FR--KL & 0.09091 & 0.09091 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p01 & G & FR--R & 0.04545 & 0.04545 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p05 & G & FR--KL & 0.09091 & 0.09091 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p05 & G & FR--R & 0.04545 & 0.04545 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p1 & G & FR--KL & 0.09091 & 0.09091 & 1 & nan & theorem compatible \\
+F2local\_d10\_k10\_rho1\_r0p1 & G & FR--R & 0.04545 & 0.04545 & 1 & nan & theorem compatible \\
+F3logistic\_d50\_kX1e0\_s0\_fb-gvi & L & FB--GVI & 0.003368 & 0.004775 & 0.705 & 0.003367545438265894 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e0\_s0\_fr-kl & L & FR--KL & 0.006735 & 0.003368 & 2 & 0.003367545438265894 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s0\_fr-r & L & FR--R & 0.006735 & 0.001684 & 4 & 0.003367545438265894 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s1\_fb-gvi & L & FB--GVI & 0.002532 & 0.004867 & 0.52 & 0.0025323975373714963 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e0\_s1\_fr-kl & L & FR--KL & 0.005065 & 0.002532 & 2 & 0.0025323975373714963 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s1\_fr-r & L & FR--R & 0.005065 & 0.001266 & 4 & 0.0025323975373714963 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s2\_fb-gvi & L & FB--GVI & 0.002721 & 0.004836 & 0.563 & 0.0027207324356031625 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e0\_s2\_fr-kl & L & FR--KL & 0.005441 & 0.002721 & 2 & 0.0027207324356031625 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s2\_fr-r & L & FR--R & 0.005441 & 0.00136 & 4 & 0.0027207324356031625 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s3\_fb-gvi & L & FB--GVI & 0.002695 & 0.00473 & 0.57 & 0.0026948322135285003 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e0\_s3\_fr-kl & L & FR--KL & 0.00539 & 0.002695 & 2 & 0.0026948322135285003 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s3\_fr-r & L & FR--R & 0.00539 & 0.001347 & 4 & 0.0026948322135285003 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s4\_fb-gvi & L & FB--GVI & 0.00254 & 0.004753 & 0.534 & 0.0025397065511290526 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e0\_s4\_fr-kl & L & FR--KL & 0.005079 & 0.00254 & 2 & 0.0025397065511290526 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e0\_s4\_fr-r & L & FR--R & 0.005079 & 0.00127 & 4 & 0.0025397065511290526 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s0\_fb-gvi & L & FB--GVI & 0.005644 & 0.007024 & 0.804 & 0.005643973867125488 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e2\_s0\_fr-kl & L & FR--KL & 0.01129 & 0.005644 & 2 & 0.005643973867125488 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s0\_fr-r & L & FR--R & 0.01129 & 0.002822 & 4 & 0.005643973867125488 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s1\_fb-gvi & L & FB--GVI & 0.005601 & 0.00727 & 0.77 & 0.005601160104578458 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e2\_s1\_fr-kl & L & FR--KL & 0.0112 & 0.005601 & 2 & 0.005601160104578458 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s1\_fr-r & L & FR--R & 0.0112 & 0.002801 & 4 & 0.005601160104578458 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s2\_fb-gvi & L & FB--GVI & 0.006543 & 0.008095 & 0.808 & 0.006543323744266776 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e2\_s2\_fr-kl & L & FR--KL & 0.01309 & 0.006543 & 2 & 0.006543323744266776 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s2\_fr-r & L & FR--R & 0.01309 & 0.003272 & 4 & 0.006543323744266776 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s3\_fb-gvi & L & FB--GVI & 0.005911 & 0.007052 & 0.838 & 0.005911275787737735 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e2\_s3\_fr-kl & L & FR--KL & 0.01182 & 0.005911 & 2 & 0.005911275787737735 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s3\_fr-r & L & FR--R & 0.01182 & 0.002956 & 4 & 0.005911275787737735 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s4\_fb-gvi & L & FB--GVI & 0.006239 & 0.007412 & 0.842 & 0.0062389425638102215 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e2\_s4\_fr-kl & L & FR--KL & 0.01248 & 0.006239 & 2 & 0.0062389425638102215 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e2\_s4\_fr-r & L & FR--R & 0.01248 & 0.003119 & 4 & 0.0062389425638102215 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s0\_fb-gvi & L & FB--GVI & 0.007676 & 0.008114 & 0.946 & 0.0076760378469925 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e4\_s0\_fr-kl & L & FR--KL & 0.01535 & 0.007676 & 2 & 0.0076760378469925 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s0\_fr-r & L & FR--R & 0.01535 & 0.003838 & 4 & 0.0076760378469925 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s1\_fb-gvi & L & FB--GVI & 0.007613 & 0.008069 & 0.944 & 0.007612845996262848 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e4\_s1\_fr-kl & L & FR--KL & 0.01523 & 0.007613 & 2 & 0.007612845996262848 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s1\_fr-r & L & FR--R & 0.01523 & 0.003806 & 4 & 0.007612845996262848 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s2\_fb-gvi & L & FB--GVI & 0.007273 & 0.007939 & 0.916 & 0.0072734361239208695 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e4\_s2\_fr-kl & L & FR--KL & 0.01455 & 0.007273 & 2 & 0.0072734361239208695 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s2\_fr-r & L & FR--R & 0.01455 & 0.003637 & 4 & 0.0072734361239208695 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s3\_fb-gvi & L & FB--GVI & 0.007496 & 0.008007 & 0.936 & 0.0074961951615120075 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e4\_s3\_fr-kl & L & FR--KL & 0.01499 & 0.007496 & 2 & 0.0074961951615120075 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s3\_fr-r & L & FR--R & 0.01499 & 0.003748 & 4 & 0.0074961951615120075 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s4\_fb-gvi & L & FB--GVI & 0.007202 & 0.007656 & 0.941 & 0.00720230939817386 & frozen practical, eta=1 \\
+F3logistic\_d50\_kX1e4\_s4\_fr-kl & L & FR--KL & 0.0144 & 0.007202 & 2 & 0.00720230939817386 & frozen practical, eta=2 \\
+F3logistic\_d50\_kX1e4\_s4\_fr-r & L & FR--R & 0.0144 & 0.003601 & 4 & 0.00720230939817386 & frozen practical, eta=2 \\
+\bottomrule
+\end{tabular}

@@ -1,0 +1,113 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.007902800325519346,
+    "FR--KL": 0.0062623134865862065,
+    "FR--KL--STL": 0.000782789185823276,
+    "FR--R": 0.0031311567432931032,
+    "FR--R--STL": 0.006262313486586208,
+    "S--FB--GVI": 0.007902800325519346
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.009713157807624797,
+    "beta": 126.5374245596017,
+    "beta_star": 1.55104943699006,
+    "certified_step_sizes": {
+      "FB--GVI": 0.007902800325519346,
+      "FR--KL": 0.0062623134865862065,
+      "FR--KL--STL": 0.000782789185823276,
+      "FR--R": 0.0031311567432931032,
+      "FR--R--STL": 0.006262313486586208,
+      "S--FB--GVI": 0.007902800325519346
+    },
+    "condition": 126.5374245596017,
+    "exact": true,
+    "kappa_star": 159.6853945657602,
+    "lambda_0_star": 1.847086148356273,
+    "lambda_0_star_max": 102.9531301566004,
+    "lambda_max_star": 102.9531301566009,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_points": 4096,
+  "experiment": "L",
+  "grid": {
+    "dimension": 50,
+    "family": "logistic",
+    "feature_condition": 100.0,
+    "role": "stepsize_pilot"
+  },
+  "id": "pilot_logistic_d50_kX1e2_fb-gvi",
+  "iterations": 150,
+  "master_seed": 20260402,
+  "methods": [
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.25,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.0015655783716465594,
+      "tag": "x0p25"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.003131156743293119,
+      "tag": "x0p5"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.006262313486586238,
+      "tag": "x1"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.012524626973172475,
+      "tag": "x2"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 4.0,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.02504925394634495,
+      "tag": "x4"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 8.0,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.0500985078926899,
+      "tag": "x8"
+    },
+    {
+      "certified_step_size": 0.007902800325519346,
+      "name": "FB--GVI",
+      "normalized_step_size": 16.0,
+      "step_scale": 0.006262313486586238,
+      "step_size": 0.1001970157853798,
+      "tag": "x16"
+    }
+  ],
+  "record_every": 1,
+  "reference_points": 4096,
+  "target": {
+    "dimension": 50,
+    "feature_condition": 100.0,
+    "initial_covariance": "prior",
+    "kind": "logistic",
+    "prior_precision": 1.0,
+    "samples": 500,
+    "test_samples": 5000
+  },
+  "tier": "manuscript",
+  "update_points": 4096
+}

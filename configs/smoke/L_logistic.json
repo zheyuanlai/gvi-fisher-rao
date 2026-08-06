@@ -1,28 +1,55 @@
 {
-  "id": "L_logistic_smoke",
+  "evaluation_points": 512,
   "experiment": "L",
-  "tier": "smoke",
-  "master_seed": 2026080512,
-  "target": {
-    "kind": "logistic",
+  "grid": {
     "dimension": 2,
-    "samples": 20,
-    "test_samples": 100,
     "feature_condition": 10.0,
     "prior_precision": 1.0
   },
-  "update_points": 128,
-  "evaluation_points": 512,
-  "reference_points": 2048,
+  "id": "L_logistic_smoke",
   "iterations": 28,
+  "master_seed": 2026080512,
   "methods": [
-    {"name": "FR--R", "step_size": 0.04},
-    {"name": "FR--KL", "step_size": 0.04},
-    {"name": "FB--GVI", "step_size": 0.03},
-    {"name": "FR--R--STL", "step_size": 0.02, "batch_size": 4},
-    {"name": "FR--KL--STL", "step_size": 0.02, "batch_size": 4},
-    {"name": "S--FB--GVI", "step_size": 0.015, "batch_size": 4},
-    {"name": "Laplace"}
-  ]
+    {
+      "name": "FR--R",
+      "step_size": 0.04
+    },
+    {
+      "name": "FR--KL",
+      "step_size": 0.04
+    },
+    {
+      "name": "FB--GVI",
+      "step_size": 0.03
+    },
+    {
+      "batch_size": 4,
+      "name": "FR--R--STL",
+      "step_size": 0.02
+    },
+    {
+      "batch_size": 4,
+      "name": "FR--KL--STL",
+      "step_size": 0.02
+    },
+    {
+      "batch_size": 4,
+      "name": "S--FB--GVI",
+      "step_size": 0.015
+    },
+    {
+      "name": "Laplace"
+    }
+  ],
+  "reference_points": 2048,
+  "target": {
+    "dimension": 2,
+    "feature_condition": 10.0,
+    "kind": "logistic",
+    "prior_precision": 1.0,
+    "samples": 20,
+    "test_samples": 100
+  },
+  "tier": "smoke",
+  "update_points": 128
 }
-

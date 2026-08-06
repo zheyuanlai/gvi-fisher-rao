@@ -1,0 +1,77 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.47963195270983233,
+    "FR--KL": 0.009900990099009903,
+    "FR--KL--STL": 0.0012376237623762376,
+    "FR--R": 0.004950495049504951,
+    "FR--R--STL": 0.009900990099009901,
+    "S--FB--GVI": 0.47963195270983233
+  },
+  "curvature": {
+    "alpha": 0.020642890956432607,
+    "alpha_star": 0.0206428909564271,
+    "beta": 2.0849319865996914,
+    "beta_star": 2.084931986599137,
+    "certified_step_sizes": {
+      "FB--GVI": 0.47963195270983233,
+      "FR--KL": 0.009900990099009903,
+      "FR--KL--STL": 0.0012376237623762376,
+      "FR--R": 0.004950495049504951,
+      "FR--R--STL": 0.009900990099009901,
+      "S--FB--GVI": 0.47963195270983233
+    },
+    "condition": 100.9999999999999,
+    "exact": true,
+    "kappa_star": 101.0,
+    "lambda_0_star": 1.0000000000001874,
+    "lambda_0_star_max": 1.0000000000002658,
+    "lambda_max_star": 48.44282722370594,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "D",
+  "grid": {
+    "condition": 100.0,
+    "dimension": 10,
+    "figure": "2a-2c",
+    "representative": false,
+    "rho": 1.0
+  },
+  "id": "F2global_d10_k100_rho1",
+  "iterations": 400,
+  "master_seed": 20261530,
+  "methods": [
+    {
+      "certified_step_size": 0.004950495049504951,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.47963195270983233,
+      "step_size": 0.9592639054196647
+    },
+    {
+      "certified_step_size": 0.009900990099009903,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.47963195270983233,
+      "step_size": 0.9592639054196647
+    },
+    {
+      "certified_step_size": 0.47963195270983233,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "step_scale": 0.47963195270983233,
+      "step_size": 0.47963195270983233
+    }
+  ],
+  "record_every": 1,
+  "target": {
+    "condition": 100.0,
+    "dimension": 10,
+    "initial_covariance_scale": 1.0,
+    "initial_mean_axis_scale": 2.0,
+    "kind": "logcosh",
+    "rho": 1.0,
+    "shift": 0.0,
+    "whiten_optimizer": true
+  },
+  "tier": "manuscript"
+}

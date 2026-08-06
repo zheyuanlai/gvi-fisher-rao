@@ -1,0 +1,64 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.004866829081938863,
+    "FR--KL": 0.0025326492482329226,
+    "FR--KL--STL": 0.00031658115602911565,
+    "FR--R": 0.0012663246241164613,
+    "FR--R--STL": 0.002532649248232925,
+    "S--FB--GVI": 0.004866829081938863
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.007198709470715912,
+    "beta": 205.4725948176542,
+    "beta_star": 2.842363377296947,
+    "certified_step_sizes": {
+      "FB--GVI": 0.004866829081938863,
+      "FR--KL": 0.0025326492482329226,
+      "FR--KL--STL": 0.00031658115602911565,
+      "FR--R": 0.0012663246241164613,
+      "FR--R--STL": 0.002532649248232925,
+      "S--FB--GVI": 0.004866829081938863
+    },
+    "condition": 205.4725948176542,
+    "exact": true,
+    "kappa_star": 394.84346310398803,
+    "lambda_0_star": 35.67513915153168,
+    "lambda_0_star_max": 138.91378782099272,
+    "lambda_max_star": 138.91378782099272,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "L",
+  "grid": {
+    "dataset": 1,
+    "dimension": 50,
+    "feature_condition": 1.0,
+    "figure": "3",
+    "prior_precision": 1.0
+  },
+  "id": "F3logistic_d50_kX1e0_s1_fr-kl",
+  "iterations": 2000,
+  "master_seed": 20260701,
+  "methods": [
+    {
+      "certified_step_size": 0.0025326492482329226,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.0025326492482329226,
+      "step_size": 0.005065298496465845
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 10,
+  "target": {
+    "dimension": 50,
+    "feature_condition": 1.0,
+    "initial_covariance": "prior",
+    "kind": "logistic",
+    "prior_precision": 1.0,
+    "samples": 500,
+    "test_samples": 5000
+  },
+  "tier": "manuscript"
+}

@@ -1,21 +1,32 @@
 {
-  "id": "G_local_spectral_smoke",
   "experiment": "G",
-  "tier": "smoke",
-  "master_seed": 2026080507,
-  "target": {
-    "kind": "logcosh",
+  "grid": {
     "dimension": 2,
-    "condition": 1.0,
-    "rho": 0.05,
-    "affine_condition": 1.0,
-    "initial_covariance_scale": 0.8
+    "rho": 0.05
   },
-  "local_operator_points": 1024,
+  "id": "G_local_spectral_smoke",
   "iterations": 28,
+  "local_operator_points": 1024,
+  "master_seed": 2026080507,
   "methods": [
-    {"name": "FR--R", "step_size": 0.2, "normalized_step_size": 0.2},
-    {"name": "FR--KL", "step_size": 0.2, "normalized_step_size": 0.2}
-  ]
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.2,
+      "step_size": 0.2
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.2,
+      "step_size": 0.2
+    }
+  ],
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 1.0,
+    "dimension": 2,
+    "initial_covariance_scale": 0.8,
+    "kind": "logcosh",
+    "rho": 0.05
+  },
+  "tier": "smoke"
 }
-

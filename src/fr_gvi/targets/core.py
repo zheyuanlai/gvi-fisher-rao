@@ -109,7 +109,12 @@ class ShiftedLogCoshTarget:
             raise ValueError("offset and shift must match nu")
         if transform.shape != (dimension, dimension):
             raise ValueError("transform shape must be d x d")
-        if abs(float(np.linalg.det(transform))) < np.finfo(np.float64).eps:
+        # Invertibility is a statement about conditioning, not about scale: the
+        # determinant of a well-conditioned d x d map underflows once d is large
+        # (at d = 50 a map with cond(T) = 7 already has |det T| ~ 1e-22), so the
+        # test is on the singular-value spread instead.
+        singular_values = np.linalg.svd(transform, compute_uv=False)
+        if singular_values[-1] <= np.finfo(np.float64).eps * singular_values[0] * dimension:
             raise ValueError("affine transform must be invertible")
         object.__setattr__(self, "nu", nu)
         object.__setattr__(self, "offset", offset)

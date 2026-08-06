@@ -1,22 +1,59 @@
 {
-  "id": "J_minibatch_floor_B1_smoke",
+  "batch_size": 1,
   "experiment": "J",
-  "tier": "smoke",
-  "master_seed": 2026080510,
-  "target": {
-    "kind": "logcosh",
-    "dimension": 3,
+  "grid": {
+    "batch_size": 1,
     "condition": 10.0,
-    "rho": 0.5,
-    "affine_condition": 1.0,
-    "initial_covariance_scale": 0.7
+    "dimension": 8,
+    "rho": 0.5
   },
+  "id": "J_minibatch_floor_B1_smoke",
   "iterations": 70,
-  "seeds": 2,
+  "master_seed": 2026080510,
   "methods": [
-    {"name": "FR--R--STL", "step_size": 0.04, "batch_size": 1, "quadratic_rescue": true, "seeds": 2},
-    {"name": "FR--KL--STL", "step_size": 0.04, "batch_size": 1, "quadratic_rescue": true, "seeds": 2},
-    {"name": "S--FB--GVI", "step_size": 0.02, "batch_size": 1, "seeds": 2}
-  ]
+    {
+      "batch_size": 1,
+      "name": "FR--R--STL",
+      "quadratic_rescue": true,
+      "seeds": 2,
+      "step_size": 0.04
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--KL--STL",
+      "quadratic_rescue": true,
+      "seeds": 2,
+      "step_size": 0.04
+    },
+    {
+      "batch_size": 1,
+      "name": "S--FB--GVI",
+      "seeds": 2,
+      "step_size": 0.02
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--R--STL",
+      "seeds": 2,
+      "step_size": 0.04,
+      "tag": "noqr"
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--KL--STL",
+      "seeds": 2,
+      "step_size": 0.04,
+      "tag": "noqr"
+    }
+  ],
+  "seeds": 2,
+  "target": {
+    "affine_condition": 1.0,
+    "condition": 10.0,
+    "dimension": 8,
+    "initial_covariance_scale": 0.7,
+    "kind": "logcosh",
+    "rho": 0.5
+  },
+  "tier": "smoke"
 }
-

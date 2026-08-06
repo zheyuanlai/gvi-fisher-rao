@@ -13,8 +13,10 @@ from fr_gvi.algorithms.core import GaussianState
 from fr_gvi.diagnostics.core import objective, residuals
 from fr_gvi.expectations.core import (
     ExactGaussianExpectation,
+    ExpectationEngine,
     FixedNormalExpectation,
     GaussHermiteLogCoshExpectation,
+    LogisticExactExpectation,
 )
 from fr_gvi.linear_algebra.spd import spd_inverse, spd_solve
 from fr_gvi.targets.core import GaussianTarget, LogisticRegressionTarget, ShiftedLogCoshTarget, Target
@@ -31,40 +33,52 @@ class ReferenceSolution:
     metadata: dict[str, float | int | str | bool]
 
 
-def _logcosh_reference(target: ShiftedLogCoshTarget, order: int) -> GaussianState:
-    # Truncated Gauss--Legendre against the Gaussian density, for the same reason
-    # as in the expectation engine: Gauss--Hermite cannot resolve the unit-width
-    # sech^2 peak inside the very wide marginals of the small-curvature
-    # coordinates, and its answer drifts rather than converging with order.
-    truncation = 12.0
-    raw_nodes, raw_weights = leggauss(max(64, 16 * order))
-    means = np.zeros(target.dimension, dtype=np.float64)
-    variances = np.ones(target.dimension, dtype=np.float64)
-    for index in range(target.dimension):
-        nu = target.nu[index]
-        rho = target.rho
-        offset = target.offset[index]
+def logcosh_marginal_optimizer(
+    nu_values: FloatArray, rho_value: float, offsets: FloatArray, order: int = 32
+) -> tuple[FloatArray, FloatArray]:
+    """Per-coordinate Gaussian-VI optimizer of the separable log-cosh marginals.
+
+    Returns the optimizing means and variances of the ``z`` coordinates, which are
+    the diagonal of the optimizer in any affine image ``x = T z + s``.
+    """
+
+    # The stationarity conditions are integrated with the *same* panelled rule the
+    # expectation engine uses.  A single Gauss--Legendre panel over
+    # [m - 12 s, m + 12 s] places its nodes proportionally to the marginal width, so
+    # in the small-curvature coordinates -- where the marginal is several units wide
+    # but the tanh and sech^2 structure lives in a window of unit width -- it misses
+    # the peak.  That is what made the reference residual on the wide-marginal cells
+    # five orders of magnitude worse than on the rest of the grid.
+    rule = GaussHermiteLogCoshExpectation(order=order)
+    dimension = int(np.asarray(nu_values).size)
+    means = np.zeros(dimension, dtype=np.float64)
+    variances = np.ones(dimension, dtype=np.float64)
+    for index in range(dimension):
+        nu = float(np.asarray(nu_values)[index])
+        rho = float(rho_value)
+        offset = float(np.asarray(offsets)[index])
 
         def conditions(parameters: FloatArray) -> FloatArray:
             mean = parameters[0]
             variance = np.exp(parameters[1])
-            deviation = np.sqrt(variance)
-            half_width = truncation * deviation
-            samples = mean + half_width * raw_nodes
-            density = np.exp(-0.5 * (truncation * raw_nodes) ** 2) / (
-                deviation * np.sqrt(2.0 * np.pi)
-            )
-            weights = raw_weights * half_width * density
+            samples, weights = rule._rule(mean, np.sqrt(variance), offset)
             tanh = np.tanh(samples - offset)
             expected_gradient = float(weights @ (nu * samples + rho * tanh))
             expected_hessian = float(weights @ (nu + rho * (1.0 - tanh**2)))
             return np.asarray([expected_gradient, variance * expected_hessian - 1.0])
 
-        solution = least_squares(conditions, np.asarray([0.0, -np.log(nu + rho)]), xtol=1e-13, ftol=1e-13, gtol=1e-13)
-        if not solution.success or np.linalg.norm(solution.fun) > 1.0e-9:
+        solution = least_squares(conditions, np.asarray([0.0, -np.log(nu + rho)]), xtol=1e-14, ftol=1e-14, gtol=1e-14)
+        if not solution.success or np.linalg.norm(solution.fun) > 1.0e-11:
             raise RuntimeError(f"log-cosh reference solve failed in coordinate {index}: {solution.message}")
         means[index] = solution.x[0]
         variances[index] = np.exp(solution.x[1])
+    return means, variances
+
+
+def _logcosh_reference(target: ShiftedLogCoshTarget, order: int) -> GaussianState:
+    means, variances = logcosh_marginal_optimizer(
+        target.nu, target.rho, target.offset, order
+    )
     mean = target.transform @ means + target.shift
     covariance = target.transform @ np.diag(variances) @ target.transform.T
     return GaussianState(mean, covariance)
@@ -100,7 +114,7 @@ def _state_to_parameter(state: GaussianState) -> FloatArray:
     return np.concatenate([np.asarray(state.mean, dtype=np.float64), entries])
 
 
-def _foc_residual(target: Target, engine: FixedNormalExpectation, state: GaussianState) -> float:
+def _foc_residual(target: Target, engine: ExpectationEngine, state: GaussianState) -> float:
     """Squared first-order-condition residual at a state, on the fixed design."""
 
     expectation = engine.evaluate(target, state.mean, state.covariance)
@@ -109,7 +123,7 @@ def _foc_residual(target: Target, engine: FixedNormalExpectation, state: Gaussia
 
 def _foc_newton(
     target: Target,
-    engine: FixedNormalExpectation,
+    engine: ExpectationEngine,
     initial: GaussianState,
     *,
     iterations: int = 200,
@@ -298,6 +312,28 @@ def solve_reference(
             certificate.fisher_rao_squared,
             certificate.bures_wasserstein_squared,
             {"backend": "gauss_hermite_foc", "order": order},
+        )
+    if isinstance(target, LogisticRegressionTarget):
+        # The logistic expectations are exact, so the stationarity conditions
+        #     E_q[grad V] = 0,     C^{-1} = E_q[grad^2 V]
+        # can be solved directly.  Under strong logconcavity the objective has a
+        # unique stationary point which is its minimizer, so there is no surrogate
+        # to minimize separately and no design to transfer between: the reference
+        # is the true Gaussian variational optimum up to the residual reported here.
+        exact = LogisticExactExpectation(96)
+        state, residual = _foc_newton(target, exact, initial)
+        objective_value, expectation = objective(target, state, exact)
+        certificate = residuals(state, expectation)
+        return ReferenceSolution(
+            state,
+            objective_value,
+            certificate.fisher_rao_squared,
+            certificate.bures_wasserstein_squared,
+            {
+                "backend": "logistic_exact_foc_newton",
+                "order": exact.order,
+                "foc_residual_squared": residual,
+            },
         )
     # Nonseparable targets are handled on one fixed quadrature design that is
     # shared with the deterministic updates and with the objective evaluation.

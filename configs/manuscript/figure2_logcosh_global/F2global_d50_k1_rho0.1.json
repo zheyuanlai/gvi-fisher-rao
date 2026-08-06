@@ -1,0 +1,77 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.9613412256297957,
+    "FR--KL": 0.9055124251246129,
+    "FR--KL--STL": 0.11318905314057662,
+    "FR--R": 0.45275621256230647,
+    "FR--R--STL": 0.9055124251246129,
+    "S--FB--GVI": 0.9613412256297957
+  },
+  "curvature": {
+    "alpha": 0.9419261350530268,
+    "alpha_star": 0.941926135052864,
+    "beta": 1.0402133741272543,
+    "beta_star": 1.0402133741270752,
+    "certified_step_sizes": {
+      "FB--GVI": 0.9613412256297957,
+      "FR--KL": 0.9055124251246129,
+      "FR--KL--STL": 0.11318905314057662,
+      "FR--R": 0.45275621256230647,
+      "FR--R--STL": 0.9055124251246129,
+      "S--FB--GVI": 0.9613412256297957
+    },
+    "condition": 1.1043470771396469,
+    "exact": true,
+    "kappa_star": 1.1043470771396473,
+    "lambda_0_star": 1.0000000000001703,
+    "lambda_0_star_max": 1.0000000000001752,
+    "lambda_max_star": 1.061654372658294,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "D",
+  "grid": {
+    "condition": 1.0,
+    "dimension": 50,
+    "figure": "2a-2c",
+    "representative": false,
+    "rho": 0.1
+  },
+  "id": "F2global_d50_k1_rho0.1",
+  "iterations": 400,
+  "master_seed": 20265501,
+  "methods": [
+    {
+      "certified_step_size": 0.45275621256230647,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.961341225629793,
+      "step_size": 1.922682451259586
+    },
+    {
+      "certified_step_size": 0.9055124251246129,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.961341225629793,
+      "step_size": 1.922682451259586
+    },
+    {
+      "certified_step_size": 0.9613412256297957,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "step_scale": 0.961341225629793,
+      "step_size": 0.961341225629793
+    }
+  ],
+  "record_every": 1,
+  "target": {
+    "condition": 1.0,
+    "dimension": 50,
+    "initial_covariance_scale": 1.0,
+    "initial_mean_axis_scale": 2.0,
+    "kind": "logcosh",
+    "rho": 0.1,
+    "shift": 0.0,
+    "whiten_optimizer": true
+  },
+  "tier": "manuscript"
+}

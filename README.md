@@ -6,7 +6,30 @@ The repository includes deterministic and stochastic Gaussian variational-infere
 algorithms, resumable experiment campaigns, numerical validation, and
 publication-ready figures.
 
-![Application experiments](results/figures/main_figure_4.png)
+![Global-to-local convergence](results/figures/manuscript/figure_2.png)
+
+## The manuscript campaign
+
+The figures of the paper come from a reduced, preregistered campaign of 131
+deterministic trajectories, separate from the exploratory grids. Three experiment
+groups produce three figures: Gaussian structure and affine invariance, global-to-local
+convergence on non-Gaussian targets, and deterministic Bayesian logistic regression.
+Only `FR--R`, `FR--KL` and `FB--GVI` iterate, with `Laplace` as a non-iterative
+reference.
+
+```bash
+make manuscript-pilot     # sweep the pilot cell, freeze the stepsizes
+make manuscript-configs   # instantiate the 87 configs
+make manuscript-runs      # 131 trajectories
+make manuscript-figures   # figures 1-3 plus the width and font audit
+make manuscript-tables
+make manuscript-audit
+```
+
+The protocol, the frozen stepsizes and the deviations from the plan it was written
+against are documented in [the protocol note](reports/MANUSCRIPT_PROTOCOL.md).
+Every figure carries a provenance JSON naming its panels, their config identifiers
+and the commit; every panel carries its processed CSV.
 
 ## Highlights
 
@@ -117,15 +140,16 @@ git because they are resumable and regenerable.
 
 ```text
 src/fr_gvi/       algorithms, targets, diagnostics, experiments, and plotting
-configs/          smoke and generated full-tier experiment configurations
+configs/          smoke, generated full-tier, and manuscript experiment configurations
 scripts/          environment, campaign, resume, figure, and audit entry points
 tests/            unit, integration, and regression validation
 results/          tracked headline artifacts and local campaign outputs
-reports/          implementation, audit, campaign, and reproduction notes
+reports/          protocol, implementation, audit, campaign, and reproduction notes
 ```
 
 ## Documentation
 
+- [Manuscript numerical protocol](reports/MANUSCRIPT_PROTOCOL.md)
 - [Reproduction guide](reports/REPRODUCIBILITY.md)
 - [Implementation notes](reports/IMPLEMENTATION_NOTES.md)
 - [Numerical audit](reports/NUMERICAL_AUDIT.md)

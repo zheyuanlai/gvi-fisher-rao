@@ -70,3 +70,9 @@ results/manifests/reference_*.json
 results/manifests/campaign_state.json
 results/tables/*.csv
 results/tables/*.tex
+
+# The manuscript campaign is the citable one: its figures, panel data, tables and
+# per-run manifests are tracked, and only its bulk trajectories are regenerable.
+results/raw/manuscript/
+!results/tables/manuscript_*.csv
+!results/tables/manuscript_*.tex

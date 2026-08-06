@@ -1,0 +1,45 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.9283294545620578,
+    "FR--KL": 0.48076923079706824,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.24038461539853412,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 0.9283294545620578
+  },
+  "experiment": "B",
+  "grid": {
+    "dimension": 10,
+    "figure": "1b",
+    "transform_condition": 10000.0
+  },
+  "id": "F1affine_d10_S1e4",
+  "iterations": 60,
+  "master_seed": 20260424,
+  "methods": [
+    {
+      "certified_step_size": 0.24038461539853412,
+      "name": "FR--R",
+      "normalized_step_size": 0.5,
+      "step_size": 0.12019230769926706
+    },
+    {
+      "certified_step_size": 0.48076923079706824,
+      "name": "FR--KL",
+      "normalized_step_size": 0.5,
+      "step_size": 0.24038461539853412
+    },
+    {
+      "certified_step_size": 0.9283294545620578,
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "step_size": 0.4641647272810289
+    }
+  ],
+  "target": {
+    "dimension": 10,
+    "kind": "gaussian",
+    "transform_condition": 10000.0
+  },
+  "tier": "manuscript"
+}

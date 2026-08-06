@@ -43,6 +43,7 @@ from fr_gvi.diagnostics.curvature import (
     whitened_initialization,
 )
 from fr_gvi.diagnostics.core import (
+    certified_gap_bound,
     gaussian_core_rate,
     gaussian_kl_gap,
     gaussian_w2_squared,
@@ -54,12 +55,15 @@ from fr_gvi.diagnostics.local_operator import (
     assemble_local_operator,
     discrete_rate,
     kl_local_gap,
+    symmetric_star_basis,
 )
 from fr_gvi.expectations.core import (
     ExactGaussianExpectation,
     ExpectationEngine,
     FixedNormalExpectation,
     GaussHermiteLogCoshExpectation,
+    LogisticExactExpectation,
+    expected_bernoulli_probabilities,
 )
 from fr_gvi.experiments.factories import BuiltProblem, build_problem
 from fr_gvi.experiments.reference import ReferenceSolution, laplace_approximation, solve_reference
@@ -164,7 +168,8 @@ def load_configs(paths: Iterable[str]) -> list[tuple[Path, dict[str, Any]]]:
     for item in paths:
         path = Path(item)
         if path.is_dir():
-            files.extend(sorted(path.glob("*.json")))
+            # Recursive so a config tree may be grouped into per-figure directories.
+            files.extend(sorted(path.rglob("*.json")))
         else:
             files.append(path)
     configs: list[tuple[Path, dict[str, Any]]] = []
@@ -200,6 +205,13 @@ def engines(
         # uniformly in the marginal width, so these orders are comfortably
         # converged; a doubling test is in the unit suite.
         return GaussHermiteLogCoshExpectation(32), GaussHermiteLogCoshExpectation(64)
+    if isinstance(target, LogisticRegressionTarget):
+        # The logistic potential depends on theta only through the linear
+        # predictors, so its Gaussian expectations are exact one-dimensional
+        # integrals.  There is no sampling design to share or to transfer between,
+        # and the reported gaps are gaps to the true Gaussian variational optimum.
+        del update_points, evaluation_points, update_seed, evaluation_seed
+        return LogisticExactExpectation(48), LogisticExactExpectation(96)
     # Nonseparable targets share one fixed quadrature design between the
     # deterministic updates, the objective evaluation and the reference solve.
     # The discretized problem is then internally exact, and the quadrature error
@@ -230,12 +242,25 @@ def _predictive_metrics(
     state: GaussianState,
     normals: np.ndarray,
 ) -> dict[str, float]:
+    """Held-out predictive quality of the Gaussian posterior approximation.
+
+    For a logistic model the posterior predictive probability is a
+    one-dimensional Gaussian integral per test point, so it is computed exactly
+    and the sampling design is unused; the argument is retained for other target
+    families that have no such reduction.
+    """
+
     if problem.heldout is None:
         return {"predictive_nll": np.nan, "classification_error": np.nan, "brier": np.nan}
     features, labels = problem.heldout
-    root = spd_sqrt(state.covariance)
-    parameter_samples = state.mean + normals @ root.T
-    probabilities = np.mean(expit(parameter_samples @ features.T), axis=0)
+    if isinstance(problem.target, LogisticRegressionTarget):
+        probabilities = expected_bernoulli_probabilities(
+            features, state.mean, state.covariance
+        )
+    else:
+        root = spd_sqrt(state.covariance)
+        parameter_samples = state.mean + normals @ root.T
+        probabilities = np.mean(expit(parameter_samples @ features.T), axis=0)
     epsilon = 1.0e-12
     nll = -np.mean(labels * np.log(probabilities + epsilon) + (1.0 - labels) * np.log(1.0 - probabilities + epsilon))
     classification = np.mean((probabilities >= 0.5) != labels)
@@ -264,8 +289,10 @@ def trajectory_row(
     repair: dict[str, float] | None,
     problem: BuiltProblem,
     predictive_normals: np.ndarray,
+    algorithm_elapsed: float = np.nan,
     equivariance_error_mean: float = np.nan,
     equivariance_error_covariance: float = np.nan,
+    equivariance_error_back: float = np.nan,
     local_gamma: float = np.nan,
     local_lambda: float = np.nan,
 ) -> dict[str, Any]:
@@ -299,9 +326,13 @@ def trajectory_row(
         "fisher_rao_residual_squared": certificate.fisher_rao_squared,
         "bures_wasserstein_residual_squared": certificate.bures_wasserstein_squared,
         "wall_time_seconds": elapsed,
+        # Cumulative time spent inside the algorithm's own update, excluding the
+        # per-iteration diagnostics, which are not part of any method's cost.
+        "algorithm_seconds": algorithm_elapsed,
         "repair": json.dumps(repair, sort_keys=True) if repair else "",
         "equivariance_error_mean": equivariance_error_mean,
         "equivariance_error_covariance": equivariance_error_covariance,
+        "equivariance_error_back": equivariance_error_back,
         "local_gamma": local_gamma,
         "local_lambda": local_lambda,
         **predictive,
@@ -325,6 +356,38 @@ def write_rows(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writeheader()
         writer.writerows(rows)
     temporary.replace(path)
+
+
+def _local_eigenmode_state(
+    operator: np.ndarray, optimum: GaussianState, radius: float
+) -> tuple[GaussianState, np.ndarray]:
+    """``a_0 = a_star + r v_min`` along the slowest mode of the linearized generator.
+
+    ``v_min = (u, X)`` is the unit ``star``-norm eigenvector of ``L_star`` for its
+    smallest eigenvalue ``gamma_star``.  A tangent vector at ``a_star`` acts on the
+    state by ``m = m_star + r C_star^{1/2} u`` and
+    ``C = C_star^{1/2} (I + r X) C_star^{1/2}``, which is the exponential-free
+    first-order parameterization used throughout the local analysis.  The sign is
+    pinned by the largest-magnitude component so the construction is reproducible.
+    """
+
+    dimension = optimum.mean.size
+    values, vectors = np.linalg.eigh(operator)
+    vector = np.asarray(vectors[:, 0], dtype=np.float64)
+    vector = vector * np.sign(vector[int(np.argmax(np.abs(vector)))] or 1.0)
+    basis = symmetric_star_basis(dimension)
+    direction_mean = vector[:dimension]
+    direction_covariance = np.einsum("k,kij->ij", vector[dimension:], np.asarray(basis))
+    root = spd_sqrt(optimum.covariance)
+    identity = np.eye(dimension, dtype=np.float64)
+    perturbed = symmetrize_matrix(identity + radius * direction_covariance)
+    if float(np.linalg.eigvalsh(perturbed)[0]) <= 0.0:
+        raise ValueError(f"local eigenmode radius {radius} leaves the positive cone")
+    state = GaussianState(
+        optimum.mean + radius * root @ direction_mean,
+        symmetrize_matrix(root @ perturbed @ root),
+    )
+    return state, values
 
 
 def _base_equivariance_problem(problem: BuiltProblem) -> tuple[GaussianTarget, GaussianState, np.ndarray, np.ndarray]:
@@ -361,12 +424,17 @@ def _run_trajectory(
     base_step_size = float(method_specification.get("step_size", config.get("step_size", 0.1)))
     state = problem.initial_state
     rescue = bool(method_specification.get("quadratic_rescue", False))
+    setup_seconds = 0.0
     if rescue:
         state = quadratic_rescue(problem.target, state.mean)
     if method == Method.LAPLACE:
         if not isinstance(problem.target, LogisticRegressionTarget):
             raise ValueError("Laplace is only an approximation-quality baseline for logistic regression")
+        # Laplace is non-iterative, so its whole cost is the mode solve; timing it
+        # keeps the wall-clock column comparable with the iterative methods.
+        laplace_started = time.perf_counter()
         state = laplace_approximation(problem.target)
+        setup_seconds = time.perf_counter() - laplace_started
         iterations = 0
     rng = np.random.default_rng(run_seed)
     counts = OperationCounts()
@@ -378,14 +446,13 @@ def _run_trajectory(
         counts.cholesky_solves += 2
     rows: list[dict[str, Any]] = []
     started = time.perf_counter()
-    predictive_normals = FixedNormalExpectation.qmc(
-        state.mean.size, min(512, int(config.get("evaluation_points", 1024))), run_seed + 17
-    ).normals
+    algorithm_elapsed = setup_seconds
 
     local_gamma = np.nan
     local_lambda = np.nan
     local_kl_gamma = np.nan
     local_discrete_rate = np.nan
+    predicted_contraction = np.nan
     if config["experiment"] == "G":
         local_normals = FixedNormalExpectation.qmc(
             state.mean.size, int(config.get("local_operator_points", 2048)), run_seed + 37
@@ -396,6 +463,16 @@ def _run_trajectory(
         local_kl_gamma = kl_local_gap(operator, state.mean.size, base_step_size)
         gap = local_kl_gamma if method == Method.FR_KL else local_gamma
         local_discrete_rate = discrete_rate(gap, base_step_size)
+        predicted_contraction = 1.0 - base_step_size * gap
+        local_initialization = config.get("local_initialization")
+        if local_initialization is not None:
+            state, _ = _local_eigenmode_state(
+                operator, reference.state, float(local_initialization["radius"])
+            )
+
+    predictive_normals = FixedNormalExpectation.qmc(
+        state.mean.size, min(512, int(config.get("evaluation_points", 1024))), run_seed + 17
+    ).normals
 
     base_target = None
     base_state = None
@@ -406,9 +483,14 @@ def _run_trajectory(
     if config["experiment"] == "B":
         base_target, base_state, transform, shift = _base_equivariance_problem(problem)
 
+    inverse_transform = (
+        np.linalg.solve(transform, np.eye(transform.shape[0])) if transform is not None else None
+    )
+
     def add_row(iteration: int, actual_step: float, repair: dict[str, float] | None) -> None:
         mean_error = np.nan
         covariance_error = np.nan
+        back_error = np.nan
         if base_state is not None and transform is not None and shift is not None:
             expected_mean = transform @ base_state.mean + shift
             expected_covariance = transform @ base_state.covariance @ transform.T
@@ -417,6 +499,23 @@ def _run_trajectory(
             mean_error = float(np.linalg.norm(state.mean - expected_mean) / denominator_mean)
             covariance_error = float(
                 np.linalg.norm(state.covariance - expected_covariance, ord="fro") / denominator_covariance
+            )
+            # The equivariance residual of the protocol is measured after mapping
+            # the transformed trajectory *back* to the base coordinates, so the
+            # discrepancy is reported in the coordinates the reference lives in.
+            assert inverse_transform is not None
+            back_mean = inverse_transform @ (state.mean - shift)
+            back_covariance = inverse_transform @ state.covariance @ inverse_transform.T
+            back_error = float(
+                (
+                    np.linalg.norm(back_mean - base_state.mean)
+                    + np.linalg.norm(back_covariance - base_state.covariance, ord="fro")
+                )
+                / (
+                    1.0
+                    + float(np.linalg.norm(base_state.mean))
+                    + float(np.linalg.norm(base_state.covariance, ord="fro"))
+                )
             )
         rows.append(
             trajectory_row(
@@ -432,11 +531,13 @@ def _run_trajectory(
                 evaluation_engine=evaluation_engine,
                 counts=counts,
                 elapsed=time.perf_counter() - started,
+                algorithm_elapsed=algorithm_elapsed,
                 repair=repair,
                 problem=problem,
                 predictive_normals=predictive_normals,
                 equivariance_error_mean=mean_error,
                 equivariance_error_covariance=covariance_error,
+                equivariance_error_back=back_error,
                 local_gamma=local_gamma,
                 local_lambda=local_lambda,
             )
@@ -450,9 +551,19 @@ def _run_trajectory(
         rows[-1]["problem_instance"] = int(instance)
         rows[-1]["local_kl_gamma"] = float(local_kl_gamma)
         rows[-1]["local_discrete_rate"] = float(local_discrete_rate)
+        rows[-1]["predicted_contraction"] = float(predicted_contraction)
+        rows[-1]["local_radius"] = float(
+            (config.get("local_initialization") or {}).get("radius", np.nan)
+        )
         for key in ("alpha", "beta", "alpha_star", "beta_star", "kappa_star",
                     "lambda_0_star", "lambda_0_star_max", "lambda_max_star"):
             rows[-1][key] = float((curvature or {}).get(key, np.nan))
+        rows[-1]["certified_gap"] = certified_gap_bound(
+            fisher_rao_squared=float(rows[-1]["fisher_rao_residual_squared"]),
+            bures_wasserstein_squared=float(rows[-1]["bures_wasserstein_residual_squared"]),
+            alpha_star=float(rows[-1]["alpha_star"]),
+            covariance_min_eigenvalue=float(rows[-1]["covariance_min_eigenvalue"]),
+        )
         for key, value in config.get("grid", {}).items():
             rows[-1][f"grid_{key}"] = value
 
@@ -472,6 +583,7 @@ def _run_trajectory(
         else:
             actual_step = base_step_size
         try:
+            update_started = time.perf_counter()
             state, diagnostics = step(
                 method,
                 problem.target,
@@ -483,6 +595,7 @@ def _run_trajectory(
                 counts=counts,
                 raw_mean_ablation=bool(method_specification.get("raw_mean_ablation", False)),
             )
+            algorithm_elapsed += time.perf_counter() - update_started
             if base_state is not None and base_target is not None:
                 base_state, _ = step(
                     method,
@@ -531,6 +644,7 @@ def _run_trajectory(
         "minimum_covariance_eigenvalue": min(float(row["covariance_min_eigenvalue"]) for row in rows),
         "burn_in_iteration": burn_in,
         "operation_counts": counts.to_dict(),
+        "algorithm_seconds": algorithm_elapsed,
         "wall_time_seconds": time.perf_counter() - started,
         "peak_rss_kib": int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss),
     }
@@ -848,13 +962,25 @@ def run_config(
             seed=seed_for(master_seed, 3, instance),
             engine=evaluation_engine if isinstance(evaluation_engine, FixedNormalExpectation) else None,
         )
-        reference_objective, _ = objective(problem.target, reference.state, evaluation_engine)
+        # Re-evaluate the reference on the *evaluation* engine, the same one every
+        # trajectory objective is measured with, so a gap is a difference of two
+        # numbers produced by one rule.  The residuals are recomputed there too:
+        # carrying over the solver's residuals would certify the reference against
+        # a rule that no reported quantity uses.
+        reference_objective, reference_expectation = objective(
+            problem.target, reference.state, evaluation_engine
+        )
+        reference_certificate = residuals(reference.state, reference_expectation)
         reference = ReferenceSolution(
             reference.state,
             reference_objective,
-            reference.fisher_rao_residual_squared,
-            reference.bures_wasserstein_residual_squared,
-            reference.metadata,
+            reference_certificate.fisher_rao_squared,
+            reference_certificate.bures_wasserstein_squared,
+            {
+                **reference.metadata,
+                "solver_fisher_rao_residual_squared": reference.fisher_rao_residual_squared,
+                "evaluation_backend": type(evaluation_engine).__name__,
+            },
         )
         suffix = f"_instance{instance}" if instance_per_seed else ""
         reference_path = RESULTS / "manifests" / f"reference_{config['id']}{suffix}.json"

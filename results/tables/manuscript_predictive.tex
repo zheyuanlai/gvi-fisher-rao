@@ -1,0 +1,19 @@
+% Held-out predictive negative log-likelihood at termination on the Bayesian logistic-regression problem, median over five datasets, together with the terminal objective gap and Fisher--Rao gradient norm. The iteration budget is fixed and the tolerance reference is 1e-06.
+\begin{tabular}{lllllllll}
+\toprule
+feature\_condition & method & datasets & objective\_gap\_median & gradient\_norm\_median & predictive\_nll\_median & predictive\_nll\_min & predictive\_nll\_max & classification\_error\_median \\
+\midrule
+1.0 & FR--R & 5 & 1.393e-06 & 1.306e-03 & 0.6454 & 0.6290 & 0.6506 & 0.3526 \\
+1.0 & FR--KL & 5 & 1.487e-06 & 1.356e-03 & 0.6454 & 0.6290 & 0.6506 & 0.3526 \\
+1.0 & FB--GVI & 5 & 0.000e+00 & 2.217e-14 & 0.6454 & 0.6290 & 0.6506 & 0.3526 \\
+1.0 & Laplace & 5 & 6.359e-01 & 1.056e+00 & 0.6371 & 0.6233 & 0.6397 & 0.3526 \\
+100.0 & FR--R & 5 & -3.979e-13 & 4.245e-09 & 0.7096 & 0.6972 & 0.7209 & 0.4448 \\
+100.0 & FR--KL & 5 & -4.547e-13 & 5.139e-09 & 0.7096 & 0.6972 & 0.7209 & 0.4448 \\
+100.0 & FB--GVI & 5 & 0.000e+00 & 1.232e-10 & 0.7096 & 0.6972 & 0.7209 & 0.4448 \\
+100.0 & Laplace & 5 & 2.106e-01 & 6.060e-01 & 0.7049 & 0.6940 & 0.7145 & 0.4452 \\
+10000.0 & FR--R & 5 & 0.000e+00 & 1.889e-12 & 0.6992 & 0.6890 & 0.7040 & 0.4652 \\
+10000.0 & FR--KL & 5 & 0.000e+00 & 2.794e-12 & 0.6992 & 0.6890 & 0.7040 & 0.4652 \\
+10000.0 & FB--GVI & 5 & 1.137e-13 & 9.801e-08 & 0.6992 & 0.6890 & 0.7040 & 0.4652 \\
+10000.0 & Laplace & 5 & 3.390e-02 & 2.487e-01 & 0.6979 & 0.6884 & 0.7027 & 0.4654 \\
+\bottomrule
+\end{tabular}

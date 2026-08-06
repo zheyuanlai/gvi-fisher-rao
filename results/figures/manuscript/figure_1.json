@@ -1,0 +1,53 @@
+{
+  "figure": "figure_1",
+  "git": {
+    "commit": "b0ac19c04582351fcf13522e804102a26bf20c83",
+    "dirty": true
+  },
+  "outputs": [
+    "results/figures/manuscript/figure_1.pdf",
+    "results/figures/manuscript/figure_1.png",
+    "results/figures/manuscript/figure_1.md"
+  ],
+  "panels": [
+    {
+      "config_ids": [
+        "F1burnin_d20_lam1e-2",
+        "F1burnin_d20_lam1e-4",
+        "F1burnin_d20_lam1e-6",
+        "F1burnin_d20_lam1e-8"
+      ],
+      "panel": "a",
+      "processed_csv": "results/processed/manuscript/figure_1_a.csv",
+      "rows": 8,
+      "title": "Covariance entry time"
+    },
+    {
+      "config_ids": [
+        "F1affine_d10_S1e0",
+        "F1affine_d10_S1e2",
+        "F1affine_d10_S1e4",
+        "F1affine_d10_S1e6"
+      ],
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_1_b.csv",
+      "rows": 12,
+      "title": "Affine equivariance"
+    },
+    {
+      "config_ids": [
+        "F1aniso_d10_kappa1e9"
+      ],
+      "panel": "c",
+      "processed_csv": "results/processed/manuscript/figure_1_c.csv",
+      "rows": 1503,
+      "title": "$\\kappa=10^9$, $\\kappa_\\star=1$"
+    }
+  ],
+  "stepsize_protocol": {
+    "FB--GVI": 1.0,
+    "FR--KL": 2.0,
+    "FR--R": 2.0
+  },
+  "tier": "manuscript"
+}

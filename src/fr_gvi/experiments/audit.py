@@ -78,11 +78,20 @@ def _pathwise_covariance_bands() -> dict[str, object]:
 def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--allow-failed", action="store_true")
+    parser.add_argument(
+        "--tier",
+        default=None,
+        help="restrict the audit to one tier; without it every tier is scanned, "
+        "including the exploratory sweeps whose unstable points are retained by design",
+    )
     args = parser.parse_args(arguments)
+    tier = args.tier
     errors: list[str] = []
     warnings: list[str] = []
     manifests = []
-    for path in sorted((ROOT / "results" / "manifests").rglob("*.json")):
+    manifest_root = (ROOT / "results" / "manifests" / tier) if tier else (ROOT / "results" / "manifests")
+    raw_root = (ROOT / "results" / "raw" / tier) if tier else (ROOT / "results" / "raw")
+    for path in sorted(manifest_root.rglob("*.json")):
         if path.name.startswith("reference_") or path.name == "campaign_state.json":
             continue
         if "state_shards" in path.parts:
@@ -101,7 +110,7 @@ def main(arguments: list[str] | None = None) -> int:
     # 100 * eps of the matrix scale, and only if the run also logged the repair.
     epsilon = float(np.finfo(np.float64).eps)
     roundoff_repairs = 0
-    for path in sorted((ROOT / "results" / "raw").rglob("*.csv")):
+    for path in sorted(raw_root.rglob("*.csv")):
         with path.open(encoding="utf-8", newline="") as handle:
             for line, row in enumerate(csv.DictReader(handle), start=2):
                 value = row.get("covariance_min_eigenvalue", "")
@@ -154,7 +163,8 @@ def main(arguments: list[str] | None = None) -> int:
         "pathwise_covariance_bands": theory_checks["summary"],
         "manifest_statuses": dict(statuses),
         "manifest_count": len(manifests),
-        "raw_csv_count": len(list((ROOT / "results" / "raw").rglob("*.csv"))),
+        "tier": tier or "all",
+        "raw_csv_count": len(list(raw_root.rglob("*.csv"))),
         "figure_png_count": len(list((ROOT / "results" / "figures").glob("*.png"))),
         "errors": errors,
         "warnings": warnings,

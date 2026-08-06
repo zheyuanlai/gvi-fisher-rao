@@ -1,11 +1,10 @@
 {
   "errors": [],
   "figure_png_count": 17,
-  "manifest_count": 17770,
+  "manifest_count": 54,
   "manifest_statuses": {
-    "completed": 15725,
-    "failed": 2042,
-    "skipped": 3
+    "completed": 53,
+    "skipped": 1
   },
   "pathwise_covariance_bands": {
     "minimum_lower_slack": {
@@ -18,9 +17,8 @@
     },
     "runs_checked": 4260
   },
-  "raw_csv_count": 17767,
-  "roundoff_scale_covariance_repairs": 2,
-  "warnings": [
-    "2 covariance eigenvalues at or below roundoff scale; each is a logged repair bounded by 100 * eps * matrix scale"
-  ]
+  "raw_csv_count": 53,
+  "roundoff_scale_covariance_repairs": 0,
+  "tier": "smoke",
+  "warnings": []
 }

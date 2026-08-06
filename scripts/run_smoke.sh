@@ -8,8 +8,8 @@ export MKL_NUM_THREADS=1
 
 "${REPO_ROOT}/.venv/bin/python" -m pytest -q
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.campaign "${REPO_ROOT}/configs/smoke" --budget-hours 0.5
-"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.figures --raw-root "${REPO_ROOT}/results/raw/smoke"
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.figures --tier smoke
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.tables
-"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.audit
+"${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.audit --tier smoke
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.plotting.audit
 

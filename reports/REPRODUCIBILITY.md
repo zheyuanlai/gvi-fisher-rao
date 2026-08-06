@@ -32,7 +32,33 @@ make smoke
 Finishes in under a minute and exercises every experiment end to end, including
 the data, plotting and reporting paths.
 
-## 3. Configuration grids
+## 3. The manuscript campaign
+
+The figures of the paper come from a separate, reduced campaign of 131
+deterministic trajectories. It is the one to run if the goal is to reproduce the
+paper rather than to explore.
+
+```bash
+make manuscript-pilot     # sweep the two pilot cells, freeze the stepsizes
+make manuscript-configs   # instantiate the 87 configs from the frozen steps
+make manuscript-runs      # the 131 trajectories
+make manuscript-figures   # figures 1-3 plus the width and font audit
+make manuscript-tables
+make manuscript-audit
+```
+
+The pilot writes `configs/manuscript/selected_steps.json`, which must not be
+regenerated after inspecting final results. `make manuscript-audit` checks the
+trajectory count, the method exclusions, the absence of repairs, the reference
+certification margin, the agreement between the configs and the frozen steps, and
+the presence of every figure artifact. The full protocol and its deviations from
+the plan it was written against are in
+[the protocol note](MANUSCRIPT_PROTOCOL.md).
+
+Wall time is dominated by the logistic cells, which solve one reference per
+dataset seed; expect a couple of hours on a machine with a few dozen cores.
+
+## 4. Configuration grids
 
 The full-tier configs under `configs/full/` are generated programmatically and
 are committed, so this step is only needed if a grid definition changes:
@@ -44,7 +70,7 @@ make configs        # instantiates each cell and solves its reference
 Generation is slower than the campaign itself because it solves one reference per
 cell in order to compute the certified stepsizes that the sweep is built around.
 
-## 4. Full campaign
+## 5. Full campaign
 
 ```bash
 CAMPAIGN_JOBS=64 OVERNIGHT_BUDGET_HOURS=8 make full
@@ -68,7 +94,7 @@ under `results/manifests/state_shards/`, and the parent merges them into
 JSON. Use one BLAS thread per worker (the scripts already export
 `OMP_NUM_THREADS=1` and friends) to avoid oversubscription.
 
-## 5. Figures, tables and audits
+## 6. Figures, tables and audits
 
 ```bash
 make figures        # regenerates every figure and table from saved results only
@@ -80,26 +106,36 @@ make audit
 paired PDF and PNG files plus the exact processed CSV behind each figure and a
 caption draft, then runs the physical plot audit.
 
-## 6. What is and is not in version control
+## 7. What is and is not in version control
 
 Committed: the source, the configs, the reports, every figure with its caption
-draft and its processed input CSV, and the smoke tier's raw data and manifests.
+draft and its processed input CSV, the smoke tier's raw data and manifests, and
+the whole manuscript layer -- its configs and frozen stepsizes, its per-run
+manifests, its figures with per-panel CSVs and provenance JSON, and its tables.
 
 Not committed, because it is regenerable and large: `results/raw/full/`,
-`results/raw/appendix/`, the full- and appendix-tier manifests,
-`results/manifests/reference_*.json` (which carry full covariance matrices),
-`results/manifests/campaign_state.json`, `results/tables/*`, and logs. All of it
-is written by `make full`, `make figures` and `make tables`.
+`results/raw/appendix/`, `results/raw/manuscript/`, the full- and appendix-tier
+manifests, `results/manifests/reference_*.json` (which carry full covariance
+matrices), `results/manifests/campaign_state.json`, the exploratory
+`results/tables/*`, and logs. All of it is written by `make full`,
+`make manuscript-runs`, `make figures` and `make tables`.
 
 Manifests record the working tree's dirty-path count rather than the full
 `git status` listing; the commit hash, the dirty flag and the numerical source
 hash — the parts that actually identify the code — are recorded in full.
 
-## 7. What to check
+## 8. What to check
 
+- `reports/MANUSCRIPT_AUDIT.json` — trajectory count against the preregistered
+  protocol, method exclusions, repaired runs, declared breakdowns, the reference
+  certification margin, and the agreement between the configs and the frozen
+  stepsizes.
 - `reports/AUDIT_RESULTS.json` — manifest statuses, forbidden-method scan,
   covariance positivity, and the pathwise covariance-band check of Lemma 4.4.
-- `reports/PLOT_AUDIT.json` — PDF/PNG pairing, physical width, font embedding.
+- `reports/PLOT_AUDIT.json`, `reports/PLOT_AUDIT_MANUSCRIPT.json` — PDF/PNG
+  pairing, physical width, font embedding.
+- `results/tables/manuscript_reference_certification.csv` — the on-design and
+  transfer residuals of every reference behind a manuscript figure.
 - `results/tables/reference_quality.csv` — the certification of every reference
   used to compute an objective gap.
 - `results/manifests/full/*.json` — per-run provenance: config, config hash,
@@ -107,7 +143,7 @@ hash — the parts that actually identify the code — are recorded in full.
   platform, CPU count, BLAS configuration, seeds, curvature constants, operation
   counts, status and failure reason.
 
-## 8. Determinism
+## 9. Determinism
 
 Every run derives its seeds from `numpy.random.SeedSequence(master_seed,
 spawn_key=(stream, repeat))`, and both the master seed and the derived run seed
@@ -116,7 +152,7 @@ its CSV bit-for-bit on the same platform and package versions. Results are not
 guaranteed bit-identical across BLAS implementations; the reported quantities are
 stable far beyond the precision at which they are interpreted.
 
-## 9. Known non-reproducible quantities
+## 10. Known non-reproducible quantities
 
 Wall-clock timings are machine specific and are recorded for within-run
 comparison only. Peak RSS is process-level and reflects the worker, not a single

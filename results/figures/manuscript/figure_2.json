@@ -1,0 +1,101 @@
+{
+  "figure": "figure_2",
+  "git": {
+    "commit": "b0ac19c04582351fcf13522e804102a26bf20c83",
+    "dirty": true
+  },
+  "outputs": [
+    "results/figures/manuscript/figure_2.pdf",
+    "results/figures/manuscript/figure_2.png",
+    "results/figures/manuscript/figure_2.md"
+  ],
+  "panels": [
+    {
+      "config_ids": [
+        "F2global_d10_k1_rho1"
+      ],
+      "panel": "a",
+      "processed_csv": "results/processed/manuscript/figure_2_a.csv",
+      "rows": 1203,
+      "title": "$d=10$, $\\kappa_{\\rm base}=1$"
+    },
+    {
+      "config_ids": [
+        "F2global_d10_k10_rho1"
+      ],
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_2_b.csv",
+      "rows": 1203,
+      "title": "$d=10$, $\\kappa_{\\rm base}=10$"
+    },
+    {
+      "config_ids": [
+        "F2global_d50_k100_rho1"
+      ],
+      "panel": "c",
+      "processed_csv": "results/processed/manuscript/figure_2_c.csv",
+      "rows": 1203,
+      "title": "$d=50$, $\\kappa_{\\rm base}=10^2$"
+    },
+    {
+      "config_ids": [
+        "F2global_d10_k100_rho0.1",
+        "F2global_d10_k100_rho1",
+        "F2global_d10_k10_rho0.1",
+        "F2global_d10_k10_rho1",
+        "F2global_d10_k1_rho0.1",
+        "F2global_d10_k1_rho1",
+        "F2global_d50_k100_rho0.1",
+        "F2global_d50_k100_rho1",
+        "F2global_d50_k10_rho0.1",
+        "F2global_d50_k10_rho1",
+        "F2global_d50_k1_rho0.1",
+        "F2global_d50_k1_rho1"
+      ],
+      "panel": "d",
+      "processed_csv": "results/processed/manuscript/figure_2_d.csv",
+      "rows": 36,
+      "title": "Grid summary"
+    },
+    {
+      "config_ids": [
+        "F2global_d10_k100_rho0.1",
+        "F2global_d10_k100_rho1",
+        "F2global_d10_k10_rho0.1",
+        "F2global_d10_k10_rho1",
+        "F2global_d10_k1_rho0.1",
+        "F2global_d10_k1_rho1",
+        "F2global_d50_k100_rho0.1",
+        "F2global_d50_k100_rho1",
+        "F2global_d50_k10_rho0.1",
+        "F2global_d50_k10_rho1",
+        "F2global_d50_k1_rho0.1",
+        "F2global_d50_k1_rho1"
+      ],
+      "panel": "e",
+      "processed_csv": "results/processed/manuscript/figure_2_e.csv",
+      "rows": 36,
+      "title": "Elapsed flow time"
+    },
+    {
+      "config_ids": [
+        "F2local_d10_k10_rho0p1_r0p01",
+        "F2local_d10_k10_rho0p1_r0p05",
+        "F2local_d10_k10_rho0p1_r0p1",
+        "F2local_d10_k10_rho1_r0p01",
+        "F2local_d10_k10_rho1_r0p05",
+        "F2local_d10_k10_rho1_r0p1"
+      ],
+      "panel": "f",
+      "processed_csv": "results/processed/manuscript/figure_2_f.csv",
+      "rows": 12,
+      "title": "Local rate"
+    }
+  ],
+  "stepsize_protocol": {
+    "FB--GVI": 1.0,
+    "FR--KL": 2.0,
+    "FR--R": 2.0
+  },
+  "tier": "manuscript"
+}

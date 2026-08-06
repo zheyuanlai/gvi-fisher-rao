@@ -1,0 +1,77 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.634163058234474,
+    "FR--KL": 0.5,
+    "FR--KL--STL": 0.0625,
+    "FR--R": 0.25,
+    "FR--R--STL": 0.5,
+    "S--FB--GVI": 0.634163058234474
+  },
+  "curvature": {
+    "alpha": 0.7884407543258872,
+    "alpha_star": 0.7884407543257401,
+    "beta": 1.5768815086517736,
+    "beta_star": 1.5768815086514802,
+    "certified_step_sizes": {
+      "FB--GVI": 0.634163058234474,
+      "FR--KL": 0.5,
+      "FR--KL--STL": 0.0625,
+      "FR--R": 0.25,
+      "FR--R--STL": 0.5,
+      "S--FB--GVI": 0.634163058234474
+    },
+    "condition": 1.999999999999999,
+    "exact": true,
+    "kappa_star": 2.0,
+    "lambda_0_star": 1.0000000000001725,
+    "lambda_0_star_max": 1.0000000000001867,
+    "lambda_max_star": 1.2683261164691841,
+    "source": "logcosh_separable_exact"
+  },
+  "experiment": "D",
+  "grid": {
+    "condition": 10.0,
+    "dimension": 10,
+    "figure": "2a-2c",
+    "representative": false,
+    "rho": 0.1
+  },
+  "id": "F2global_d10_k10_rho0.1",
+  "iterations": 400,
+  "master_seed": 20261511,
+  "methods": [
+    {
+      "certified_step_size": 0.25,
+      "name": "FR--R",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.6341630582344736,
+      "step_size": 1.2683261164689472
+    },
+    {
+      "certified_step_size": 0.5,
+      "name": "FR--KL",
+      "normalized_step_size": 2.0,
+      "step_scale": 0.6341630582344736,
+      "step_size": 1.2683261164689472
+    },
+    {
+      "certified_step_size": 0.634163058234474,
+      "name": "FB--GVI",
+      "normalized_step_size": 1.0,
+      "step_scale": 0.6341630582344736,
+      "step_size": 0.6341630582344736
+    }
+  ],
+  "record_every": 1,
+  "target": {
+    "condition": 10.0,
+    "dimension": 10,
+    "initial_covariance_scale": 1.0,
+    "initial_mean_axis_scale": 2.0,
+    "kind": "logcosh",
+    "rho": 0.1,
+    "shift": 0.0,
+    "whiten_optimizer": true
+  },
+  "tier": "manuscript"
+}
