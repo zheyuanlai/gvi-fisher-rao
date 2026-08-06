@@ -174,9 +174,10 @@ def test_certified_gap_bound_dominates_the_measured_gap() -> None:
     from fr_gvi.diagnostics.core import certified_gap_bound
 
     frame = load_experiment("D", "manuscript")
-    if frame.empty:
-        pytest.skip("no manuscript results")
-    frame = frame[~frame["job_id"].astype(str).str.startswith("pilot")].copy()
+    if not frame.empty:
+        frame = frame[~frame["job_id"].astype(str).str.startswith("pilot")].copy()
+    if frame.empty or "certified_gap" not in frame.columns:
+        pytest.skip("no manuscript campaign results yet")
     frame["initial"] = frame.groupby(["job_id", "method"])["objective_gap"].transform("first")
     meaningful = frame[frame["objective_gap"] > 1e-10 * frame["initial"]]
     assert len(meaningful) > 100
