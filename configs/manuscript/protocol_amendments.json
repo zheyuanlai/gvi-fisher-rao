@@ -1,0 +1,53 @@
+{
+  "note": "Deliberate departures from the experiment brief, each recorded with what was requested, what was implemented, why, and the author's decision. The manuscript audit fails if an amendment is undecided or if the implementation no longer matches what was approved, so a deviation cannot pass merely because a gate is silent.",
+  "amendments": [
+    {
+      "id": "A",
+      "title": "Stepsize scale and pilot design",
+      "requested": "One pilot target, h = eta * h_cert, largest admissible multiplier.",
+      "implemented": "One pilot per target family; h = eta / (beta_star * max(lambda_0_star_max, 1)); fastest admissible multiplier, minimised across the families; FB--GVI additionally held at the ceiling its own theorem admits.",
+      "reason": "The requested rule diverges on six of the twelve final grid cells. The Fisher-Rao certificate reduces to 1/(2 kappa_star) on these targets, so its conservatism grows like kappa_star and a multiplier chosen at kappa_star = 11 is far outside the stable range at kappa_star = 2. A multiple of 1/beta_star alone fails the other way, ignoring an initial covariance that overshoots C_star by two orders of magnitude on the logistic posteriors. The scale used is the certified step with the non-attained growth allowance removed and the initialisation kept, and one pilot cell cannot calibrate both regimes.",
+      "cost": "The frozen multiplier is a single number across a grid on which beta_star varies by a factor of five, so on the least conditioned cells h*gamma_star approaches 2 and the Fisher-Rao iteration count rises. That is visible in Figure 2(d) and separated from the geometry by Figure 2(e).",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-07",
+      "verify": {"step_scale": "inverse_beta_star_times_initial_ceiling", "pilot_families": 2}
+    },
+    {
+      "id": "B",
+      "title": "Logistic expectation rule",
+      "requested": "A common quasi-Monte-Carlo update design, an independent finer evaluation design, and a still finer reference design.",
+      "implemented": "Deterministic panelled Gauss-Legendre integration of the exact one-dimensional predictor marginals, order 48 for updates and order 96 for the objective evaluation and the reference solve.",
+      "reason": "The logistic potential depends on theta only through the linear predictors z_i = x_i . theta, and z_i is a scalar Gaussian under q, so every expectation is a one-dimensional integral and no sampling error need be incurred. The plan's structure is preserved, since the evaluation rule is distinct from and strictly finer than the update rule and both are common to all methods; only the size of the residual disagreement changes. Against an order-160 rule the order-48 objective, gradient and Hessian differ by at most 6.6e-11, 6.5e-12 and 2.9e-11, where a 4096-point scrambled-Sobol design misplaced the objective by about 1e-1 and left a design-transfer error near 1e-3.",
+      "cost": "The backend is quadrature, not a random design, so it cannot be described as quasi-Monte-Carlo and its accuracy is to the reported numerical precision rather than literally exact.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-07",
+      "verify": {"backend": "logistic_exact_foc_newton", "update_order": 48, "evaluation_order": 96}
+    },
+    {
+      "id": "C",
+      "title": "Reference acceptance criterion",
+      "requested": "The Fisher-Rao residual at least two orders of magnitude below the smallest reported objective gap.",
+      "implemented": "The residual is converted into a bound on the reference's own suboptimality by Fisher-Rao gradient domination, and that certified gap is compared with the smallest gap the panels draw.",
+      "reason": "A residual is a gradient norm and a gap is an energy difference; comparing them directly compares different units. The conversion uses a proved inequality with a constant the campaign computes exactly. The Bures-Wasserstein form of the lemma is slightly tighter but was rejected: certifying a Fisher-Rao method with a Wasserstein quantity would place that geometry inside the methodology rather than leaving it an external baseline. The literal test would instead require the panels to stop at a much larger gap, since the residuals are near 1e-13 while the plotted gaps reach 1e-16.",
+      "cost": "The worst reference carries 6.86 decades of margin rather than the literal residual-against-gap comparison the brief names.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-07",
+      "verify": {"branch": "fisher_rao_gradient_domination", "margin_decades_required": 2.0}
+    },
+    {
+      "id": "D",
+      "title": "Display name of the Bures-Wasserstein baseline",
+      "requested": "FB--GVI, the name Diao et al. give the algorithm.",
+      "implemented": "BW-FB in figures and manuscript text, with FB--GVI named in the figure captions so the citation is unambiguous. Stored identifiers, configs and manifests keep FB--GVI unchanged.",
+      "reason": "FR-R and FR-KL name their geometry before their discretization; FB--GVI names only its discretization, which left the three labels asymmetric and the Fisher-Rao versus Bures-Wasserstein contrast unreadable from a legend. Plain BW was rejected as it names a geometry whose other algorithms this study excludes by design.",
+      "cost": "It is not the published name, so the captions must carry the correspondence.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-07",
+      "verify": {"display_name": "BW-FB", "identifier": "FB--GVI"}
+    }
+  ]
+}

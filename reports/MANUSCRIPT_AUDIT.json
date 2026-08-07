@@ -1,4 +1,12 @@
 {
+  "amendments": {
+    "decisions": {
+      "A": "approved",
+      "B": "approved",
+      "C": "approved",
+      "D": "approved"
+    }
+  },
   "artifacts": {
     "panels_per_figure": {
       "figure_1": 3,

@@ -43,6 +43,7 @@ RAW = ROOT / "results" / "raw" / "manuscript"
 MANIFESTS = ROOT / "results" / "manifests" / "manuscript"
 FIGURES = ROOT / "results" / "figures" / "manuscript"
 REPORT = ROOT / "reports" / "MANUSCRIPT_AUDIT.json"
+AMENDMENTS = CONFIG_ROOT / "protocol_amendments.json"
 TIER = "manuscript"
 
 ALLOWED_METHODS = {*ITERATIVE, "Laplace"}
@@ -367,7 +368,7 @@ def check_configs_regenerate() -> tuple[list[str], list[str], dict[str, object]]
         manuscript_main(["--destination", str(destination)])
         manuscript_main(["--pilot", "--destination", str(destination)])
         for path in sorted(CONFIG_ROOT.rglob("*.json")):
-            if path.name == "selected_steps.json":
+            if path.name in {"selected_steps.json", "protocol_amendments.json"}:
                 continue
             rebuilt = destination / path.relative_to(CONFIG_ROOT)
             checked += 1
@@ -395,6 +396,56 @@ def check_captions() -> tuple[list[str], list[str], dict[str, object]]:
             if token in text:
                 errors.append(f"{name} caption still describes an obsolete backend: {token!r}")
     return errors, [], {}
+
+
+def check_amendments() -> tuple[list[str], list[str], dict[str, object]]:
+    """Every departure from the brief must be recorded and explicitly decided.
+
+    A deviation that no gate mentions passes silently, which is how an
+    exploratory choice becomes an undocumented protocol.  Each amendment carries
+    the author's decision and a machine-checkable fingerprint of what was
+    approved, so the implementation cannot drift away from the decision after the
+    fact.
+    """
+
+    errors: list[str] = []
+    if not AMENDMENTS.exists():
+        return [f"missing the protocol amendment record at {AMENDMENTS.name}"], [], {}
+    payload = json.loads(AMENDMENTS.read_text(encoding="utf-8"))
+    recorded: dict[str, str] = {}
+    for amendment in payload.get("amendments", []):
+        identifier = str(amendment.get("id", "?"))
+        status = str(amendment.get("status", "undecided"))
+        recorded[identifier] = status
+        if status != "approved":
+            errors.append(f"amendment {identifier} is {status}; it needs an explicit decision")
+        if not amendment.get("decided_by") or not amendment.get("decided_on"):
+            errors.append(f"amendment {identifier} records no decision maker or date")
+        for field in ("requested", "implemented", "reason", "cost"):
+            if not amendment.get(field):
+                errors.append(f"amendment {identifier} does not state its {field}")
+
+    # The implementation must still match what was approved.
+    verify = {a["id"]: a.get("verify", {}) for a in payload.get("amendments", [])}
+    from fr_gvi.experiments.manuscript import (
+        LOGISTIC_EVALUATION_ORDER,
+        LOGISTIC_UPDATE_ORDER,
+        PILOT_STEP_SCALE,
+    )
+    from fr_gvi.plotting.style import DISPLAY_NAMES
+
+    if verify.get("A", {}).get("step_scale") != PILOT_STEP_SCALE:
+        errors.append("amendment A was approved for a different stepsize scale than the code uses")
+    expected_b = verify.get("B", {})
+    if (
+        expected_b.get("update_order") != LOGISTIC_UPDATE_ORDER
+        or expected_b.get("evaluation_order") != LOGISTIC_EVALUATION_ORDER
+    ):
+        errors.append("amendment B was approved for different quadrature orders than the code uses")
+    expected_d = verify.get("D", {})
+    if DISPLAY_NAMES.get(expected_d.get("identifier", "")) != expected_d.get("display_name"):
+        errors.append("amendment D was approved for a different display name than the code uses")
+    return errors, [], {"decisions": recorded}
 
 
 def check_artifacts() -> tuple[list[str], list[str], dict[str, object]]:
@@ -438,7 +489,7 @@ def main(arguments: list[str] | None = None) -> int:
     report: dict[str, object] = {}
     sections = [("campaign", check_campaign), ("references", check_references),
                 ("stepsizes", check_stepsizes), ("pilot_isolation", check_no_pilot_contamination),
-                ("configs", check_configs_regenerate)]
+                ("configs", check_configs_regenerate), ("amendments", check_amendments)]
     if not args.skip_artifacts:
         sections.extend([("artifacts", check_artifacts), ("captions", check_captions)])
     for name, check in sections:

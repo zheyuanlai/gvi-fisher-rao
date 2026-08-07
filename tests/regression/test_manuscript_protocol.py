@@ -189,3 +189,19 @@ def test_certified_gap_bound_dominates_the_measured_gap() -> None:
             covariance_min_eigenvalue=row.covariance_min_eigenvalue,
         )
         assert bound >= row.objective_gap
+
+
+def test_every_protocol_amendment_is_decided_and_matches_the_code() -> None:
+    """A deviation from the brief must be recorded, decided, and still accurate.
+
+    The audit owns the full check; this keeps it in the fast suite so an
+    implementation change that silently departs from an approved amendment fails
+    before anyone runs a campaign.
+    """
+
+    from fr_gvi.experiments.manuscript_audit import check_amendments
+
+    errors, _, summary = check_amendments()
+    assert not errors, errors
+    assert set(summary["decisions"]) == {"A", "B", "C", "D"}
+    assert set(summary["decisions"].values()) == {"approved"}

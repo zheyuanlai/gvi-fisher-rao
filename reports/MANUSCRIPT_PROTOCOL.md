@@ -184,6 +184,13 @@ commit they were produced from; every panel carries its processed CSV.
 
 ## Deviations from the plan this protocol was written against
 
+All four are recorded in `configs/manuscript/protocol_amendments.json` with what
+was requested, what was implemented, the reason, the cost, and the author's
+decision. All four were approved on 2026-08-07. `make manuscript-audit` fails if
+an amendment is undecided, records no decision maker, omits its cost, or if the
+implementation drifts from the fingerprint that was approved, so a deviation
+cannot pass merely because no gate mentions it.
+
 Three, each forced by something the data showed.
 
 ### 1. The frozen multiplier applies to a different scale, on two pilot cells
