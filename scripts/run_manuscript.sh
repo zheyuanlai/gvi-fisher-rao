@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run the reduced manuscript campaign: 134 deterministic trajectories over the
+# Run the reduced manuscript campaign: 131 deterministic trajectories over the
 # six preregistered config groups.  Safe to rerun: jobs whose config and code
 # hashes match a completed run are skipped.
 set -euo pipefail

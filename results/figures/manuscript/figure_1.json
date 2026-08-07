@@ -1,9 +1,9 @@
 {
   "figure": "figure_1",
   "git": {
-    "code_hash": "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b",
-    "commit": "f93cffcc2a9a45e91fcf20c81d404a5f8793d003",
-    "dirty": false
+    "code_hash": "a1e013f7298d97ee91b5036863053530d51038c77e4531f1f235dc2cc455197c",
+    "commit": "01a245e3337d5b3ebc0bcc6362b41bf4e053c499",
+    "dirty": true
   },
   "outputs": [
     "results/figures/manuscript/figure_1.pdf",

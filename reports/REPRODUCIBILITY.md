@@ -148,7 +148,8 @@ hash — the parts that actually identify the code — are recorded in full.
 Every run derives its seeds from `numpy.random.SeedSequence(master_seed,
 spawn_key=(stream, repeat))`, and both the master seed and the derived run seed
 are stored in the manifest. Re-running a completed job with `--force` reproduces
-its CSV bit-for-bit on the same platform and package versions. Results are not
+the scientific columns of its CSV bit-for-bit on the same platform and package
+versions; the timing columns are wall-clock measurements and do not repeat. Results are not
 guaranteed bit-identical across BLAS implementations; the reported quantities are
 stable far beyond the precision at which they are interpreted.
 

@@ -18,7 +18,7 @@ Only `FR--R`, `FR--KL` and `FB--GVI` iterate, with `Laplace` as a non-iterative
 reference.
 
 ```bash
-make manuscript-pilot     # sweep the pilot cell, freeze the stepsizes
+make manuscript-pilot     # sweep the two pilot cells, freeze the stepsizes
 make manuscript-configs   # instantiate the 87 configs
 make manuscript-runs      # 131 trajectories
 make manuscript-figures   # figures 1-3 plus the width and font audit
@@ -113,11 +113,11 @@ scripts already restrict BLAS libraries to one thread per worker.
 
 ## Results and reproducibility
 
-The five manuscript composites are available as
-`results/figures/main_figure_1.{pdf,png}` through
-`results/figures/main_figure_5.{pdf,png}`. Their processed inputs are stored in
-`results/processed/main_figure_*.csv`; detailed local campaigns also produce one
-figure and caption draft per experiment.
+The three manuscript figures are `results/figures/manuscript/figure_1.{pdf,png}`
+through `figure_3.{pdf,png}`, each with a caption draft, a provenance JSON and one
+processed CSV per panel under `results/processed/manuscript/`. The exploratory
+campaign additionally produces the older `main_figure_*` composites and one figure
+per experiment.
 
 Every run manifest records the configuration and source hashes, git state,
 platform and package versions, BLAS configuration, seeds, curvature constants,

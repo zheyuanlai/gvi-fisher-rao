@@ -33,8 +33,9 @@ reported as a non-iterative reference. No Wasserstein warm start, hybrid
 geometry, or covariance rescue enters any deterministic comparison.
 
 \paragraph{Expectations.}
-Every expectation is computed exactly; no Monte Carlo enters the deterministic
-study. Gaussian targets are closed form. The separable targets of
+No Monte Carlo enters the deterministic study: every expectation is computed by
+deterministic quadrature, to the precision reported below. Gaussian targets are
+closed form. The separable targets of
 Section~\ref{subsec:numerics-nongaussian} use a panelled Gauss--Legendre rule
 against the Gaussian density, which resolves the unit-width
 $\operatorname{sech}^2$ structure uniformly in the marginal width. The logistic
@@ -42,9 +43,14 @@ posterior admits the same reduction: $V$ depends on $\theta$ only through the
 linear predictors $z_i=x_i^{\!\top}\theta$, and $z_i\sim\N(x_i^{\!\top}m,
 x_i^{\!\top}Cx_i)$ under $q$, so the objective, the expected gradient and the
 expected Hessian are $n$ independent one-dimensional integrals. The updates use
-order $48$ and the objective evaluation and reference solve use order $96$; the
-two agree to about $10^{-11}$, so the evaluation rule is both independent of and
-strictly finer than the update rule.
+order $48$ and the objective evaluation and reference solve use order $96$, so the
+evaluation rule is both distinct from and strictly finer than the update rule.
+Measured against a rule of order $160$ on every dataset at the initial,
+intermediate and reference states, the order-$48$ objective, gradient and Hessian
+differ by at most $6.6\times10^{-11}$, $6.5\times10^{-12}$ and
+$2.9\times10^{-11}$; order $96$ against order $192$ differs by at most
+$1.3\times10^{-10}$ in the objective. Every gap the figures resolve is far above
+these.
 
 \paragraph{Reference solutions.}
 A residual is a gradient norm and a gap is an energy difference, so the two are
@@ -52,13 +58,14 @@ related through the Gaussian variational PL inequality of
 Lemma~\ref{lem:gaussian-PL}, $\Delta(a)\le\|g(a)\|^2+\operatorname{Tr}((C^{-1}-H)C(C^{-1}-H))$
 divided by $2\alpha_\star$. This is a proved bound with a constant computed
 exactly for each target family. Applied to each reference's own residual it
-certifies the reference's suboptimality at least $7.4$ orders of magnitude below
-the smallest gap any panel draws. The same two lemmas give a reference-free
-certificate at every iterate,
-$\Delta(a)\le\min\{\|\cdot\|_{\mathrm{BW}}^2/(2\alpha_\star),
-\|\grad\mathcal E(a)\|_a^2/(\alpha_\star\lambda_{\min}(C))\}$, which holds at
-every state where the measured gap is meaningful and is tight to a factor of
-$1.2$ on the log-cosh grid.
+certifies the reference's suboptimality at least $6.9$ orders of magnitude below
+the smallest gap any panel draws. We use the Fisher--Rao branch of the lemma,
+$\Delta(a)\le\norm{\grad\mathcal E(a)}_a^2/(\alpha_\star\lambda_{\min}(C))$,
+throughout; the Bures--Wasserstein form is slightly tighter but would put that
+geometry inside the certification of a Fisher--Rao method rather than leaving it
+an external baseline. The same inequality gives a reference-free certificate at
+every iterate, which holds wherever the measured gap is meaningful and is tight to
+a factor of $1.2$ on the log-cosh grid.
 
 \paragraph{Stepsizes.}
 Panels that verify a theorem use the stepsize that theorem certifies. The
@@ -230,8 +237,8 @@ wall-clock terms only at large $N_\theta$ with a cheaper expectation.
 
 The held-out predictive negative log-likelihood at termination is reported in
 Table~\ref{tab:logistic-predictive}. All three iterative schemes agree to four
-decimals on every conditioning and every dataset, as they must, since they
-converge to the same optimizer; the differences between them are in how fast they
+decimals on $13$ of the $15$ datasets and to within $1.9\times10^{-5}$ on all of
+them, as they must, since they converge to the same optimizer; the differences between them are in how fast they
 reach that common answer, not in the answer. The Laplace approximation, which is
 a fixed point of none of the schemes, attains a \emph{lower} predictive negative
 log-likelihood than the Gaussian variational optimum at all three conditionings,

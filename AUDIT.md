@@ -1,293 +1,324 @@
-# Independent manuscript-readiness audit
+# Second independent manuscript-readiness audit
 
-Date: 2026-08-06
+Date: 2026-08-07
 
-## Verdict
+## Revised verdict
 
-**Not manuscript-ready. Do not start another full campaign or cite the current figures in the manuscript.**
+**Not yet manuscript-ready, but the numerical campaign is now close.**
 
-The reduction to three deterministic experiment groups is directionally correct, and most of the requested exclusions are respected. However, the current artifacts do not constitute one frozen, reproducible experiment campaign. There are also scientific problems in the affine-equivariance and logistic-regression results, a permissive reference-certification gate, and a failing smoke gate.
+The core rerun is substantially improved: all 131 declared final trajectories complete from one clean numerical-source hash, no final covariance repair is logged, the invalid affine (10^8) cell is gone, and all inexpensive gates pass. The remaining blockers are now mostly postprocessing, reproducibility, and protocol-consistency defects. They do not justify another full campaign unless the author rejects the three amended protocol choices listed below.
 
-Claude Code should treat the P0 findings below as release blockers. Fix the validation and protocol issues first, freeze a clean revision, and only then rerun the reduced campaign.
+Do not cite the current Figure 3 or its predictive table until the pilot contamination and stale caption are corrected.
 
-## Scope of this audit
+## Independent gate results
 
-I checked:
+| Gate | Result |
+| --- | --- |
+| `make test` | Pass: 88 tests |
+| `make smoke` | Pass |
+| `make manuscript-audit` | Pass with no reported errors or warnings |
+| Manuscript plot audit | Pass: 6.5-inch PDFs, matching PNGs, embedded fonts |
+| Independent final-manifest audit | Pass: 87 configs, 131 manifests, all config/source/reference hashes and raw paths valid |
+| Manual figure inspection | Figures 1 and 2 are usable; Figure 3 needs the corrections below |
 
-- the manuscript configuration tree, run manifests, raw results, processed data, figures, tables, and provenance files;
-- the implementations of FR--R, FR--KL, FB--GVI, reference construction, pilot selection, manuscript plotting, and manuscript auditing;
-- consistency with `references/manuscript.tex`, `references/2304.05398.pdf`, the requested theory-first experiment plan, and `AGENTS.md`;
-- the numerical-validation gates and the new test coverage;
-- all three generated manuscript figures at approximately their intended display size;
-- factual claims in `reports/NUMERICAL_SECTION.tex`, `reports/MANUSCRIPT_PROTOCOL.md`, and the reproducibility documentation.
+The smoke run modified timestamp-bearing tracked artifacts. I restored only those audit-induced changes, and the working tree was clean afterward.
 
-I did not rerun the expensive campaign. The existing raw results were sufficient to audit it.
+## What the revision genuinely fixed
 
-## Gate results
+The following first-audit blockers are closed:
 
-| Gate | Result | Consequence |
-| --- | --- | --- |
-| `make test` | Pass: 82 tests | Unit/regression tests are green, but important release invariants are not covered. |
-| `make smoke` | **Fail** | Release blocker. `scripts/run_smoke.sh` passes `--raw-root`, which `src/fr_gvi/plotting/figures.py` does not accept. |
-| `make manuscript-audit` | Exit 0 with warnings | Not a sufficient pass: it explicitly accepts a failed trajectory and covariance repairs. |
-| Plot width/font audit | Pass | The three PDFs have acceptable physical width and embedded fonts. |
-| Manual figure audit | Mixed | Figures are readable, but Figure 1(b) contains invalid repaired/failed data and Figure 3 is not supported by an independent expectation/reference design. |
+- The final campaign now has 131/131 completed trajectories, one numerical source hash, one recorded campaign commit, and `git_dirty: false` throughout.
+- The final method counts are 42 FR--R, 42 FR--KL, 32 FB--GVI, and 15 Laplace.
+- No final trajectory records covariance repair, clipping, backtracking, or a rescue method.
+- The affine grid stops at `cond(S)=10^6`; all twelve affine trajectories complete without repair. The failed and heavily repaired `10^8` observations are no longer plotted.
+- `make smoke` is repaired.
+- Figure provenance now includes a numerical source hash as well as a commit and clean-tree flag.
+- The former finite-QMC logistic surrogate was replaced by deterministic one-dimensional quadrature over each linear predictor. This removes the old (10^{-3})-scale design-transfer defect.
+- Reference suboptimality is now converted with the manuscript's proved gradient-domination inequalities rather than the former unjustified `0.5 * residual**2` heuristic.
+- The false claim that all logistic FR terminal gradient norms were below (10^{-8}) was corrected.
+- Documentation now uses 87 configs and 131 final trajectories in most places.
 
-Running `make smoke` regenerated tracked smoke outputs. Those audit-induced changes were restored; no pre-existing experiment work was reverted.
+## P0: remaining release blockers
 
-## P0: release blockers
+### 1. Figure 3's committed caption describes an obsolete experiment
 
-### 1. The 134 trajectories were not produced from one frozen code state
+`results/figures/manuscript/figure_3.md` and the caption generator in
+`src/fr_gvi/plotting/manuscript_figures.py:885-920` still claim that:
 
-The 134 manifests contain four distinct `code_hash` values:
+- all methods use a shared 4,096-point scrambled-Sobol design;
+- each iteration costs 246--250 ms;
+- the expectation costs (O(Snd)).
 
-- all 60 logistic trajectories use one hash;
-- the 36 global log-cosh, 12 local log-cosh, and 3 anisotropic-Gaussian trajectories use another;
-- the 15 affine-equivariance trajectories use a third;
-- the 8 Gaussian burn-in trajectories use a fourth.
+None of these describes the final campaign. The current implementation uses order-48 and order-96 panelled one-dimensional quadrature, and the observed median update costs are approximately:
 
-All 134 manifests report `git_dirty: true`. They share a recorded Git commit, but the differing source hashes show that the code changed between experiment groups. There is no `numerics-protocol-*` tag. This is not one reproducible frozen campaign.
+| Method | Median ms/iteration |
+| --- | ---: |
+| FB--GVI | 12.68 |
+| FR--R | 13.08 |
+| FR--KL | 13.95 |
 
-The configuration hashes do match the corresponding manifests, and all referenced raw files exist. The defect is source provenance, not missing data.
-
-Relevant code and artifacts:
-
-- `src/fr_gvi/experiments/campaign.py:847-878`
-- `src/fr_gvi/plotting/manuscript_figures.py:75-83`
-- `results/manifests/manuscript/`
-- `results/figures/manuscript/figure_1.json`
-- `results/figures/manuscript/figure_2.json`
-- `results/figures/manuscript/figure_3.json`
-
-Required fix:
-
-1. Complete every code, protocol, test, and documentation correction.
-2. Run `make test` and `make smoke` successfully.
-3. Commit the exact source and selected protocol, require a clean tree, and create the protocol tag.
-4. Regenerate every final trajectory from that one revision.
-5. Make the manuscript audit fail unless every manifest has the expected unique commit/code hash and `git_dirty` is false.
-6. Put the source hash, not only the commit and dirty flag, in each figure provenance JSON.
-
-### 2. Figure 1(b) includes one failed trajectory and two covariance-repaired trajectories
-
-At `cond(S)=10^8`:
-
-- FR--R fails with `LinAlgError: Matrix is not positive definite` after only a few updates;
-- FR--R records one covariance repair before failing;
-- FB--GVI records two covariance repairs;
-- the plotted maximum affine errors are approximately 46.4 for FR--R and 48.0 for FB--GVI.
-
-The repairs are not negligible state-preserving roundoff adjustments. For example, a negative eigenvalue is replaced by a scale-dependent positive value of order 223--234. The plotted FR--R maximum also comes from a short failed trajectory, while the other methods are evaluated over complete trajectories. The panel therefore does not make a valid method comparison.
-
-The manuscript audit currently downgrades this to a warning, and the configuration generator preregisters the failure as expected:
-
-- `src/fr_gvi/experiments/manuscript.py:357-367`
-- `src/fr_gvi/experiments/manuscript_audit.py:77-124`
-- `src/fr_gvi/linear_algebra/spd.py:41-63`
-- `results/processed/manuscript/figure_1_b.csv`
-- `reports/MANUSCRIPT_AUDIT.json`
-
-This conflicts with the final-figure requirement of no clipping, repairs, or backtracking and with the repository rule never to use covariance eigenvalue clipping as algorithmic stabilization.
+The spread is about 10%, not 2%. The numerical-section draft has newer timing text, but the required caption artifact and its source are stale.
 
 Required fix:
 
-- The final audit must fail on any failed, truncated, repaired, clipped, or backtracked final trajectory.
-- Do not repair the state to make the `10^8` point finish.
-- Either implement a stable affine-equivariance calculation that completes without modifying the algorithmic state, or lower the largest transformation condition number to the range that float64 can represent reliably (for example, stop at `10^6`) and explain the numerical limit.
-- Regenerate Figure 1(b). Do not plot partial failed trajectories as comparable observations.
+- update the Figure 3 lead and panel-(b) caption in the plotting source;
+- regenerate Figure 3, its Markdown caption, processed CSVs, and provenance JSON;
+- derive timing numbers programmatically from the final data instead of hard-coding them;
+- make a regression test reject `Sobol`, `4096`, or the obsolete timings in the final logistic caption.
 
-### 3. The logistic experiment does not use independent update, evaluation, and reference designs
+No trajectory rerun is needed.
 
-The requested protocol calls for a common deterministic update design, an independent finer evaluation design, and a still finer reference design. Instead:
+### 2. The stepsize pilot leaks into Figure 3 and the predictive table
 
-- the configs set update, evaluation, and reference counts to 4096;
-- `build_expectation_engines` returns the update engine as the evaluation engine;
-- the reference is solved/evaluated on that shared finite design;
-- an independent 4x design is used only for a transfer diagnostic, not for the reported trajectory objective and gradient.
+Pilot runs use experiment code `L` and tier `manuscript`, so
+`load_experiment("L", "manuscript")` loads them together with the 60 final
+logistic trajectories.
 
-Relevant locations:
+Consequences:
 
-- `src/fr_gvi/experiments/manuscript.py:524-535`
-- `src/fr_gvi/experiments/manuscript.py:590-593`
-- `src/fr_gvi/experiments/campaign.py:189-211`
-- `src/fr_gvi/experiments/campaign.py:920-943`
-- `src/fr_gvi/experiments/reference.py:314-348`
-- `reports/MANUSCRIPT_PROTOCOL.md:211-225`
-
-This matters numerically. The recorded independent-design transfer residual is about `8.6e-4` to `3.4e-3`, and the transfer objective discrepancy reaches about `9.2e-3`. These discrepancies are many orders of magnitude larger than the `1e-6` convergence tolerance and the small gaps shown in Figure 3. The existing results establish convergence for a finite-design surrogate, not the requested independently evaluated Gaussian-VI objective.
-
-Required fix:
-
-- Build genuinely separate update, evaluation, and reference expectation engines with independent seeds/designs.
-- Use the same update and evaluation designs across methods for a dataset, while keeping update and evaluation designs independent from each other.
-- Use the finer independent reference/evaluation design for the reported objective gap and Fisher--Rao residual.
-- Reuse one certified reference per dataset across methods rather than recomputing it four times.
-- Regenerate all logistic results, tables, and Figure 3.
-
-### 4. Reference certification does not implement the stated acceptance criterion
-
-The requested rule is direct: the reference Fisher--Rao residual must be at least two orders of magnitude below the smallest reported objective gap. The audit instead defines
-
-```text
-objective_error = 0.5 * residual^2
-```
-
-and compares that inferred number to the gap. No curvature constant or proved residual-to-objective conversion is supplied. This is not the requested criterion and does not provide a general rigorous error bound.
-
-The audit also records, but does not gate on, the much larger independent-design transfer residual and transfer objective discrepancy. Negative objective gaps are then used to define a plotting "reference floor", which hides reference mismatch instead of rejecting it.
-
-Relevant locations:
-
-- `src/fr_gvi/experiments/manuscript_audit.py:137-190`
-- `src/fr_gvi/experiments/reference.py:334-336`
-- `src/fr_gvi/experiments/campaign.py:936-943`
-- `src/fr_gvi/plotting/manuscript_figures.py:777-792`
-- `results/tables/manuscript_reference_certification.csv`
-- `reports/NUMERICAL_SECTION.tex:46-51`
-
-There is an additional consistency bug: `solve_reference` may select the lower-objective candidate, but `run_config` subsequently overwrites `reference.objective` with the objective of the fixed-point candidate. This contributes to negative reported gaps.
+- `results/tables/manuscript_predictive.csv` reports six iterative datasets at
+  (kappa_X=100), but only five Laplace datasets.
+- `predictive_table()` in
+  `src/fr_gvi/experiments/manuscript_tables.py:174-206` never filters pilot job IDs.
+- Figure 3(c)'s provenance lists the three logistic pilot config IDs.
+- The pilot changes the (kappa_X=100) resolution floor from about
+  (1.73×10^{-13}) to (3.83×10^{-13}).
+- The protocol says that pilot trajectories appear in no figure, which is therefore
+  not true of the current artifact pipeline.
 
 Required fix:
 
-- Preserve and evaluate the actually selected reference state consistently.
-- Gate directly on the stated residual margin, or implement a proved residual-to-objective bound including all required constants and state it precisely.
-- Gate on independent-design transfer residual/objective discrepancy.
-- Reject material negative objective gaps; do not derive a resolution floor from the largest negative excursion across methods.
-- Make reference certification a hard failure before plotting.
+- give pilot results a separate tier/directory, or filter `job_id.startswith("pilot")`
+  immediately in the common logistic loader;
+- filter pilots explicitly in every manuscript table and panel;
+- assert five datasets per method and condition;
+- assert that no figure provenance `config_ids` entry starts with `pilot`;
+- regenerate Figure 3 and every logistic summary table.
 
-### 5. The stepsize protocol was changed after inspecting final target behavior
+No final trajectory rerun is needed.
 
-The requested protocol specifies one pilot target, `h = eta * h_cert`, and the largest admissible multiplier frozen across final non-Gaussian experiments. The implementation instead:
+### 3. Figure 3(c) still presents constructed resolution floors as terminal gaps
 
-- uses two pilot families;
-- defines a different scale involving `beta_star` and the initial covariance;
-- selects the fastest admissible multiplier rather than simply the largest admissible multiplier;
-- documents that the prescribed scheme diverged on six final grid cells and that alternative scales were tried after observing this behavior.
+`panel_logistic_conditions` clamps terminal gaps to a floor derived from negative
+roundoff excursions and plots the clamped value as `terminal Delta(a_N)`.
+The caption does not disclose the clamping, and markers at the floor are not
+visually distinguished. This is the numerical-floor behavior the experiment brief
+explicitly says not to present as a convergence effect.
 
-Relevant locations:
+Relevant code:
 
-- `src/fr_gvi/experiments/manuscript.py:51-88`
-- `src/fr_gvi/experiments/manuscript.py:168-232`
-- `src/fr_gvi/experiments/pilot.py:174-210`
-- `reports/MANUSCRIPT_PROTOCOL.md:161-225`
-- `configs/manuscript/selected_steps.json`
-
-The modified scheme may be defensible as a new practical protocol, but it is exploratory rather than preregistered. It cannot be described as the requested frozen pilot protocol.
+- `src/fr_gvi/plotting/manuscript_figures.py:757-772`
+- `src/fr_gvi/plotting/manuscript_figures.py:808-865`
 
 Required fix:
 
-- Preferred: restore the specified single pilot and certified-step multiplier rule.
-- If that rule is genuinely unsuitable, write a new protocol with mathematical justification, freeze it before looking at regenerated final results, and label the prior results exploratory. Do not retrofit the protocol to the already observed final grid.
-- Keep theorem-verification panels on theorem-compatible steps exactly as requested.
-- Correct any claim that the FB multiplier is universally the largest theorem-admissible step unless the implemented scale is exactly `1/beta` in every relevant cell.
+- use iterations to a declared relative tolerance across (kappa_X), as the
+  original plan permits and the numerical-section draft already tabulates; or
+- visually distinguish censored/floor observations and state exactly what was
+  clamped.
 
-### 6. The smoke gate fails
+The iterations-to-(10^{-6}) summary is the cleaner choice and requires no rerun.
 
-`make smoke` reaches the plotting stage and fails because:
+### 4. The committed logistic pilot configs do not regenerate from the current code
 
-```text
-figures.py: error: unrecognized arguments: --raw-root ...
-```
+I regenerated all manuscript configs into `/tmp` and compared them with the
+committed tree. All 87 final configs reproduce exactly. The three committed
+logistic pilot configs do not.
 
-Relevant locations:
+The current generator emits `quadrature_order: 48` and
+`evaluation_quadrature_order: 96`; the committed pilot configs instead retain
+obsolete `update_points/evaluation_points/reference_points: 4096` fields and
+slightly different reference curvature and step scales. For example, the current
+FR--R pilot scale is about `0.0062628654`, while the committed config and frozen
+sweep record about `0.0062623135`.
 
-- `scripts/run_smoke.sh:11`
-- `src/fr_gvi/plotting/figures.py:1377-1379`
+The selected multipliers remain (2,2,1), so this has no material effect on the
+final trajectories. It does mean the documented command
+`make manuscript-pilot` mutates the supposedly frozen tagged protocol and does
+not reproduce `selected_steps.json` exactly.
 
-Required fix: reconcile the CLI and the script, add coverage for this invocation, and require `make smoke` to pass before any final campaign.
+Required fix:
 
-## P1: manuscript and reporting corrections
+1. Regenerate the pilot configs from the current generator.
+2. Rerun only the 42 pilot trajectories.
+3. Regenerate `selected_steps.json`.
+4. Verify that the multipliers remain (2,2,1).
+5. Add a test that generates configs in a temporary directory and compares them
+   byte-for-byte with the committed protocol.
+6. Keep pilot configs outside the six final `configs/manuscript/` group
+   directories, as the experiment brief requested.
 
-### 7. Several numerical-section claims are unsupported or false
+If the multipliers remain unchanged and the 87 final configs remain byte-identical,
+the 131 final trajectories do not need to be rerun.
 
-`reports/NUMERICAL_SECTION.tex` should not be used in its current form.
+### 5. The manuscript audit does not detect the defects above
 
-- Lines 46-51 claim an objective-reference error of order `1e-25` from the squared residual. This inference is unsupported and ignores the much larger independent-design transfer discrepancy.
-- Lines 180-183 say that every iterative method reaches the reference on every logistic dataset and that terminal FR gradient norms lie between `1e-14` and `1e-8`. In the raw results, FR--R and FR--KL reach terminal gradient norms as large as about `2.5e-3`, particularly for `kappa_X=1`, and some terminal gaps are around `1e-6` to `9e-6`.
-- Calling the four-point covariance-entry plot "bootstrap sharp" is stronger than the evidence. "Consistent with the predicted logarithmic dependence" is accurate.
-- The explanation of Laplace predictive performance as under-dispersion is a causal interpretation not established by this experiment.
-- The setup does not report the hardware, despite the planned experimental-setup requirements.
-- Statements that the optimizer covariance is exactly the identity should be qualified as numerical construction/to numerical tolerance unless proved for the generated instance.
+The current audit correctly rejects failed/repaired final runs and multiple hashes,
+but it does not check:
 
-Recompute every quantitative statement directly from the final processed CSVs after the corrected rerun. Prefer restrained illustration language appropriate to a theory paper.
+- committed configs against the generator;
+- manifest hashes against the current source and config files;
+- pilot IDs in figure/table inputs;
+- five logistic datasets per method and condition;
+- caption text against the configured expectation backend;
+- the exact commit/tag relationship.
 
-### 8. Documentation reports the wrong number of configs
+My independent check found no mismatch among the 131 final manifests, but these
+invariants need to be automated before release.
 
-The manuscript tree has 88 final YAML configs, not 31:
+## Author decisions required: three intentional protocol amendments
 
-- 4 burn-in;
-- 5 affine-equivariance;
-- 1 anisotropic Gaussian;
-- 12 global log-cosh;
-- 6 local log-cosh;
-- 60 logistic method/dataset configs.
+These are not hidden bugs. Claude documented deliberate changes to the requested
+protocol. They are scientifically defensible in parts, but Claude should not treat
+them as approved merely because an audit command passes.
 
-These expand to 134 trajectories. Update `README.md`, `reports/REPRODUCIBILITY.md`, and `reports/MANUSCRIPT_PROTOCOL.md`. If configs are intentionally method-split, distinguish config count from trajectory count explicitly.
+### A. Stepsize selection
 
-### 9. The manuscript audit and tests encode the implementation, not the release contract
+Requested:
 
-The new tests pass, but they do not assert the most important manuscript invariants:
+- one pilot target;
+- `h = eta * h_cert`;
+- largest admissible multiplier.
 
-- independent update/evaluation/reference designs;
-- one clean source hash and commit;
-- zero failures and zero repairs;
-- direct reference-residual margin;
-- exact pilot/certified-step rule;
-- successful smoke workflow.
+Implemented:
 
-Add these as regression tests or hard checks in `manuscript_audit.py`. An audit command that exits zero while listing a failed final trajectory is not a release gate.
+- one pilot per target family;
+- `h = eta / [beta_star * max(lambda0_star_max, 1)]`;
+- fastest admissible multiplier, minimized across the two families;
+- a separate theorem ceiling for FB--GVI.
 
-### 10. Figure/data issues to fix during regeneration
+This remains a direct deviation from the brief and was motivated after inspecting
+behavior on final-grid cells. Either the author must explicitly approve this as the
+new protocol, or Claude must restore the requested rule and rerun the affected
+non-Gaussian experiments. Relabeling the amendment as preregistered is not enough.
 
-- Figure 1(b): remove the invalid `10^8` failed/repaired comparison as described above.
-- Figure 2: the grid panels are readable but crowded; preserve legibility at final manuscript width. The three local-rate radii almost overlap, which is acceptable if the caption states their purpose.
-- Figure 3(c): the current terminal-gap summary is dominated by the constructed reference floor. Prefer iterations-to-tolerance or a certified terminal-gap summary after the reference fix.
-- Align "wall-clock" wording with the actual measured timing scope if the code reports update-only algorithm time.
-- Ensure each processed panel CSV contains the values actually plotted after masking/truncation, rather than relying on plotting code to reconstruct the displayed data.
-- In `_grid_summary_table`, use the actual terminal gap rather than `nanmin(gaps)` when reporting a terminal value (`src/fr_gvi/plotting/manuscript_figures.py:503-529`).
+### B. Logistic expectation rule
 
-## What is already in good shape
+Requested: common deterministic QMC update design, independent finer evaluation
+design, and a still finer reference design.
 
-The following parts should be preserved:
+Implemented: deterministic panelled Gauss--Legendre integration of the exact
+one-dimensional predictor marginals.
 
-- The main experiment suite is deterministic and organized around three experiment groups and three main figures.
-- Final config method lists contain only FR--R, FR--KL, FB--GVI, and Laplace where applicable.
-- No Wasserstein warm start, WFR hybrid, BWGD/BWSGD campaign, decreasing-stepsize campaign, lower-bound campaign, or affine-metric performance campaign appears in the main suite.
-- The global log-cosh grid and local eigenmode experiment are appropriately reduced and use the intended target family.
-- The local-rate implementation and its unit tests are structurally sound; the observed contractions are close to the predicted factors.
-- The run system is resumable, raw failed runs are retained, config hashes agree with manifests, and panel provenance lists exact config IDs.
-- Numerical code generally uses float64 and symmetric eigendecompositions for SPD matrix functions.
-- Physical figure dimensions, font embedding, labels, and legends are broadly suitable.
+The implemented rule is scientifically preferable for this target, but it is
+quadrature, not QMC and not an independent random design. My independent comparison
+on all 15 final datasets at initial, intermediate, and reference states found:
 
-Metadata dictionaries in some configs mention stochastic certified steps, but the executed final method lists do not run those methods. Filtering unused method metadata would reduce ambiguity.
+- order 48 versus order 160: maximum objective/gradient/Hessian differences about
+  (6.6×10^{-11}), (6.5×10^{-12}), and (2.9×10^{-11});
+- order 96 versus order 192: maximum absolute objective difference about
+  (1.3×10^{-10}).
 
-## Required remediation order
+This is adequate for the experiment but does not support saying that every
+expectation is literally exact or that the rules agree uniformly to (10^{-11}).
+If approved, describe the backend as deterministic one-dimensional quadrature to
+reported numerical precision, use the configured quadrature-order fields rather
+than hard-coded values, and add a full-grid fine-rule certification.
 
-1. Fix the smoke command and make all inexpensive validation gates pass.
-2. Decide and document the final stepsize protocol before examining any new final results.
-3. Separate logistic update, evaluation, and reference designs.
-4. Repair the reference-selection/certification logic and make its checks hard failures.
-5. Remove or stably reformulate the invalid affine `10^8` cell without covariance clipping or repair.
-6. Add release-contract tests: no failures/repairs, clean unique provenance, independent designs, direct residual margin, and successful artifact provenance.
-7. Commit the implementation and protocol with a clean tree; tag the frozen state.
-8. Run the small pilot, commit `selected_steps.json`, and do not alter it after inspecting final results.
-9. Run the reduced campaign once from the frozen revision.
-10. Regenerate figures, processed CSVs, captions, tables, and provenance JSON.
-11. Run `make test`, `make smoke`, `make manuscript-audit`, the plot audit, and a manual final-size visual audit.
-12. Rewrite the numerical section from the corrected artifacts and independently verify every numerical claim.
+### C. Reference acceptance criterion
 
-## Acceptance criteria for manuscript readiness
+Requested: Fisher--Rao residual at least two orders below the smallest reported
+objective gap.
 
-The package is ready for a second audit only when all of the following are true:
+Implemented: convert the squared residual to a certified gap with a proved PL or
+gradient-domination inequality, then compare like units.
 
-- every declared final trajectory completes; zero final trajectories use clipping, covariance repair, backtracking, or undeclared rescue;
-- all final manifests have one expected clean commit and code hash, and all config hashes match;
-- `make test`, `make smoke`, `make manuscript-audit`, and the plot audit all exit successfully without scientific warnings;
-- logistic update, evaluation, and reference designs are independent as specified and common across methods where appropriate;
-- every non-Gaussian reference passes the stated residual margin on an independent finer design, with no material unexplained negative objective gaps;
-- the stepsize selection is demonstrably frozen before the final campaign;
-- figure provenance includes exact config IDs, commit, source hash, and clean-tree status;
-- documentation gives correct config/trajectory counts and all manuscript claims match the final CSVs;
-- the three figures remain readable at final manuscript size and do not present numerical failures or reference floors as convergence behavior.
+The implemented comparison is mathematically better dimensioned, but it is not the
+literal requested test. Also, the numerical section promotes a Bures--Wasserstein
+residual to a reference-free certificate at every iterate, which risks making
+Wasserstein geometry part of the proposed numerical methodology rather than merely
+an external FB--GVI baseline.
 
-Until these conditions hold, the current artifacts are useful exploratory diagnostics, not manuscript-ready numerical evidence.
+A Fisher--Rao-only certificate is sufficient: using the squared FR residual divided
+by `alpha_star * lambda_min(C_star)`, the worst reference still has about
+6.86 decades of margin below the smallest plotted gap. Prefer that branch in the
+numerical audit and text. No trajectory rerun is needed.
+
+If the author insists on the literal residual-versus-gap rule, the plots must stop
+at a higher gap; the present residuals are around (10^{-13}), while some plotted
+gaps reach (10^{-14})--(10^{-16}).
+
+## P1: manuscript-facing corrections
+
+### 6. Several statements remain inaccurate or internally inconsistent
+
+- `reports/NUMERICAL_SECTION.tex:35-47` and
+  `reports/MANUSCRIPT_PROTOCOL.md:115-133` call finite quadrature "exact" and
+  overstate its measured cross-order agreement.
+- `reports/NUMERICAL_SECTION.tex:231-235` says the three iterative predictive NLLs
+  agree to four decimals on every dataset. They do on 13 of 15 datasets; the maximum
+  within-dataset difference is (1.85×10^{-5}), and two datasets round
+  differently at four decimals. "Agree within (1.9×10^{-5})" is accurate.
+- `reports/MANUSCRIPT_PROTOCOL.md:235-249` still describes the obsolete shared-QMC
+  evaluation protocol, contradicting its own exact-quadrature section.
+- `reports/MANUSCRIPT_PROTOCOL.md:159-164` still claims a 2% per-iteration timing
+  spread.
+- `scripts/run_manuscript.sh:2` still says 134 trajectories.
+- `README.md:21` says "pilot cell" although there are two.
+- `README.md:116-120` still advertises five old manuscript composites rather than
+  the current three figures.
+- `reports/REPRODUCIBILITY.md:148-153` claims CSVs reproduce bit-for-bit, but the
+  CSVs contain wall-clock timings. Restrict the claim to deterministic scientific
+  columns.
+- The campaign manifests record commit `5e6b2416`, while
+  `numerics-protocol-v2` points to later commit `01a245e3`. The tagged tree has
+  the same numerical source hash and final configs, so reproduction is possible,
+  but "the campaign was run from the tagged revision" is not literally true.
+- Use the published/requested method name `FB--GVI` in figures and text rather
+  than inventing `BW-FB`; the latter needlessly obscures which Diao et al.
+  algorithm was run.
+
+### 7. Processed summaries should not contain misleading terminal values
+
+`_grid_summary_table` still records
+`terminal_normalized_gap = nanmin(gaps)`, which is often a negative roundoff
+excursion rather than the actual terminal value. It is currently not used because
+all global cells reach tolerance, but the processed CSV is part of the manuscript
+artifact. Record the actual terminal value or omit the column.
+
+## Manual figure assessment
+
+- **Figure 1:** readable and scientifically coherent after removing the (10^8)
+  cell. The shaded non-representable region is helpful. Rename the baseline
+  FB--GVI.
+- **Figure 2:** readable at manuscript width. Six panels are dense but coherent.
+  The local-rate panel communicates the theorem well.
+- **Figure 3:** visually clean, but panel (c) should become iterations-to-tolerance.
+  The committed caption is invalid, and pilot leakage affects the (kappa_X=100)
+  floor and predictive table.
+
+## Recommended remediation order
+
+1. Obtain the author's explicit decision on amendments A--C.
+2. Separate pilot outputs from final manuscript data and fix all pilot filters.
+3. Regenerate the three logistic pilot configs and pilot sweep only.
+4. Confirm the frozen multipliers and final config files do not change.
+5. Replace Figure 3(c) with iterations-to-tolerance.
+6. Correct the Figure 3 caption generator, method label, timings, protocol note,
+   predictive table, and stale counts.
+7. Use the Fisher--Rao-only reference certificate in manuscript-facing reporting.
+8. Add release tests for config regeneration, pilot exclusion, dataset counts,
+   caption backend, current hashes, and tag/provenance consistency.
+9. Regenerate figures and tables only.
+10. Rerun `make test`, `make smoke`, `make manuscript-audit`, and the plot
+    audit, then perform one final visual/text audit.
+
+## Acceptance criteria for a third audit
+
+The package is ready for a final audit when:
+
+- all three intentional protocol amendments are explicitly accepted or reverted;
+- committed pilot and final configs reproduce byte-for-byte from the generator;
+- no pilot ID or pilot observation enters a main figure, table, or provenance list;
+- every logistic aggregate contains exactly five datasets;
+- Figure 3's caption matches the actual quadrature backend and final timings;
+- Figure 3(c) does not portray a constructed floor as a measured terminal gap;
+- manuscript-facing reference certification uses the approved Fisher--Rao criterion;
+- all stale counts, QMC descriptions, timing claims, and predictive claims are fixed;
+- all gates pass from a clean tree.
+
+The current 131 final trajectories are credible and likely reusable. The present
+blockers do not require another full campaign unless the author chooses to restore
+the original QMC or certified-step pilot protocols.
+
+---

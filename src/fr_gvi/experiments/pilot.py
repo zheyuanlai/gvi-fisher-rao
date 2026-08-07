@@ -41,6 +41,7 @@ import pandas as pd
 
 from fr_gvi.experiments.manuscript import (
     ITERATIVE,
+    PILOT_TIER,
     PILOT_CELL,
     PILOT_LOGISTIC_CELL,
     PILOT_LOGISTIC_SEED,
@@ -49,8 +50,8 @@ from fr_gvi.experiments.manuscript import (
 )
 
 ROOT = Path(__file__).resolve().parents[3]
-RAW = ROOT / "results" / "raw" / "manuscript"
-MANIFESTS = ROOT / "results" / "manifests" / "manuscript"
+RAW = ROOT / "results" / "raw" / PILOT_TIER
+MANIFESTS = ROOT / "results" / "manifests" / PILOT_TIER
 # Relative gap used to rank the admissible multipliers by speed on each pilot.
 PILOT_TOLERANCE = 1.0e-6
 

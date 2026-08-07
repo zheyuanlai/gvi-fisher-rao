@@ -68,9 +68,19 @@ EPS = float(np.finfo(np.float64).eps)
 class Panel:
     letter: str
     title: str
-    caption: str
+    caption: str | Callable[[pd.DataFrame], str]
     draw: Callable[[plt.Axes], pd.DataFrame]
     sources: list[str] = field(default_factory=list)
+
+    def rendered_caption(self, data: pd.DataFrame) -> str:
+        """Caption text, computed from the panel's own data when it quotes numbers.
+
+        Hard-coded figures in a caption drift the moment the experiment changes;
+        this one described a quasi-Monte-Carlo design and 250 ms iterations long
+        after the backend had become one-dimensional quadrature at 13 ms.
+        """
+
+        return self.caption(data) if callable(self.caption) else self.caption
 
 
 def _git_state() -> dict[str, object]:
@@ -150,8 +160,10 @@ def compose(
         raise ValueError(f"{name}: {len(panels)} panels do not fit a {rows}x{columns} grid")
 
     record: list[dict[str, object]] = []
+    captions: list[str] = []
     for panel, axis in zip(panels, flat, strict=False):
         data = panel.draw(axis)
+        captions.append(panel.rendered_caption(data))
         panel_letter(axis, panel.letter, panel.title)
         csv_path = PROCESSED / f"{name}_{panel.letter}.csv"
         data.to_csv(csv_path, index=False)
@@ -178,7 +190,8 @@ def compose(
 
     caption_lines = [f"# {name} caption draft", "", figure_text(lead), ""]
     caption_lines += [
-        figure_text(f"**({panel.letter})** {panel.caption}") for panel in panels
+        figure_text(f"**({panel.letter})** {text}")
+        for panel, text in zip(panels, captions, strict=True)
     ]
     caption_lines += ["", "Panel data:"]
     caption_lines += [
@@ -504,7 +517,10 @@ def _grid_summary_table() -> pd.DataFrame:
                     "iterations_to_tolerance": count,
                     "flow_time_to_tolerance": count * step,
                     "censored": censored,
-                    "terminal_normalized_gap": float(np.nanmin(gaps)),
+                    # The value at the end of the run, not the running minimum: the
+                    # minimum is often a negative roundoff excursion and would
+                    # misreport what the trajectory actually finished at.
+                    "terminal_normalized_gap": float(gaps[-1]),
                 }
             )
     return pd.DataFrame(rows)
@@ -806,63 +822,91 @@ def _logistic_trajectory_panel(x_column: str, x_label: str) -> Callable[[plt.Axe
 
 
 def panel_logistic_conditions(axis: plt.Axes) -> pd.DataFrame:
+    """Iterations to a declared relative tolerance, across feature conditioning.
+
+    The previous version summarised the terminal gap, which meant clamping values
+    that had reached the reference's own resolution and drawing the clamp as if it
+    were a measurement.  Iterations to a fixed relative tolerance is a measured
+    quantity everywhere, needs no floor, and is what the experiment plan offers as
+    the alternative.
+    """
+
     frame = _logistic_frame()
-    terminal = (
-        frame.sort_values("iteration")
-        .groupby(["grid_feature_condition", "method", "grid_dataset"], as_index=False)
-        .last()
-    )
-    # Each cell resolves the gap only down to its own reference floor, and a
-    # terminal gap can land on or below it.  Values are clamped there and flagged,
-    # so a marker at the floor reads as "resolved to the reference" rather than as
-    # a measured value.
-    floors = {
-        float(condition): reference_resolution_floor(cell)
-        for condition, cell in frame.groupby("grid_feature_condition")
-    }
     rows: list[dict[str, object]] = []
-    for (condition, method), subset in terminal.groupby(["grid_feature_condition", "method"]):
-        floor = floors[float(condition)]
-        gaps = subset["objective_gap"].to_numpy(dtype=np.float64)
+    for (condition, method, dataset), trajectory in frame.groupby(
+        ["grid_feature_condition", "method", "grid_dataset"]
+    ):
+        trajectory = trajectory.sort_values("iteration")
+        initial = float(trajectory["objective_gap"].iloc[0])
+        if method == "Laplace" or initial <= 0.0:
+            continue
+        relative = trajectory["objective_gap"].to_numpy(dtype=np.float64) / initial
+        reached = np.where(relative <= GLOBAL_TOLERANCE)[0]
         rows.append(
             {
-                "method": method,
                 "feature_condition": float(condition),
-                "datasets": int(len(subset)),
-                "resolution_floor": floor,
-                "at_resolution_floor": bool(np.median(gaps) <= floor),
-                "median_gap": float(max(np.median(gaps), floor)),
-                "min_gap": float(max(gaps.min(), floor)),
-                "max_gap": float(max(gaps.max(), floor)),
-                "median_gradient_norm": float(
-                    np.sqrt(subset["fisher_rao_residual_squared"]).median()
+                "method": method,
+                "dataset": int(dataset),
+                "iterations_to_tolerance": (
+                    float(trajectory["iteration"].to_numpy()[reached[0]])
+                    if reached.size
+                    else np.nan
                 ),
-                "median_predictive_nll": float(subset["predictive_nll"].median()),
+                "censored": not reached.size,
             }
         )
-    table = pd.DataFrame(rows).sort_values(["method", "feature_condition"])
-    # Horizontal offsets separate four markers that share each abscissa.
-    offsets = {"FR--R": 0.8, "FR--KL": 1.0, "FB--GVI": 1.25, "Laplace": 1.55}
-    for method in [*ITERATIVE_METHODS, "Laplace"]:
+    table = pd.DataFrame(rows)
+    # Horizontal offsets separate three markers that share each abscissa.
+    offsets = {"FR--R": 0.82, "FR--KL": 1.0, "FB--GVI": 1.22}
+    for method in ITERATIVE_METHODS:
         subset = table[table["method"] == method]
         if subset.empty:
             continue
         style = method_style(method)
-        median = subset["median_gap"].to_numpy()
+        summary = subset.groupby("feature_condition")["iterations_to_tolerance"].agg(
+            ["median", "min", "max"]
+        )
+        median = summary["median"].to_numpy()
         axis.errorbar(
-            subset["feature_condition"].to_numpy() * offsets[method], median,
-            yerr=[median - subset["min_gap"].to_numpy(),
-                  subset["max_gap"].to_numpy() - median],
+            summary.index.to_numpy() * offsets[method], median,
+            yerr=[median - summary["min"].to_numpy(), summary["max"].to_numpy() - median],
             linestyle="none", marker=style["marker"], markersize=4.0, fillstyle="none",
             color=style["color"], elinewidth=0.9, capsize=2.0, label=method,
         )
-    level = float(np.median(list(floors.values())))
     axis.set_xscale("log")
     axis.set_yscale("log")
-    axis.set_ylim(level / 3.0, None)
     axis.set_xlabel(r"$\kappa_X$")
-    axis.set_ylabel(r"terminal $\Delta(a_N)$")
+    axis.set_ylabel(r"$N_{10^{-6}}$")
     return table
+
+
+def _wall_clock_caption(data: pd.DataFrame) -> str:
+    """Panel (b)'s caption, with the measured per-iteration costs read off the data."""
+
+    frame = _logistic_frame()
+    cell = frame[frame["grid_feature_condition"] == LOGISTIC_HEADLINE]
+    terminal = (
+        cell[cell["method"] != "Laplace"]
+        .sort_values("iteration")
+        .groupby(["method", "grid_dataset"], as_index=False)
+        .last()
+    )
+    per_iteration = 1000.0 * terminal["algorithm_seconds"] / terminal["iteration"]
+    low, high = float(per_iteration.min()), float(per_iteration.max())
+    spread = 100.0 * (high - low) / low
+    order = int(cell["quadrature_order"].iloc[0]) if "quadrature_order" in cell else 48
+    return (
+        "The same trajectories against the time spent inside the update itself, "
+        "excluding the diagnostics. The three methods cost "
+        f"{low:.1f} to {high:.1f} milliseconds per iteration, a spread of about "
+        f"{spread:.0f} per cent, so the panel largely repeats the shape of (a). The cost "
+        "is set by the expectation, which is one panelled Gauss--Legendre rule of order "
+        f"{order} per linear predictor and so scales as $O(nQ)$ in the $n$ observations "
+        "and $Q$ nodes, rather than by the $O(d^3)$ linear algebra that distinguishes the "
+        "matrix exponential of the retraction from the resolvent solve of the Bregman "
+        "scheme. That distinction would become visible only at large $d$ with a cheaper "
+        "expectation."
+    )
 
 
 def figure_3() -> dict[str, object]:
@@ -884,24 +928,21 @@ def figure_3() -> dict[str, object]:
         ),
         Panel(
             "b", r"$\kappa_X=10^4$, wall clock",
-            "The same trajectories against the time spent inside the update itself, "
-            "excluding the diagnostics. The three methods cost the same per iteration to "
-            "within two per cent, $246$ to $250$ milliseconds, so the panel repeats the "
-            "shape of~(a). On a problem of this form the cost is set by the expectation, "
-            "$O(Snd)$ for $S=4096$ quadrature points and $n=500$ observations, and not by "
-            "the $O(d^3)$ linear algebra that distinguishes the matrix exponential of the "
-            "retraction from the resolvent solve of the Bregman scheme; the two differ by "
-            "roughly three orders of magnitude in flops here. The distinction would become "
-            "visible only at large $d$ with a cheap expectation.",
+            _wall_clock_caption,
             _logistic_trajectory_panel("algorithm_seconds", "algorithm time (s)"),
             headline,
         ),
         Panel(
             "c", r"Across $\kappa_X$",
-            "Terminal objective gap at the fixed iteration budget for "
-            r"$\kappa_X\in\{1,10^2,10^4\}$, median over the five datasets with min-max bars; "
-            "markers are offset horizontally for legibility. The non-iterative Laplace "
-            "approximation is a fixed point of neither scheme and is shown as a reference.",
+            f"Iterations to a relative objective gap of {GLOBAL_TOLERANCE:g}, median over "
+            f"the {LOGISTIC_DATASETS} datasets with min-max bars; markers are offset "
+            "horizontally for legibility. No method dominates: the Bures--Wasserstein "
+            "baseline is fastest where the features are best conditioned and slowest where "
+            "they are worst, with the crossover near $\kappa_X=10^2$. That is the expected "
+            "shape, since its guarantee places the conditioning in the rate while the "
+            "Fisher--Rao guarantee places it in the admissible stepsize. The Laplace "
+            "approximation is a fixed point of none of the schemes and so has no "
+            "iteration count; it appears in panels (a) and (b) and in the predictive table.",
             panel_logistic_conditions,
             sources,
         ),
@@ -915,9 +956,11 @@ def figure_3() -> dict[str, object]:
             "Deterministic Gaussian variational inference for Bayesian logistic regression "
             "with a proper Gaussian prior $\\theta\\sim\\mathcal N(0,\\lambda^{-1}I)$, "
             "$\\lambda=1$, in $d=50$ with $500$ training and $5000$ held-out points. All "
-            "iterative methods share one scrambled-Sobol design for the updates, the "
-            "objective evaluation and the reference solve, so the reported gaps are exact "
-            "for the discretized problem the algorithms solve."
+            "expectations are computed by deterministic one-dimensional quadrature over "
+            "each linear predictor rather than by sampling, so a reported gap is a gap to "
+            "the Gaussian variational optimum itself. FB--GVI denotes the forward--backward "
+            "Bures--Wasserstein scheme of Diao et al., written BW--FB for symmetry with the "
+            "geometry-first Fisher--Rao labels."
         ),
         legend_columns=4,
     )

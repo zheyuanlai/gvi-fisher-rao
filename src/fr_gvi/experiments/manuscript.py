@@ -40,6 +40,13 @@ CONFIG_ROOT = ROOT / "configs" / "manuscript"
 SELECTED_STEPS = CONFIG_ROOT / "selected_steps.json"
 
 TIER = "manuscript"
+# The pilot writes to its own tier.  Sharing "manuscript" put pilot trajectories
+# under the same experiment codes as the final cells, so the common loaders picked
+# them up: they reached the logistic predictive table, shifted a resolution floor
+# and appeared in a figure's provenance.  The protocol says no pilot trajectory
+# appears in a figure, and a separate tier makes that structural rather than a
+# filter every consumer has to remember.
+PILOT_TIER = "manuscript-pilot"
 ITERATIVE = ("FR--R", "FR--KL", "FB--GVI")
 
 # Multipliers offered to the pilot.
@@ -182,7 +189,7 @@ def pilot_configs() -> list[dict[str, Any]]:
             {
                 "id": f"pilot_logcosh_d10_k10_rho1_{slug}",
                 "experiment": "D",
-                "tier": TIER,
+                "tier": PILOT_TIER,
                 "master_seed": PILOT_SEED,
                 "grid": {**PILOT_CELL, "role": "stepsize_pilot", "family": "logcosh"},
                 "target": target,
@@ -209,7 +216,7 @@ def pilot_configs() -> list[dict[str, Any]]:
             {
                 "id": f"pilot_logistic_d50_kX1e2_{slug}",
                 "experiment": "L",
-                "tier": TIER,
+                "tier": PILOT_TIER,
                 "master_seed": PILOT_LOGISTIC_SEED,
                 "grid": {
                     **PILOT_LOGISTIC_CELL,

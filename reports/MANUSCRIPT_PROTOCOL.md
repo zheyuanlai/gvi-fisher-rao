@@ -157,11 +157,11 @@ gap is meaningful and is tight to a factor of `1.2` on the log-cosh grid.
 time. Each deterministic iteration consumes one expected gradient and one expected
 Hessian, so the iteration count is already a population-oracle count. Wall-clock is
 measured inside the update alone, excluding the per-iteration diagnostics. On these
-problems it carries no information the iteration count does not: all three methods
-cost the same per iteration to within two per cent, because the expectation
-dominates the `O(d^3)` linear algebra that separates the matrix exponential of
-`FR--R` from the resolvent solve of `FR--KL` by about three orders of magnitude in
-flops.
+problems it adds little to the iteration count: the three methods cost `12.2` to
+`14.2` milliseconds per iteration, a spread of about sixteen per cent, because the
+expectation dominates the `O(d^3)` linear algebra that separates the matrix
+exponential of `FR--R` from the resolvent solve of `FR--KL`. The figure captions
+compute these numbers from the final data rather than quoting them.
 
 Curves are truncated at the resolution floor of the quantity being plotted, so a
 numerical plateau is never drawn as if it were convergence.
@@ -232,21 +232,33 @@ The residual effect of the boundary is still visible and is reported: at
 `kappa_star` near `1.1` the frozen step lands closest to `h gamma_star = 2` and the
 Fisher--Rao iteration count rises. That is panel 2(d).
 
-### 3. The evaluation design is shared with the updates and the reference
+### 3. The logistic expectations are deterministic quadrature, not a sampling design
 
-The plan asks for an independent 16384-point evaluation design. The repository
-instead shares one design between the updates, the objective evaluation and the
-reference solve, and this was kept. With an independent evaluation design the
-reported gap floors at the design-transfer error rather than at machine precision,
-because the algorithms converge to the fixed point of the *update* design; with a
-shared design the reference is the exact minimizer of the same discretized problem
-the algorithms solve, so the gaps are exact. The independent design is used for
-what the plan actually wants it for, namely certifying the reference, and its
-transfer error is reported in
-`results/tables/manuscript_reference_certification.csv`.
+The plan asks for a common quasi-Monte-Carlo update design, an independent finer
+evaluation design and a still finer reference design. That structure exists to
+control a sampling error the logistic problem does not have to incur: `V` sees
+`theta` only through the linear predictors, so all the expectations are
+one-dimensional integrals and are computed by a panelled Gauss--Legendre rule
+instead.
 
-Every method still uses the same update design and the same evaluation design, as
-the plan requires.
+The plan's intent is met and its numbers are not. The evaluation and reference
+rules (order 96) are distinct from and strictly finer than the update rule (order
+48), and all methods share both. What changes is the size of the residual
+disagreement: against an order-160 rule the order-48 objective, gradient and
+Hessian differ by at most `6.6e-11`, `6.5e-12` and `2.9e-11`, where a 4096-point
+scrambled-Sobol design misplaced the objective by about `1e-1` and left a
+design-transfer error near `1e-3`. A gap reported here is a gap to the Gaussian
+variational optimum, not to the minimizer of a sampled surrogate.
+
+### 4. Reference certification converts residuals with a proved inequality
+
+The plan asks for the Fisher--Rao residual to sit two orders of magnitude below
+the smallest reported gap. A residual is a gradient norm and a gap is an energy
+difference, so the audit instead converts one into the other with Fisher--Rao
+gradient domination and compares like with like. The worst reference then carries
+`6.9` decades of margin. Applying the literal residual-against-gap test would
+require the panels to stop at a much larger gap, since the residuals are near
+`1e-13` while the plotted gaps reach `1e-16`.
 
 ## Correctness fixes made along the way
 

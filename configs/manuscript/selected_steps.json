@@ -92,25 +92,25 @@
       "step_size": 0.560833949925582
     },
     {
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "family": "logistic",
       "method": "FR--R",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0125246269731724
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.0125257308722995
     },
     {
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "family": "logistic",
       "method": "FR--KL",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0125246269731724
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.0125257308722995
     },
     {
       "certified_step_size": 0.007902800325519346,
       "family": "logistic",
       "method": "FB--GVI",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0062623134865862
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.00626286543614975
     }
   ],
   "selection_rule": "among the admissible multipliers, the one reaching a relative gap of 1e-06 in the fewest iterations on the pilot, ties broken towards the smaller step",
@@ -502,7 +502,7 @@
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 2.6501595224216885,
+      "final_objective_gap": 2.6496679408148798,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -512,15 +512,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586,
-      "step_size": 0.0015655783716465
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0015657163590374
     },
     {
       "admissible": true,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.500968227343435,
+      "final_objective_gap": 0.5008459889441497,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -530,15 +530,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0031311567432931
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0031314327180748
     },
     {
       "admissible": true,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.0490584378121639,
+      "final_objective_gap": 0.0490405541515315,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -548,15 +548,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0062623134865862
+      "step_scale": 0.0062628654361497,
+      "step_size": 0.0062628654361497
     },
     {
       "admissible": true,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.1794680169707589,
+      "final_objective_gap": 0.1796446237344753,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -566,15 +566,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0125246269731724
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.0125257308722995
     },
     {
       "admissible": true,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 48.9730286413926,
+      "final_objective_gap": 48.99396482190781,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -584,15 +584,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586225,
-      "step_size": 0.0250492539463449
+      "step_scale": 0.006262865436149775,
+      "step_size": 0.0250514617445991
     },
     {
       "admissible": true,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 363.177793227414,
+      "final_objective_gap": 363.240233952743,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -602,15 +602,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.0500985078926899
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.0501029234891983
     },
     {
       "admissible": false,
       "certified_step_size": 0.007902800325519346,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 1138.613168491608,
+      "final_objective_gap": 1138.759380357924,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -620,15 +620,15 @@
       "objective_decreased": false,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.1001970157853798
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.1002058469783966
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 39.86325491902579,
+      "final_objective_gap": 39.85902242548741,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -638,15 +638,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586,
-      "step_size": 0.0015655783716465
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0015657163590374
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 14.9736048452329,
+      "final_objective_gap": 14.971424546949038,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -656,15 +656,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0031311567432931
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0031314327180748
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 3.7814723103296615,
+      "final_objective_gap": 3.780677019144889,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -674,15 +674,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0062623134865862
+      "step_scale": 0.0062628654361497,
+      "step_size": 0.0062628654361497
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.4748328214120647,
+      "final_objective_gap": 0.474675798516273,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -692,15 +692,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0125246269731724
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.0125257308722995
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.0150823570441502,
+      "final_objective_gap": 0.0150736647347571,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -710,15 +710,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586225,
-      "step_size": 0.0250492539463449
+      "step_scale": 0.006262865436149775,
+      "step_size": 0.0250514617445991
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 2.745525802083648e-05,
+      "final_objective_gap": 2.7425382427281875e-05,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": 120.0,
@@ -728,15 +728,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.0500985078926899
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.0501029234891983
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0062623134865862065,
+      "certified_step_size": 0.00626286543614979,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 1.5188561519607902e-10,
+      "final_objective_gap": 1.5154455468291414e-10,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": 63.0,
@@ -746,15 +746,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.1001970157853798
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.1002058469783966
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 39.51283786264895,
+      "final_objective_gap": 39.508612447224266,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -764,15 +764,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586,
-      "step_size": 0.0015655783716465
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0015657163590374
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 14.712012645476989,
+      "final_objective_gap": 14.70984691627308,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -782,15 +782,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0031311567432931
+      "step_scale": 0.0062628654361496,
+      "step_size": 0.0031314327180748
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 3.642279710679361,
+      "final_objective_gap": 3.6414997124285833,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -800,15 +800,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0062623134865862
+      "step_scale": 0.0062628654361497,
+      "step_size": 0.0062628654361497
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.4343965703882304,
+      "final_objective_gap": 0.4342483883406203,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -818,15 +818,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.0062623134865862,
-      "step_size": 0.0125246269731724
+      "step_scale": 0.00626286543614975,
+      "step_size": 0.0125257308722995
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 0.0119711144903362,
+      "final_objective_gap": 0.0119638786348446,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": Infinity,
@@ -836,15 +836,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586225,
-      "step_size": 0.0250492539463449
+      "step_scale": 0.006262865436149775,
+      "step_size": 0.0250514617445991
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 1.5855615856708027e-05,
+      "final_objective_gap": 1.5837603825730184e-05,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": 115.0,
@@ -854,15 +854,15 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.0500985078926899
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.0501029234891983
     },
     {
       "admissible": true,
-      "certified_step_size": 0.0031311567432931032,
+      "certified_step_size": 0.003131432718074895,
       "failure_reason": "",
       "family": "logistic",
-      "final_objective_gap": 1.0834355634870008e-10,
+      "final_objective_gap": 1.0811618267325683e-10,
       "finite_objective": true,
       "iterations_completed": 150,
       "iterations_to_tolerance": 68.0,
@@ -872,8 +872,8 @@
       "objective_decreased": true,
       "positive_definite": true,
       "status": "completed",
-      "step_scale": 0.006262313486586238,
-      "step_size": 0.1001970157853798
+      "step_scale": 0.0062628654361497876,
+      "step_size": 0.1002058469783966
     }
   ]
 }

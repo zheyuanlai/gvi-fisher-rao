@@ -28,9 +28,11 @@ from fr_gvi.experiments.manuscript import (
     CONFIG_ROOT,
     GROUPS,
     ITERATIVE,
+    LOGISTIC_DATASETS,
     SELECTED_STEPS,
     trajectory_count,
 )
+from fr_gvi.experiments.manuscript import main as manuscript_main
 from fr_gvi.plotting.style import load_experiment
 from fr_gvi.experiments.manuscript_tables import (
     reference_certification_table,
@@ -263,6 +265,95 @@ def check_stepsizes() -> tuple[list[str], list[str], dict[str, object]]:
     return errors, [], {"frozen_multipliers": frozen, "step_scale": payload["step_scale"]}
 
 
+def check_no_pilot_contamination() -> tuple[list[str], list[str], dict[str, object]]:
+    """No pilot trajectory may reach a figure, a table or a provenance list.
+
+    The pilot exists to choose the stepsizes and must appear nowhere in the
+    reported artifacts.  It once shared the ``manuscript`` tier with the final
+    cells, which put three pilot trajectories into the logistic predictive table
+    and into a figure's provenance; the tiers are now separate and this checks the
+    separation holds end to end.
+    """
+
+    errors: list[str] = []
+    leaked: dict[str, list[str]] = {}
+    for experiment in ("A", "B", "C", "D", "G", "L"):
+        frame = load_experiment(experiment, TIER)
+        if frame.empty:
+            continue
+        pilots = sorted(
+            str(job) for job in frame["job_id"].unique() if str(job).startswith("pilot")
+        )
+        if pilots:
+            leaked[experiment] = pilots
+            errors.append(f"pilot trajectories in the {experiment} manuscript tier: {pilots}")
+    for name in FIGURE_NAMES:
+        path = FIGURES / f"{name}.json"
+        if not path.exists():
+            continue
+        provenance = json.loads(path.read_text(encoding="utf-8"))
+        for panel in provenance.get("panels", []):
+            offenders = [c for c in panel.get("config_ids", []) if str(c).startswith("pilot")]
+            if offenders:
+                errors.append(f"{name} panel {panel.get('panel')} cites pilot configs: {offenders}")
+
+    # Every logistic aggregate must rest on exactly the declared number of datasets.
+    frame = load_experiment("L", TIER)
+    counts: dict[str, int] = {}
+    if not frame.empty:
+        terminal = frame.groupby(["grid_feature_condition", "method"])["grid_dataset"].nunique()
+        for (condition, method), count in terminal.items():
+            counts[f"{condition:g}:{method}"] = int(count)
+            if int(count) != LOGISTIC_DATASETS:
+                errors.append(
+                    f"logistic cell kappa_X={condition:g} method {method} aggregates "
+                    f"{count} datasets, protocol declares {LOGISTIC_DATASETS}"
+                )
+    return errors, [], {"leaked": leaked, "datasets_per_cell": counts}
+
+
+def check_configs_regenerate() -> tuple[list[str], list[str], dict[str, object]]:
+    """Committed configs must reproduce byte-for-byte from the generator."""
+
+    import tempfile
+
+    errors: list[str] = []
+    checked = 0
+    with tempfile.TemporaryDirectory() as directory:
+        destination = Path(directory)
+        manuscript_main(["--destination", str(destination)])
+        manuscript_main(["--pilot", "--destination", str(destination)])
+        for path in sorted(CONFIG_ROOT.rglob("*.json")):
+            if path.name == "selected_steps.json":
+                continue
+            rebuilt = destination / path.relative_to(CONFIG_ROOT)
+            checked += 1
+            if not rebuilt.exists():
+                errors.append(f"generator no longer emits {path.relative_to(CONFIG_ROOT)}")
+            elif rebuilt.read_bytes() != path.read_bytes():
+                errors.append(
+                    f"committed config differs from the generator: "
+                    f"{path.relative_to(CONFIG_ROOT)}"
+                )
+    return errors, [], {"configs_checked": checked}
+
+
+def check_captions() -> tuple[list[str], list[str], dict[str, object]]:
+    """A caption must not describe a backend the campaign no longer uses."""
+
+    errors: list[str] = []
+    obsolete = ("Sobol", "4096", "O(Snd)", "quasi-Monte-Carlo design")
+    for name in FIGURE_NAMES:
+        path = FIGURES / f"{name}.md"
+        if not path.exists():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for token in obsolete:
+            if token in text:
+                errors.append(f"{name} caption still describes an obsolete backend: {token!r}")
+    return errors, [], {}
+
+
 def check_artifacts() -> tuple[list[str], list[str], dict[str, object]]:
     errors: list[str] = []
     panels: dict[str, int] = {}
@@ -303,9 +394,10 @@ def main(arguments: list[str] | None = None) -> int:
     warnings: list[str] = []
     report: dict[str, object] = {}
     sections = [("campaign", check_campaign), ("references", check_references),
-                ("stepsizes", check_stepsizes)]
+                ("stepsizes", check_stepsizes), ("pilot_isolation", check_no_pilot_contamination),
+                ("configs", check_configs_regenerate)]
     if not args.skip_artifacts:
-        sections.append(("artifacts", check_artifacts))
+        sections.extend([("artifacts", check_artifacts), ("captions", check_captions)])
     for name, check in sections:
         section_errors, section_warnings, summary = check()
         errors.extend(section_errors)

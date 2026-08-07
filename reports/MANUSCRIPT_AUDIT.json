@@ -35,7 +35,32 @@
     },
     "trajectories": 131
   },
-  "errors": [],
+  "captions": {},
+  "configs": {
+    "configs_checked": 93
+  },
+  "errors": [
+    "figure_1: figure was built from a dirty working tree",
+    "figure_2: figure was built from a dirty working tree",
+    "figure_3: figure was built from a dirty working tree"
+  ],
+  "pilot_isolation": {
+    "datasets_per_cell": {
+      "10000:FB--GVI": 5,
+      "10000:FR--KL": 5,
+      "10000:FR--R": 5,
+      "10000:Laplace": 5,
+      "100:FB--GVI": 5,
+      "100:FR--KL": 5,
+      "100:FR--R": 5,
+      "100:Laplace": 5,
+      "1:FB--GVI": 5,
+      "1:FR--KL": 5,
+      "1:FR--R": 5,
+      "1:Laplace": 5
+    },
+    "leaked": {}
+  },
   "references": {
     "checked": [
       {
@@ -47,626 +72,626 @@
         "smallest_plotted_gap": 1.1876992285616653e-17
       },
       {
-        "certified_gap_bound": 3.1099710241824127e-25,
+        "certified_gap_bound": 3.123174240490195e-25,
         "experiment": "D",
         "job_id": "F2global_d10_k100_rho0.1",
-        "margin_decades": 9.455743874107322,
+        "margin_decades": 9.453904002800478,
         "residual_on_design": 3.800415098541062e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 6.9724078834277e-24,
+        "certified_gap_bound": 6.917985355261304e-24,
         "experiment": "D",
         "job_id": "F2global_d10_k100_rho1",
-        "margin_decades": 8.105117431544217,
+        "margin_decades": 8.108520578483096,
         "residual_on_design": 3.7789842196925965e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.825036936766092e-25,
+        "certified_gap_bound": 1.8127351326525129e-25,
         "experiment": "D",
         "job_id": "F2global_d10_k10_rho0.1",
-        "margin_decades": 9.687228558270714,
+        "margin_decades": 9.690165864901164,
         "residual_on_design": 3.780521465858359e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 9.020907344995059e-25,
+        "certified_gap_bound": 9.078777170407957e-25,
         "experiment": "D",
         "job_id": "F2global_d10_k10_rho1",
-        "margin_decades": 8.993249994657406,
+        "margin_decades": 8.990472859899633,
         "residual_on_design": 3.836190699099559e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.5275755931927453e-25,
+        "certified_gap_bound": 1.5237167196178423e-25,
         "experiment": "D",
         "job_id": "F2global_d10_k1_rho0.1",
-        "margin_decades": 9.764497505975275,
+        "margin_decades": 9.765595983749018,
         "residual_on_design": 3.78853339445073e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 2.4485529128052115e-25,
+        "certified_gap_bound": 2.4155606934132697e-25,
         "experiment": "D",
         "job_id": "F2global_d10_k1_rho1",
-        "margin_decades": 9.559590723316612,
+        "margin_decades": 9.565482262751814,
         "residual_on_design": 3.7706341996871337e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.5645234642388725e-24,
+        "certified_gap_bound": 1.5473862262528905e-24,
         "experiment": "D",
         "job_id": "F2global_d50_k100_rho0.1",
-        "margin_decades": 8.75411813585561,
+        "margin_decades": 8.75890149004709,
         "residual_on_design": 8.459258397910428e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 3.484990037714124e-23,
+        "certified_gap_bound": 3.4885730425256086e-23,
         "experiment": "D",
         "job_id": "F2global_d50_k100_rho1",
-        "margin_decades": 7.4062986758509775,
+        "margin_decades": 7.405852396284195,
         "residual_on_design": 8.486120015083825e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 9.15195550309077e-25,
+        "certified_gap_bound": 9.08357145309155e-25,
         "experiment": "D",
         "job_id": "F2global_d50_k10_rho0.1",
-        "margin_decades": 8.98698631689145,
+        "margin_decades": 8.990243580018964,
         "residual_on_design": 8.462776097976708e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 4.457342656151949e-24,
+        "certified_gap_bound": 4.4214320472200436e-24,
         "experiment": "D",
         "job_id": "F2global_d50_k10_rho1",
-        "margin_decades": 8.299424195244303,
+        "margin_decades": 8.302937262049843,
         "residual_on_design": 8.465799662530485e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 7.638230133901314e-25,
+        "certified_gap_bound": 7.668328627698075e-25,
         "experiment": "D",
         "job_id": "F2global_d50_k1_rho0.1",
-        "margin_decades": 9.06550747761337,
+        "margin_decades": 9.063799500422554,
         "residual_on_design": 8.498822945916754e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.223749133461053e-24,
+        "certified_gap_bound": 1.224362257209616e-24,
         "experiment": "D",
         "job_id": "F2global_d50_k1_rho1",
-        "margin_decades": 8.860807819514335,
+        "margin_decades": 8.860590283443626,
         "residual_on_design": 8.488253184167361e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.8240776763403157e-25,
+        "certified_gap_bound": 1.8117776543435012e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho0p1_r0p01",
-        "margin_decades": 9.68745688846222,
+        "margin_decades": 9.690395317840224,
         "residual_on_design": 3.7795229070100573e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.8240776763403157e-25,
+        "certified_gap_bound": 1.8117776543435012e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho0p1_r0p05",
-        "margin_decades": 9.68745688846222,
+        "margin_decades": 9.690395317840224,
         "residual_on_design": 3.7795229070100573e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 1.8240776763403157e-25,
+        "certified_gap_bound": 1.8117776543435012e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho0p1_r0p1",
-        "margin_decades": 9.68745688846222,
+        "margin_decades": 9.690395317840224,
         "residual_on_design": 3.7795229070100573e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 9.016398957168014e-25,
+        "certified_gap_bound": 9.092167275918728e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho1_r0p01",
-        "margin_decades": 8.993467096697316,
+        "margin_decades": 8.989832799609404,
         "residual_on_design": 3.839018616955301e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 9.016398957168014e-25,
+        "certified_gap_bound": 9.092167275918728e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho1_r0p05",
-        "margin_decades": 8.993467096697316,
+        "margin_decades": 8.989832799609404,
         "residual_on_design": 3.839018616955301e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 9.016398957168014e-25,
+        "certified_gap_bound": 9.092167275918728e-25,
         "experiment": "G",
         "job_id": "F2local_d10_k10_rho1_r0p1",
-        "margin_decades": 8.993467096697316,
+        "margin_decades": 8.989832799609404,
         "residual_on_design": 3.839018616955301e-13,
         "smallest_plotted_gap": 8.881784197001252e-16
       },
       {
-        "certified_gap_bound": 7.010517668856647e-22,
+        "certified_gap_bound": 1.669254219816109e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s0_fb-gvi",
-        "margin_decades": 7.90893010257179,
+        "margin_decades": 7.532157707996705,
         "residual_on_design": 2.6569175388596734e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 7.010517668856647e-22,
+        "certified_gap_bound": 1.669254219816109e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s0_fr-kl",
-        "margin_decades": 7.90893010257179,
+        "margin_decades": 7.532157707996705,
         "residual_on_design": 2.6569175388596734e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 7.010517668856647e-22,
+        "certified_gap_bound": 1.669254219816109e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s0_fr-r",
-        "margin_decades": 7.90893010257179,
+        "margin_decades": 7.532157707996705,
         "residual_on_design": 2.6569175388596734e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 7.010517668856647e-22,
+        "certified_gap_bound": 1.669254219816109e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s0_laplace",
-        "margin_decades": 7.90893010257179,
+        "margin_decades": 7.532157707996705,
         "residual_on_design": 2.6569175388596734e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.5103078678373181e-21,
+        "certified_gap_bound": 4.374785114084083e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s1_fb-gvi",
-        "margin_decades": 7.575614705958919,
+        "margin_decades": 7.113723465097233,
         "residual_on_design": 4.761381818848758e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.5103078678373181e-21,
+        "certified_gap_bound": 4.374785114084083e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s1_fr-kl",
-        "margin_decades": 7.575614705958919,
+        "margin_decades": 7.113723465097233,
         "residual_on_design": 4.761381818848758e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.5103078678373181e-21,
+        "certified_gap_bound": 4.374785114084083e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s1_fr-r",
-        "margin_decades": 7.575614705958919,
+        "margin_decades": 7.113723465097233,
         "residual_on_design": 4.761381818848758e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.5103078678373181e-21,
+        "certified_gap_bound": 4.374785114084083e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s1_laplace",
-        "margin_decades": 7.575614705958919,
+        "margin_decades": 7.113723465097233,
         "residual_on_design": 4.761381818848758e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.1648173511033444e-21,
+        "certified_gap_bound": 4.4637441442527814e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s2_fb-gvi",
-        "margin_decades": 7.419258930628546,
+        "margin_decades": 7.10498089731132,
         "residual_on_design": 4.831757745533295e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.1648173511033444e-21,
+        "certified_gap_bound": 4.4637441442527814e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s2_fr-kl",
-        "margin_decades": 7.419258930628546,
+        "margin_decades": 7.10498089731132,
         "residual_on_design": 4.831757745533295e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.1648173511033444e-21,
+        "certified_gap_bound": 4.4637441442527814e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s2_fr-r",
-        "margin_decades": 7.419258930628546,
+        "margin_decades": 7.10498089731132,
         "residual_on_design": 4.831757745533295e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.1648173511033444e-21,
+        "certified_gap_bound": 4.4637441442527814e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s2_laplace",
-        "margin_decades": 7.419258930628546,
+        "margin_decades": 7.10498089731132,
         "residual_on_design": 4.831757745533295e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 5.625453782942621e-22,
+        "certified_gap_bound": 2.7766917909879287e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s3_fb-gvi",
-        "margin_decades": 8.00452262978292,
+        "margin_decades": 7.311152514456146,
         "residual_on_design": 3.617814055537093e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 5.625453782942621e-22,
+        "certified_gap_bound": 2.7766917909879287e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s3_fr-kl",
-        "margin_decades": 8.00452262978292,
+        "margin_decades": 7.311152514456146,
         "residual_on_design": 3.617814055537093e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 5.625453782942621e-22,
+        "certified_gap_bound": 2.7766917909879287e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s3_fr-r",
-        "margin_decades": 8.00452262978292,
+        "margin_decades": 7.311152514456146,
         "residual_on_design": 3.617814055537093e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 5.625453782942621e-22,
+        "certified_gap_bound": 2.7766917909879287e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s3_laplace",
-        "margin_decades": 8.00452262978292,
+        "margin_decades": 7.311152514456146,
         "residual_on_design": 3.617814055537093e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.332119551601333e-21,
+        "certified_gap_bound": 4.742346006495856e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s4_fb-gvi",
-        "margin_decades": 7.386929380859972,
+        "margin_decades": 7.078686953409668,
         "residual_on_design": 5.112692703917027e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.332119551601333e-21,
+        "certified_gap_bound": 4.742346006495856e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s4_fr-kl",
-        "margin_decades": 7.386929380859972,
+        "margin_decades": 7.078686953409668,
         "residual_on_design": 5.112692703917027e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.332119551601333e-21,
+        "certified_gap_bound": 4.742346006495856e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s4_fr-r",
-        "margin_decades": 7.386929380859972,
+        "margin_decades": 7.078686953409668,
         "residual_on_design": 5.112692703917027e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.332119551601333e-21,
+        "certified_gap_bound": 4.742346006495856e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e0_s4_laplace",
-        "margin_decades": 7.386929380859972,
+        "margin_decades": 7.078686953409668,
         "residual_on_design": 5.112692703917027e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.038856941390428e-23,
+        "certified_gap_bound": 3.4644232117891205e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s0_fb-gvi",
-        "margin_decades": 8.849485890710337,
+        "margin_decades": 8.21504925105445,
         "residual_on_design": 1.6603599947157647e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.038856941390428e-23,
+        "certified_gap_bound": 3.4644232117891205e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s0_fr-kl",
-        "margin_decades": 8.849485890710337,
+        "margin_decades": 8.21504925105445,
         "residual_on_design": 1.6603599947157647e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.038856941390428e-23,
+        "certified_gap_bound": 3.4644232117891205e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s0_fr-r",
-        "margin_decades": 8.849485890710337,
+        "margin_decades": 8.21504925105445,
         "residual_on_design": 1.6603599947157647e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.038856941390428e-23,
+        "certified_gap_bound": 3.4644232117891205e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s0_laplace",
-        "margin_decades": 8.849485890710337,
+        "margin_decades": 8.21504925105445,
         "residual_on_design": 1.6603599947157647e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 3.881610894658353e-22,
+        "certified_gap_bound": 1.783134259328292e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s1_fb-gvi",
-        "margin_decades": 8.165668192646534,
+        "margin_decades": 7.5034961466054115,
         "residual_on_design": 3.8265656069265256e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 3.881610894658353e-22,
+        "certified_gap_bound": 1.783134259328292e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s1_fr-kl",
-        "margin_decades": 8.165668192646534,
+        "margin_decades": 7.5034961466054115,
         "residual_on_design": 3.8265656069265256e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 3.881610894658353e-22,
+        "certified_gap_bound": 1.783134259328292e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s1_fr-r",
-        "margin_decades": 8.165668192646534,
+        "margin_decades": 7.5034961466054115,
         "residual_on_design": 3.8265656069265256e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 3.881610894658353e-22,
+        "certified_gap_bound": 1.783134259328292e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s1_laplace",
-        "margin_decades": 8.165668192646534,
+        "margin_decades": 7.5034961466054115,
         "residual_on_design": 3.8265656069265256e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.0662420095596924e-22,
+        "certified_gap_bound": 8.754471603688973e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s2_fb-gvi",
-        "margin_decades": 8.439499003678206,
+        "margin_decades": 7.812450252418747,
         "residual_on_design": 2.922277959961787e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.0662420095596924e-22,
+        "certified_gap_bound": 8.754471603688973e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s2_fr-kl",
-        "margin_decades": 8.439499003678206,
+        "margin_decades": 7.812450252418747,
         "residual_on_design": 2.922277959961787e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.0662420095596924e-22,
+        "certified_gap_bound": 8.754471603688973e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s2_fr-r",
-        "margin_decades": 8.439499003678206,
+        "margin_decades": 7.812450252418747,
         "residual_on_design": 2.922277959961787e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 2.0662420095596924e-22,
+        "certified_gap_bound": 8.754471603688973e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s2_laplace",
-        "margin_decades": 8.439499003678206,
+        "margin_decades": 7.812450252418747,
         "residual_on_design": 2.922277959961787e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.905796121634013e-23,
+        "certified_gap_bound": 4.876525411844291e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s3_fb-gvi",
-        "margin_decades": 8.805007442080665,
+        "margin_decades": 8.066569699094499,
         "residual_on_design": 1.8696590836403317e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.905796121634013e-23,
+        "certified_gap_bound": 4.876525411844291e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s3_fr-kl",
-        "margin_decades": 8.805007442080665,
+        "margin_decades": 8.066569699094499,
         "residual_on_design": 1.8696590836403317e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.905796121634013e-23,
+        "certified_gap_bound": 4.876525411844291e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s3_fr-r",
-        "margin_decades": 8.805007442080665,
+        "margin_decades": 8.066569699094499,
         "residual_on_design": 1.8696590836403317e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 8.905796121634013e-23,
+        "certified_gap_bound": 4.876525411844291e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s3_laplace",
-        "margin_decades": 8.805007442080665,
+        "margin_decades": 8.066569699094499,
         "residual_on_design": 1.8696590836403317e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6452411744526012e-21,
+        "certified_gap_bound": 6.0355481028104855e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s4_fb-gvi",
-        "margin_decades": 7.5384506209871995,
+        "margin_decades": 6.97396347522182,
         "residual_on_design": 7.067874504031476e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6452411744526012e-21,
+        "certified_gap_bound": 6.0355481028104855e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s4_fr-kl",
-        "margin_decades": 7.5384506209871995,
+        "margin_decades": 6.97396347522182,
         "residual_on_design": 7.067874504031476e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6452411744526012e-21,
+        "certified_gap_bound": 6.0355481028104855e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s4_fr-r",
-        "margin_decades": 7.5384506209871995,
+        "margin_decades": 6.97396347522182,
         "residual_on_design": 7.067874504031476e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6452411744526012e-21,
+        "certified_gap_bound": 6.0355481028104855e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e2_s4_laplace",
-        "margin_decades": 7.5384506209871995,
+        "margin_decades": 6.97396347522182,
         "residual_on_design": 7.067874504031476e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.293873864083049e-22,
+        "certified_gap_bound": 2.034938501265592e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s0_fb-gvi",
-        "margin_decades": 8.121830908238696,
+        "margin_decades": 7.446128902021908,
         "residual_on_design": 3.97197338653441e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.293873864083049e-22,
+        "certified_gap_bound": 2.034938501265592e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s0_fr-kl",
-        "margin_decades": 8.121830908238696,
+        "margin_decades": 7.446128902021908,
         "residual_on_design": 3.97197338653441e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.293873864083049e-22,
+        "certified_gap_bound": 2.034938501265592e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s0_fr-r",
-        "margin_decades": 8.121830908238696,
+        "margin_decades": 7.446128902021908,
         "residual_on_design": 3.97197338653441e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.293873864083049e-22,
+        "certified_gap_bound": 2.034938501265592e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s0_laplace",
-        "margin_decades": 8.121830908238696,
+        "margin_decades": 7.446128902021908,
         "residual_on_design": 3.97197338653441e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9537935703607408e-21,
+        "certified_gap_bound": 7.123794516212046e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s1_fb-gvi",
-        "margin_decades": 7.463801514712796,
+        "margin_decades": 6.901968806911403,
         "residual_on_design": 7.488972230577801e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9537935703607408e-21,
+        "certified_gap_bound": 7.123794516212046e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s1_fr-kl",
-        "margin_decades": 7.463801514712796,
+        "margin_decades": 6.901968806911403,
         "residual_on_design": 7.488972230577801e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9537935703607408e-21,
+        "certified_gap_bound": 7.123794516212046e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s1_fr-r",
-        "margin_decades": 7.463801514712796,
+        "margin_decades": 6.901968806911403,
         "residual_on_design": 7.488972230577801e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9537935703607408e-21,
+        "certified_gap_bound": 7.123794516212046e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s1_laplace",
-        "margin_decades": 7.463801514712796,
+        "margin_decades": 6.901968806911403,
         "residual_on_design": 7.488972230577801e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9455526997967652e-22,
+        "certified_gap_bound": 7.985903325838968e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s2_fb-gvi",
-        "margin_decades": 8.465637191614764,
+        "margin_decades": 7.852356142290496,
         "residual_on_design": 2.53001826975442e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9455526997967652e-22,
+        "certified_gap_bound": 7.985903325838968e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s2_fr-kl",
-        "margin_decades": 8.465637191614764,
+        "margin_decades": 7.852356142290496,
         "residual_on_design": 2.53001826975442e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9455526997967652e-22,
+        "certified_gap_bound": 7.985903325838968e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s2_fr-r",
-        "margin_decades": 8.465637191614764,
+        "margin_decades": 7.852356142290496,
         "residual_on_design": 2.53001826975442e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.9455526997967652e-22,
+        "certified_gap_bound": 7.985903325838968e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s2_laplace",
-        "margin_decades": 8.465637191614764,
+        "margin_decades": 7.852356142290496,
         "residual_on_design": 2.53001826975442e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.345025700011053e-23,
+        "certified_gap_bound": 2.147485268020535e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s3_fb-gvi",
-        "margin_decades": 9.116687841222243,
+        "margin_decades": 8.422749997578094,
         "residual_on_design": 1.3203318413827083e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.345025700011053e-23,
+        "certified_gap_bound": 2.147485268020535e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s3_fr-kl",
-        "margin_decades": 9.116687841222243,
+        "margin_decades": 8.422749997578094,
         "residual_on_design": 1.3203318413827083e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.345025700011053e-23,
+        "certified_gap_bound": 2.147485268020535e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s3_fr-r",
-        "margin_decades": 9.116687841222243,
+        "margin_decades": 8.422749997578094,
         "residual_on_design": 1.3203318413827083e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 4.345025700011053e-23,
+        "certified_gap_bound": 2.147485268020535e-22,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s3_laplace",
-        "margin_decades": 9.116687841222243,
+        "margin_decades": 8.422749997578094,
         "residual_on_design": 1.3203318413827083e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6919855156101497e-21,
+        "certified_gap_bound": 7.868251767810104e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s4_fb-gvi",
-        "margin_decades": 7.52628354988177,
+        "margin_decades": 6.858801942788509,
         "residual_on_design": 7.450182061861956e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6919855156101497e-21,
+        "certified_gap_bound": 7.868251767810104e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s4_fr-kl",
-        "margin_decades": 7.52628354988177,
+        "margin_decades": 6.858801942788509,
         "residual_on_design": 7.450182061861956e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6919855156101497e-21,
+        "certified_gap_bound": 7.868251767810104e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s4_fr-r",
-        "margin_decades": 7.52628354988177,
+        "margin_decades": 6.858801942788509,
         "residual_on_design": 7.450182061861956e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       },
       {
-        "certified_gap_bound": 1.6919855156101497e-21,
+        "certified_gap_bound": 7.868251767810104e-21,
         "experiment": "L",
         "job_id": "F3logistic_d50_kX1e4_s4_laplace",
-        "margin_decades": 7.52628354988177,
+        "margin_decades": 6.858801942788509,
         "residual_on_design": 7.450182061861956e-13,
         "smallest_plotted_gap": 5.684341886080803e-14
       }

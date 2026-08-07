@@ -78,6 +78,19 @@ def stepsize_protocol_table() -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values(["experiment", "job_id", "method"])
 
 
+def _reference_covariance_floor(reference: dict) -> float:
+    """Smallest eigenvalue of the reference covariance, the ``l`` of the FR lemma."""
+
+    path = Path(str(reference.get("path", "")))
+    if not path.exists():
+        return float("nan")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    covariance = np.asarray(payload.get("covariance", []), dtype=np.float64)
+    if covariance.ndim != 2 or not covariance.size:
+        return float("nan")
+    return float(np.linalg.eigvalsh(covariance)[0])
+
+
 def reference_certification_table() -> pd.DataFrame:
     """Residual of every reference solution, against the smallest gap it supports.
 
@@ -107,14 +120,18 @@ def reference_certification_table() -> pd.DataFrame:
         transfer = metadata.get("design_transfer_fisher_rao_residual_squared")
         curvature = manifest.get("curvature", {})
         alpha_star = float(curvature.get("alpha_star", np.nan))
-        # The proved conversion from residual to energy gap, with the manuscript's
-        # own constant.  The reference is a stationary point so its covariance
-        # equals the inverse expected Hessian; the Fisher--Rao branch of the bound
-        # needs a covariance floor we do not carry here, so the Bures--Wasserstein
-        # branch, which needs only alpha_star, is the one applied.
+        floor = _reference_covariance_floor(reference)
+        # Fisher--Rao gradient domination, ||grad E(a)||_a^2 >= alpha_star * l * Delta(a)
+        # for C >= l I, converts the reference's own residual into a bound on its
+        # suboptimality.  The Bures--Wasserstein form of the same lemma is available
+        # and slightly tighter, but this is a Fisher--Rao paper: certifying its
+        # references with a Wasserstein quantity would make that geometry part of the
+        # methodology rather than an external baseline.  The Fisher--Rao branch
+        # carries ample margin on its own.
         certified = (
-            float(bures / (2.0 * alpha_star))
-            if np.isfinite(bures) and np.isfinite(alpha_star) and alpha_star > 0.0
+            float(on_design / (alpha_star * floor))
+            if np.isfinite(on_design) and np.isfinite(alpha_star) and alpha_star > 0.0
+            and np.isfinite(floor) and floor > 0.0
             else np.nan
         )
         rows.append(
@@ -123,6 +140,7 @@ def reference_certification_table() -> pd.DataFrame:
                 "experiment": str(config.get("experiment", "")),
                 "backend": str(metadata.get("backend", "exact")),
                 "alpha_star": alpha_star,
+                "covariance_floor": floor,
                 "residual_on_design": float(np.sqrt(max(on_design, 0.0))),
                 "certified_gap_bound": certified,
                 "residual_transfer": (

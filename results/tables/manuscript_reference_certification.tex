@@ -1,94 +1,94 @@
 % Certification of every reference solution used by the manuscript figures. The logistic cells use exact one-dimensional quadrature, order 48 for the updates and 96 for the objective evaluation and the reference solve, so there is no sampling design and no transfer error. The certified bound is the manuscript's Gaussian variational PL inequality applied to the reference's own residual.
-\begin{tabular}{llllllll}
+\begin{tabular}{lllllllll}
 \toprule
-job\_id & experiment & backend & alpha\_star & residual\_on\_design & certified\_gap\_bound & residual\_transfer & transfer\_objective\_difference \\
+job\_id & experiment & backend & alpha\_star & covariance\_floor & residual\_on\_design & certified\_gap\_bound & residual\_transfer & transfer\_objective\_difference \\
 \midrule
-F1burnin\_d20\_lam1e-2 & A & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1burnin\_d20\_lam1e-4 & A & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1burnin\_d20\_lam1e-6 & A & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1burnin\_d20\_lam1e-8 & A & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1affine\_d10\_S1e0 & B & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1affine\_d10\_S1e2 & B & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1affine\_d10\_S1e4 & B & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1affine\_d10\_S1e6 & B & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F1aniso\_d10\_kappa1e9 & C & exact & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
-F2global\_d10\_k100\_rho0.1 & D & gauss\_hermite\_foc & 0.46245114134112364 & 3.800e-13 & 3.1099710241824127e-25 & -- & -- \\
-F2global\_d10\_k100\_rho1 & D & gauss\_hermite\_foc & 0.020642890956432597 & 3.779e-13 & 6.9724078834277e-24 & -- & -- \\
-F2global\_d10\_k10\_rho0.1 & D & gauss\_hermite\_foc & 0.7884407543258877 & 3.781e-13 & 1.825036936766092e-25 & -- & -- \\
-F2global\_d10\_k10\_rho1 & D & gauss\_hermite\_foc & 0.1620962691740644 & 3.836e-13 & 9.020907344995059e-25 & -- & -- \\
-F2global\_d10\_k1\_rho0.1 & D & gauss\_hermite\_foc & 0.9419720277446456 & 3.789e-13 & 1.5275755931927453e-25 & -- & -- \\
-F2global\_d10\_k1\_rho1 & D & gauss\_hermite\_foc & 0.5885872504308797 & 3.771e-13 & 2.4485529128052115e-25 & -- & -- \\
-F2global\_d50\_k100\_rho0.1 & D & gauss\_hermite\_foc & 0.46245114134112364 & 8.459e-13 & 1.5645234642388725e-24 & -- & -- \\
-F2global\_d50\_k100\_rho1 & D & gauss\_hermite\_foc & 0.0206428909564326 & 8.486e-13 & 3.484990037714124e-23 & -- & -- \\
-F2global\_d50\_k10\_rho0.1 & D & gauss\_hermite\_foc & 0.7884407543258878 & 8.463e-13 & 9.15195550309077e-25 & -- & -- \\
-F2global\_d50\_k10\_rho1 & D & gauss\_hermite\_foc & 0.1620962691740643 & 8.466e-13 & 4.457342656151949e-24 & -- & -- \\
-F2global\_d50\_k1\_rho0.1 & D & gauss\_hermite\_foc & 0.9419261350530271 & 8.499e-13 & 7.638230133901314e-25 & -- & -- \\
-F2global\_d50\_k1\_rho1 & D & gauss\_hermite\_foc & 0.5884732373467155 & 8.488e-13 & 1.223749133461053e-24 & -- & -- \\
-F2local\_d10\_k10\_rho0p1\_r0p01 & G & gauss\_hermite\_foc & 0.7884407543258876 & 3.780e-13 & 1.8240776763403157e-25 & -- & -- \\
-F2local\_d10\_k10\_rho0p1\_r0p05 & G & gauss\_hermite\_foc & 0.7884407543258876 & 3.780e-13 & 1.8240776763403157e-25 & -- & -- \\
-F2local\_d10\_k10\_rho0p1\_r0p1 & G & gauss\_hermite\_foc & 0.7884407543258876 & 3.780e-13 & 1.8240776763403157e-25 & -- & -- \\
-F2local\_d10\_k10\_rho1\_r0p01 & G & gauss\_hermite\_foc & 0.1620962691740644 & 3.839e-13 & 9.016398957168014e-25 & -- & -- \\
-F2local\_d10\_k10\_rho1\_r0p05 & G & gauss\_hermite\_foc & 0.1620962691740644 & 3.839e-13 & 9.016398957168014e-25 & -- & -- \\
-F2local\_d10\_k10\_rho1\_r0p1 & G & gauss\_hermite\_foc & 0.1620962691740644 & 3.839e-13 & 9.016398957168014e-25 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 2.657e-13 & 7.010517668856647e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 2.657e-13 & 7.010517668856647e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 2.657e-13 & 7.010517668856647e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 2.657e-13 & 7.010517668856647e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 4.761e-13 & 1.5103078678373181e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 4.761e-13 & 1.5103078678373181e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 4.761e-13 & 1.5103078678373181e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 4.761e-13 & 1.5103078678373181e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 4.832e-13 & 2.1648173511033444e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 4.832e-13 & 2.1648173511033444e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 4.832e-13 & 2.1648173511033444e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 4.832e-13 & 2.1648173511033444e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 3.618e-13 & 5.625453782942621e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 3.618e-13 & 5.625453782942621e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 3.618e-13 & 5.625453782942621e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 3.618e-13 & 5.625453782942621e-22 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 5.113e-13 & 2.332119551601333e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 5.113e-13 & 2.332119551601333e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 5.113e-13 & 2.332119551601333e-21 & -- & -- \\
-F3logistic\_d50\_kX1e0\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 5.113e-13 & 2.332119551601333e-21 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 1.660e-13 & 8.038856941390428e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 1.660e-13 & 8.038856941390428e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 1.660e-13 & 8.038856941390428e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 1.660e-13 & 8.038856941390428e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 3.827e-13 & 3.881610894658353e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 3.827e-13 & 3.881610894658353e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 3.827e-13 & 3.881610894658353e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 3.827e-13 & 3.881610894658353e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 2.922e-13 & 2.0662420095596924e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 2.922e-13 & 2.0662420095596924e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 2.922e-13 & 2.0662420095596924e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 2.922e-13 & 2.0662420095596924e-22 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 1.870e-13 & 8.905796121634013e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 1.870e-13 & 8.905796121634013e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 1.870e-13 & 8.905796121634013e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 1.870e-13 & 8.905796121634013e-23 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 7.068e-13 & 1.6452411744526012e-21 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 7.068e-13 & 1.6452411744526012e-21 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 7.068e-13 & 1.6452411744526012e-21 & -- & -- \\
-F3logistic\_d50\_kX1e2\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 7.068e-13 & 1.6452411744526012e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 3.972e-13 & 4.293873864083049e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 3.972e-13 & 4.293873864083049e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 3.972e-13 & 4.293873864083049e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 3.972e-13 & 4.293873864083049e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 7.489e-13 & 1.9537935703607408e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 7.489e-13 & 1.9537935703607408e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 7.489e-13 & 1.9537935703607408e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 7.489e-13 & 1.9537935703607408e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 2.530e-13 & 1.9455526997967652e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 2.530e-13 & 1.9455526997967652e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 2.530e-13 & 1.9455526997967652e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 2.530e-13 & 1.9455526997967652e-22 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 1.320e-13 & 4.345025700011053e-23 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 1.320e-13 & 4.345025700011053e-23 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 1.320e-13 & 4.345025700011053e-23 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 1.320e-13 & 4.345025700011053e-23 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 7.450e-13 & 1.6919855156101497e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 7.450e-13 & 1.6919855156101497e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 7.450e-13 & 1.6919855156101497e-21 & -- & -- \\
-F3logistic\_d50\_kX1e4\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 7.450e-13 & 1.6919855156101497e-21 & -- & -- \\
+F1burnin\_d20\_lam1e-2 & A & exact & 1.0 & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
+F1burnin\_d20\_lam1e-4 & A & exact & 1.0 & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
+F1burnin\_d20\_lam1e-6 & A & exact & 1.0 & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
+F1burnin\_d20\_lam1e-8 & A & exact & 1.0 & 1.0 & 0.000e+00 & 0.0 & -- & -- \\
+F1affine\_d10\_S1e0 & B & exact & 1.0 & 0.769230769230769 & 0.000e+00 & 0.0 & -- & -- \\
+F1affine\_d10\_S1e2 & B & exact & 1.0 & 0.9697884989222761 & 0.000e+00 & 0.0 & -- & -- \\
+F1affine\_d10\_S1e4 & B & exact & 1.0 & 0.9283294548452007 & 0.000e+00 & 0.0 & -- & -- \\
+F1affine\_d10\_S1e6 & B & exact & 1.0 & 1.2206606372962185 & 0.000e+00 & 0.0 & -- & -- \\
+F1aniso\_d10\_kappa1e9 & C & exact & 1.0 & 1.0000000244005463 & 0.000e+00 & 0.0 & -- & -- \\
+F2global\_d10\_k100\_rho0.1 & D & gauss\_hermite\_foc & 0.46245114134112364 & 0.9999999999999994 & 3.800e-13 & 3.123174240490195e-25 & -- & -- \\
+F2global\_d10\_k100\_rho1 & D & gauss\_hermite\_foc & 0.020642890956432597 & 0.9999999999999992 & 3.779e-13 & 6.917985355261304e-24 & -- & -- \\
+F2global\_d10\_k10\_rho0.1 & D & gauss\_hermite\_foc & 0.7884407543258877 & 0.999999999999999 & 3.781e-13 & 1.8127351326525129e-25 & -- & -- \\
+F2global\_d10\_k10\_rho1 & D & gauss\_hermite\_foc & 0.1620962691740644 & 0.9999999999999984 & 3.836e-13 & 9.078777170407957e-25 & -- & -- \\
+F2global\_d10\_k1\_rho0.1 & D & gauss\_hermite\_foc & 0.9419720277446456 & 0.999999999999999 & 3.789e-13 & 1.5237167196178423e-25 & -- & -- \\
+F2global\_d10\_k1\_rho1 & D & gauss\_hermite\_foc & 0.5885872504308797 & 0.9999999999999983 & 3.771e-13 & 2.4155606934132697e-25 & -- & -- \\
+F2global\_d50\_k100\_rho0.1 & D & gauss\_hermite\_foc & 0.46245114134112364 & 0.9999999999999968 & 8.459e-13 & 1.5473862262528905e-24 & -- & -- \\
+F2global\_d50\_k100\_rho1 & D & gauss\_hermite\_foc & 0.0206428909564326 & 0.999999999999998 & 8.486e-13 & 3.4885730425256086e-23 & -- & -- \\
+F2global\_d50\_k10\_rho0.1 & D & gauss\_hermite\_foc & 0.7884407543258878 & 0.9999999999999979 & 8.463e-13 & 9.08357145309155e-25 & -- & -- \\
+F2global\_d50\_k10\_rho1 & D & gauss\_hermite\_foc & 0.1620962691740643 & 0.9999999999999977 & 8.466e-13 & 4.4214320472200436e-24 & -- & -- \\
+F2global\_d50\_k1\_rho0.1 & D & gauss\_hermite\_foc & 0.9419261350530271 & 0.9999999999999976 & 8.499e-13 & 7.668328627698075e-25 & -- & -- \\
+F2global\_d50\_k1\_rho1 & D & gauss\_hermite\_foc & 0.5884732373467155 & 0.9999999999999981 & 8.488e-13 & 1.224362257209616e-24 & -- & -- \\
+F2local\_d10\_k10\_rho0p1\_r0p01 & G & gauss\_hermite\_foc & 0.7884407543258876 & 0.9999999999999988 & 3.780e-13 & 1.8117776543435012e-25 & -- & -- \\
+F2local\_d10\_k10\_rho0p1\_r0p05 & G & gauss\_hermite\_foc & 0.7884407543258876 & 0.9999999999999988 & 3.780e-13 & 1.8117776543435012e-25 & -- & -- \\
+F2local\_d10\_k10\_rho0p1\_r0p1 & G & gauss\_hermite\_foc & 0.7884407543258876 & 0.9999999999999988 & 3.780e-13 & 1.8117776543435012e-25 & -- & -- \\
+F2local\_d10\_k10\_rho1\_r0p01 & G & gauss\_hermite\_foc & 0.1620962691740644 & 0.9999999999999983 & 3.839e-13 & 9.092167275918728e-25 & -- & -- \\
+F2local\_d10\_k10\_rho1\_r0p05 & G & gauss\_hermite\_foc & 0.1620962691740644 & 0.9999999999999983 & 3.839e-13 & 9.092167275918728e-25 & -- & -- \\
+F2local\_d10\_k10\_rho1\_r0p1 & G & gauss\_hermite\_foc & 0.1620962691740644 & 0.9999999999999983 & 3.839e-13 & 9.092167275918728e-25 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 0.00650304612342615 & 2.657e-13 & 1.669254219816109e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 0.00650304612342615 & 2.657e-13 & 1.669254219816109e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 0.00650304612342615 & 2.657e-13 & 1.669254219816109e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.006503046123426153 & 0.00650304612342615 & 2.657e-13 & 1.669254219816109e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 0.0071987094707159135 & 4.761e-13 & 4.374785114084083e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 0.0071987094707159135 & 4.761e-13 & 4.374785114084083e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 0.0071987094707159135 & 4.761e-13 & 4.374785114084083e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.007198709470715912 & 0.0071987094707159135 & 4.761e-13 & 4.374785114084083e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 0.007231951497294782 & 4.832e-13 & 4.4637441442527814e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 0.007231951497294782 & 4.832e-13 & 4.4637441442527814e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 0.007231951497294782 & 4.832e-13 & 4.4637441442527814e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.007231951497294785 & 0.007231951497294782 & 4.832e-13 & 4.4637441442527814e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 0.0068656617543145105 & 3.618e-13 & 2.7766917909879287e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 0.0068656617543145105 & 3.618e-13 & 2.7766917909879287e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 0.0068656617543145105 & 3.618e-13 & 2.7766917909879287e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.006865661754314514 & 0.0068656617543145105 & 3.618e-13 & 2.7766917909879287e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 0.007424258275778937 & 5.113e-13 & 4.742346006495856e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 0.007424258275778937 & 5.113e-13 & 4.742346006495856e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 0.007424258275778937 & 5.113e-13 & 4.742346006495856e-21 & -- & -- \\
+F3logistic\_d50\_kX1e0\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.007424258275778921 & 0.007424258275778937 & 5.113e-13 & 4.742346006495856e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 0.008920450567489979 & 1.660e-13 & 3.4644232117891205e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 0.008920450567489979 & 1.660e-13 & 3.4644232117891205e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 0.008920450567489979 & 1.660e-13 & 3.4644232117891205e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.008920450567490011 & 0.008920450567489979 & 1.660e-13 & 3.4644232117891205e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 0.009061855688111815 & 3.827e-13 & 1.783134259328292e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 0.009061855688111815 & 3.827e-13 & 1.783134259328292e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 0.009061855688111815 & 3.827e-13 & 1.783134259328292e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.009061855688111766 & 0.009061855688111815 & 3.827e-13 & 1.783134259328292e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 0.009876579262170684 & 2.922e-13 & 8.754471603688973e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 0.009876579262170684 & 2.922e-13 & 8.754471603688973e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 0.009876579262170684 & 2.922e-13 & 8.754471603688973e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.009876579262170683 & 0.009876579262170684 & 2.922e-13 & 8.754471603688973e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 0.008466563656922678 & 1.870e-13 & 4.876525411844291e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 0.008466563656922678 & 1.870e-13 & 4.876525411844291e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 0.008466563656922678 & 1.870e-13 & 4.876525411844291e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.008466563656922716 & 0.008466563656922678 & 1.870e-13 & 4.876525411844291e-22 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 0.009097676122263015 & 7.068e-13 & 6.0355481028104855e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 0.009097676122263015 & 7.068e-13 & 6.0355481028104855e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 0.009097676122263015 & 7.068e-13 & 6.0355481028104855e-21 & -- & -- \\
+F3logistic\_d50\_kX1e2\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.009097676122262968 & 0.009097676122263015 & 7.068e-13 & 6.0355481028104855e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s0\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 0.008805026868289541 & 3.972e-13 & 2.034938501265592e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s0\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 0.008805026868289541 & 3.972e-13 & 2.034938501265592e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s0\_fr-r & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 0.008805026868289541 & 3.972e-13 & 2.034938501265592e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s0\_laplace & L & logistic\_exact\_foc\_newton & 0.008805026868289328 & 0.008805026868289541 & 3.972e-13 & 2.034938501265592e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s1\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 0.00887291923219449 & 7.489e-13 & 7.123794516212046e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s1\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 0.00887291923219449 & 7.489e-13 & 7.123794516212046e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s1\_fr-r & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 0.00887291923219449 & 7.489e-13 & 7.123794516212046e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s1\_laplace & L & logistic\_exact\_foc\_newton & 0.008872919232194649 & 0.00887291923219449 & 7.489e-13 & 7.123794516212046e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s2\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 0.008952856697151557 & 2.530e-13 & 7.985903325838968e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s2\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 0.008952856697151557 & 2.530e-13 & 7.985903325838968e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s2\_fr-r & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 0.008952856697151557 & 2.530e-13 & 7.985903325838968e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s2\_laplace & L & logistic\_exact\_foc\_newton & 0.008952856697151746 & 0.008952856697151557 & 2.530e-13 & 7.985903325838968e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s3\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 0.009009859120456046 & 1.320e-13 & 2.147485268020535e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s3\_fr-kl & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 0.009009859120456046 & 1.320e-13 & 2.147485268020535e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s3\_fr-r & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 0.009009859120456046 & 1.320e-13 & 2.147485268020535e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s3\_laplace & L & logistic\_exact\_foc\_newton & 0.009009859120455986 & 0.009009859120456046 & 1.320e-13 & 2.147485268020535e-22 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s4\_fb-gvi & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 0.008399003492248255 & 7.450e-13 & 7.868251767810104e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s4\_fr-kl & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 0.008399003492248255 & 7.450e-13 & 7.868251767810104e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s4\_fr-r & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 0.008399003492248255 & 7.450e-13 & 7.868251767810104e-21 & -- & -- \\
+F3logistic\_d50\_kX1e4\_s4\_laplace & L & logistic\_exact\_foc\_newton & 0.008399003492248194 & 0.008399003492248255 & 7.450e-13 & 7.868251767810104e-21 & -- & -- \\
 \bottomrule
 \end{tabular}
