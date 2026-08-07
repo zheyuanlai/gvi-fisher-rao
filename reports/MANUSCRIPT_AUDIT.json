@@ -7,6 +7,7 @@
     }
   },
   "campaign": {
+    "campaign_commit_in_history": true,
     "commits": [
       "f5a66436b180a4a9bab8d90c1a633e15a208647e"
     ],
@@ -21,7 +22,6 @@
     },
     "expected_trajectories": 131,
     "matches_current_source": true,
-    "matches_head_commit": true,
     "methods": {
       "FB--GVI": 32,
       "FR--KL": 42,

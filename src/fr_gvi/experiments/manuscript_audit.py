@@ -64,6 +64,16 @@ def _head_commit() -> str:
     return result.stdout.strip()
 
 
+def _is_ancestor(commit: str, head: str) -> bool:
+    import subprocess
+
+    if not commit or not head:
+        return False
+    return subprocess.run(
+        ["git", "merge-base", "--is-ancestor", commit, head], cwd=ROOT, check=False
+    ).returncode == 0
+
+
 def _expected_trajectories() -> dict[str, int]:
     expected: dict[str, int] = {}
     for name in GROUPS:
@@ -122,11 +132,16 @@ def check_campaign() -> tuple[list[str], list[str], dict[str, object]]:
             "the campaign's source hash is not the current source; rerun the "
             "trajectories or restore the revision they were produced from"
         )
-    if head and commits and set(commits) != {head}:
-        errors.append(
-            f"the campaign records commit {sorted(commits)[0][:8]} but HEAD is "
-            f"{head[:8]}; the artifacts do not describe the checked-out revision"
-        )
+    # Commit *equality* with HEAD is unsatisfiable: committing the artifacts moves
+    # HEAD past the revision the campaign ran from.  What must hold is that the
+    # recorded revision is in the current history and that its numerical source is
+    # the source on disk, which the hash check above already establishes.
+    for commit in commits:
+        if commit and not _is_ancestor(commit, head):
+            errors.append(
+                f"the campaign records commit {commit[:8]}, which is not an ancestor "
+                f"of HEAD {head[:8]}; the artifacts came from an abandoned revision"
+            )
     dirty = sum(1 for manifest in manifests if manifest.get("git_dirty"))
     if dirty:
         errors.append(
@@ -170,7 +185,7 @@ def check_campaign() -> tuple[list[str], list[str], dict[str, object]]:
         "commits": sorted(commits),
         "dirty_trajectories": dirty,
         "matches_current_source": bool(hashes) and set(hashes) == {current},
-        "matches_head_commit": bool(commits) and set(commits) == {head},
+        "campaign_commit_in_history": all(_is_ancestor(c, head) for c in commits if c),
     }
     return errors, warnings, summary
 
