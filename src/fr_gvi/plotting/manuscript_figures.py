@@ -301,21 +301,16 @@ def panel_affine(axis: plt.Axes) -> pd.DataFrame:
         )
     # The covariance is carried forward by ``S C S^T`` and mapped back by
     # ``S^{-1} C S^{-T}``, so the round trip amplifies roundoff by ``cond(S)^2``.
-    # Where that reaches one the transported state is no longer representable in
-    # double precision; the grid stops below it and the region is shaded so the
-    # reason the panel ends where it does is visible rather than implicit.
-    breakdown = 1.0 / np.sqrt(EPS)
-    reference = np.geomspace(1.0, 4.0 * breakdown, 64)
+    # The reference line carries that statement on its own; where the grid stops and
+    # why belongs in the caption rather than in an annotation crammed into the
+    # margin of a panel this size.
+    conditions = np.asarray(sorted(table["grid_transform_condition"].unique()), dtype=float)
+    reference = np.geomspace(conditions.min(), conditions.max(), 64)
     axis.plot(reference, EPS * reference**2, color=REFERENCE_GREY, linestyle=":",
               linewidth=1.0, label=r"$\varepsilon_{\mathrm{mach}}\,\mathrm{cond}(S)^2$")
-    axis.axvspan(breakdown, 4.0 * breakdown, color=REFERENCE_GREY, alpha=0.12, linewidth=0.0)
-    axis.text(
-        breakdown * 1.5, EPS**0.5, "not representable\nin float64", fontsize=6.0,
-        color=REFERENCE_GREY, ha="center", va="center", rotation=90,
-    )
     axis.set_xscale("log")
     axis.set_yscale("log")
-    axis.set_xlim(0.4, 4.0 * breakdown)
+    axis.set_xlim(conditions.min() / 3.0, conditions.max() * 3.0)
     axis.set_xlabel(r"$\mathrm{cond}(S)$")
     axis.set_ylabel(r"$\max_n\ \mathrm{err}^{\mathrm{aff}}_n$")
     return table
@@ -387,11 +382,11 @@ def figure_1() -> dict[str, object]:
             "amplification through an ill-conditioned map rather than a loss of "
             "equivariance. FB--GVI, whose Bures--Wasserstein geometry "
             "is not affine invariant, departs by an $O(1)$ amount as soon as $S$ is not "
-            "orthogonal. The grid stops at $\\mathrm{cond}(S)=10^6$: the shaded region is "
-            "where $\\mathrm{cond}(S)^2$ reaches $\\varepsilon_{\\rm mach}^{-1}$, so the "
-            "transported covariance is no longer representable in double precision and no "
-            "method can be measured there. Every point drawn is a complete trajectory that "
-            "required no repair.",
+            "orthogonal. The grid stops at $\\mathrm{cond}(S)=10^6$ because one decade further "
+            "$\\mathrm{cond}(S)^2$ reaches $\\varepsilon_{\\rm mach}^{-1}$, the transported "
+            "covariance is no longer representable in double precision, and no method can "
+            "be measured. Every point drawn is a complete trajectory that required no "
+            "repair.",
             panel_affine,
             [f"F1affine_d10_S1e{e}" for e in (0, 2, 4, 6)],
         ),

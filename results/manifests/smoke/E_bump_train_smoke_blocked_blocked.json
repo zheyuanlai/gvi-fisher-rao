@@ -19,9 +19,9 @@
   "config_hash": "9ddc02c5f79d784862e7aed6899acc56de235d803796eb4536e48b31cf0da7e9",
   "config_path": "/home/zheyuanlai/gvi-fisher-rao/configs/smoke/E_bump_train_blocked.json",
   "cpu_count": 256,
-  "end_utc": "2026-08-07T01:01:25.518357+00:00",
+  "end_utc": "2026-08-07T01:04:47.858488+00:00",
   "failure_reason": "The attached manuscript defers fixed-step sharpness lower-bound constructions but supplies no bump-train potential formula or constants; the protocol forbids inventing them.",
-  "git_commit": "f5a66436b180a4a9bab8d90c1a633e15a208647e",
+  "git_commit": "8feb07c463a2011361bd693bb025cf7436fceede",
   "git_dirty": false,
   "git_status": "",
   "output_paths": [
@@ -46,7 +46,7 @@
   },
   "run_seed": 2026080505,
   "schema_version": 1,
-  "start_utc": "2026-08-07T01:01:25.518342+00:00",
+  "start_utc": "2026-08-07T01:04:47.858468+00:00",
   "status": "skipped",
   "target_seed": 351983848
 }

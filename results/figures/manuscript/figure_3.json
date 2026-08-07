@@ -2,8 +2,8 @@
   "figure": "figure_3",
   "git": {
     "code_hash": "456e06dcb573138cb2363734ef472181c150e046e6ad9f5b2dc5b685d4f094ef",
-    "commit": "f5a66436b180a4a9bab8d90c1a633e15a208647e",
-    "dirty": false
+    "commit": "8feb07c463a2011361bd693bb025cf7436fceede",
+    "dirty": true
   },
   "outputs": [
     "results/figures/manuscript/figure_3.pdf",
