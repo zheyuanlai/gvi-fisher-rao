@@ -11,6 +11,16 @@ dist/
 
 # Private manuscript, source papers, and local documentation details.
 references/
+# Drafted manuscript prose belongs with the manuscript, not in the public code
+# repository; the repository publishes what produced the numbers, not the paper.
+reports/NUMERICAL_SECTION.tex
+# Process notes and external review documents: useful while the work is in flight,
+# not part of what a reader needs to reproduce the campaign.
+/AUDIT.md
+reports/OVERNIGHT_SUMMARY.md
+reports/BLOCKED_EXPERIMENTS.md
+# Gate output, rewritten by make audit / make manuscript-audit / the plot audit.
+reports/*.json
 docs/_build/
 docs/private/
 notes/

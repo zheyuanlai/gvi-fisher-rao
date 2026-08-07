@@ -15,7 +15,9 @@ deterministic trajectories, separate from the exploratory grids. Three experimen
 groups produce three figures: Gaussian structure and affine invariance, global-to-local
 convergence on non-Gaussian targets, and deterministic Bayesian logistic regression.
 Only `FR--R`, `FR--KL` and `FB--GVI` iterate, with `Laplace` as a non-iterative
-reference.
+reference. The Bures-Wasserstein baseline is drawn as `BW-FB` in the figures, so
+that all three labels name their geometry before their discretization; the stored
+identifier stays `FB--GVI`.
 
 ```bash
 make manuscript-pilot     # sweep the two pilot cells, freeze the stepsizes
@@ -130,8 +132,10 @@ git because they are resumable and regenerable.
 - Numerical work is performed in float64.
 - SPD matrix functions use symmetric eigendecompositions; linear solves use
   Cholesky factors where appropriate.
-- Deterministic methods in a cell share one fixed expectation design with the
-  reference solve.
+- Deterministic expectations are computed exactly where the target admits it:
+  closed form for Gaussians, and panelled one-dimensional quadrature for the
+  log-cosh and logistic families, whose potentials depend on the parameter only
+  through scalar projections.
 - Unstable steps are retained as failed runs rather than repaired by algorithmic
   clipping.
 - The validation suite must pass before an expensive campaign is launched.
@@ -153,4 +157,3 @@ reports/          protocol, implementation, audit, campaign, and reproduction no
 - [Reproduction guide](reports/REPRODUCIBILITY.md)
 - [Implementation notes](reports/IMPLEMENTATION_NOTES.md)
 - [Numerical audit](reports/NUMERICAL_AUDIT.md)
-- [Campaign summary](reports/OVERNIGHT_SUMMARY.md)
