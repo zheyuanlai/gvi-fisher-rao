@@ -27,28 +27,38 @@ empirical contribution, and are not studied systematically here.
 Only three schemes iterate: the Riemannian retraction \eqref{upd:Riem}
 (\emph{FR-R}), the KL/Bregman scheme \eqref{upd:KL} (\emph{FR-KL}), and the
 deterministic forward--backward Bures--Wasserstein method of
-\cite{diao2023forward} (\emph{FB-GVI}), which is used only as an external
-baseline. On the logistic-regression problem the Laplace approximation is
+\cite{diao2023forward}, written \emph{BW-FB} so that all three labels name their
+geometry before their discretization; it is used only as an external baseline. On the logistic-regression problem the Laplace approximation is
 reported as a non-iterative reference. No Wasserstein warm start, hybrid
 geometry, or covariance rescue enters any deterministic comparison.
 
 \paragraph{Expectations.}
-Gaussian targets use closed-form expectations. The separable targets of
+Every expectation is computed exactly; no Monte Carlo enters the deterministic
+study. Gaussian targets are closed form. The separable targets of
 Section~\ref{subsec:numerics-nongaussian} use a panelled Gauss--Legendre rule
-against the Gaussian density, which resolves the unit-width $\operatorname{sech}^2$
-structure uniformly in the marginal width. The logistic posterior uses one
-scrambled Sobol design of $4096$ points, shared between the updates, the
-objective evaluation and the reference solve, so that every reported gap is exact
-for the discretized problem the algorithms solve; the transfer error against an
-independent design four times larger is reported separately and is of order
-$10^{-3}$.
+against the Gaussian density, which resolves the unit-width
+$\operatorname{sech}^2$ structure uniformly in the marginal width. The logistic
+posterior admits the same reduction: $V$ depends on $\theta$ only through the
+linear predictors $z_i=x_i^{\!\top}\theta$, and $z_i\sim\N(x_i^{\!\top}m,
+x_i^{\!\top}Cx_i)$ under $q$, so the objective, the expected gradient and the
+expected Hessian are $n$ independent one-dimensional integrals. The updates use
+order $48$ and the objective evaluation and reference solve use order $96$; the
+two agree to about $10^{-11}$, so the evaluation rule is both independent of and
+strictly finer than the update rule.
 
 \paragraph{Reference solutions.}
-Every non-Gaussian target is solved to a first-order-condition point whose
-Fisher--Rao residual lies between $3\times10^{-13}$ and $9\times10^{-13}$. Since
-the objective is quadratic at a stationary point, this places the reference's
-objective error near $10^{-25}$, at least nine orders of magnitude below the
-smallest gap any panel resolves.
+A residual is a gradient norm and a gap is an energy difference, so the two are
+related through the Gaussian variational PL inequality of
+Lemma~\ref{lem:gaussian-PL}, $\Delta(a)\le\|g(a)\|^2+\operatorname{Tr}((C^{-1}-H)C(C^{-1}-H))$
+divided by $2\alpha_\star$. This is a proved bound with a constant computed
+exactly for each target family. Applied to each reference's own residual it
+certifies the reference's suboptimality at least $7.4$ orders of magnitude below
+the smallest gap any panel draws. The same two lemmas give a reference-free
+certificate at every iterate,
+$\Delta(a)\le\min\{\|\cdot\|_{\mathrm{BW}}^2/(2\alpha_\star),
+\|\grad\mathcal E(a)\|_a^2/(\alpha_\star\lambda_{\min}(C))\}$, which holds at
+every state where the measured gap is meaningful and is tight to a factor of
+$1.2$ on the log-cosh grid.
 
 \paragraph{Stepsizes.}
 Panels that verify a theorem use the stepsize that theorem certifies. The
@@ -57,9 +67,16 @@ two pilot cells that appear in no figure and never revisited. The multiplier
 applies to $1/(\beta_\star\max\{\lambda_{0,\star}^{\max},1\})$; a multiple of the
 certified stepsize is not transferable, because the certified constant carries a
 worst-case covariance-growth allowance that is not attained. The frozen values
-are $2$ for both Fisher--Rao schemes and $1$ for FB-GVI, the latter being exactly
-the largest stepsize admitted by \cite{diao2023forward}. Certified stepsizes are
+are $2$ for both Fisher--Rao schemes and $1$ for BW-FB; on the optimizer-whitened
+targets $\beta=\beta_\star$, so that multiplier is exactly the ceiling
+\cite{diao2023forward} admits. Certified stepsizes are
 reported alongside the stepsizes actually used.
+
+\paragraph{Implementation.}
+All computations are in double precision with NumPy and SciPy; SPD matrix
+functions go through symmetric eigendecompositions and linear solves through
+Cholesky factors. The campaign is $131$ trajectories produced from a single
+tagged revision on a clean tree, run on one x86-64 node, and completes in minutes.
 
 \paragraph{Reported quantities.}
 We report the normalized objective gap $\Delta(a_n)/\Delta(a_0)$, the Fisher--Rao
@@ -85,30 +102,30 @@ $\lambda_0$ ranging over four decades and a common step inside both certified
 windows, the entry time grows with unit slope in
 $\log_+[1/(\beta_\star\lambda_{0,\star})]$: the retraction sits on the predicted
 line with fitted slope $0.999$ and intercept $-0.000$, and the Bregman scheme
-runs about five per cent above it. The covariance bootstrap is therefore not
-merely sufficient but sharp in its dependence on the initialization.
+runs about five per cent above it. Over the four initializations measured this is
+consistent with the predicted logarithmic dependence on the initial covariance.
 
 Panel~(b) tests Proposition~\ref{prop:affine-equivariance} directly. A base
 problem in $N_\theta=10$ is pushed through $\theta\mapsto S\theta+b$ with
-$\operatorname{cond}(S)$ ranging over eight decades, and each transformed
+$\operatorname{cond}(S)$ ranging over six decades, and each transformed
 trajectory is mapped back to the base coordinates. The Fisher--Rao iterates
 reproduce the base trajectory to roundoff, with a discrepancy that grows like
 $\varepsilon_{\mathrm{mach}}\operatorname{cond}(S)^2$: from $10^{-15}$ at
-$\operatorname{cond}(S)=1$ through $10^{-12}$, $10^{-9}$ and $10^{-5}$. This is
+$\operatorname{cond}(S)=1$ through $1.1\times10^{-12}$, $4.3\times10^{-9}$ and $5.9\times10^{-5}$. This is
 floating-point amplification through an ill-conditioned map, not a loss of
 equivariance; the exponent is $2$ because the covariance is carried by the
-congruence $C\mapsto SCS^{\!\top}$. At $\operatorname{cond}(S)=10^{8}$ the
-transported covariance has condition number $\varepsilon_{\mathrm{mach}}^{-1}$
-and is no longer representable in double precision, which is where the
-measurement necessarily ends. FB-GVI, whose Bures--Wasserstein geometry is not
-affine invariant, departs by an $O(1)$ amount as soon as $S$ is not orthogonal.
+congruence $C\mapsto SCS^{\!\top}$. The grid stops at
+$\operatorname{cond}(S)=10^{6}$: one decade further the transported covariance
+has condition number $\varepsilon_{\mathrm{mach}}^{-1}$ and no method can be
+measured. BW-FB, whose Bures--Wasserstein geometry is not affine invariant,
+departs by an $O(1)$ amount, about $0.5$, as soon as $S$ is not orthogonal.
 
 Panel~(c) shows the algorithmic consequence on the anisotropic Gaussian
 benchmark of \cite{diao2023forward} in $N_\theta=10$ with logarithmically spaced
 precision eigenvalues, where $\kappa=10^{9}$ but $\kappa_\star=1$. Each method
-runs at its own certified stepsize. Both Fisher--Rao schemes reach the
-double-precision floor within about $70$ iterations; FB-GVI reduces the KL gap by
-less than a factor of two in $500$. The target is constructed so that coordinate
+runs at its own certified stepsize. The Riemannian retraction reaches a
+normalized KL gap of $10^{-12}$ after $58$ iterations and the Bregman scheme after
+$47$; BW-FB reduces the gap only to $0.45$ of its initial value in $500$. The target is constructed so that coordinate
 anisotropy and intrinsic conditioning differ maximally, and the panel should be
 read as separating those two notions rather than as evidence that Fisher--Rao
 dominates in general.
@@ -125,8 +142,9 @@ The target family is
     \rho\sum_j\log\cosh(b_j^{\!\top}\theta-c_j),
 \]
 which is strongly logconcave and smooth for every $\rho\geq0$. The affine map is
-chosen so that $C_\star=\Id$ exactly, which is possible because the separable
-optimizer does not depend on it. Starting from $m_0=2e_1$, $C_0=\Id$ then places
+chosen so that $C_\star=\Id$ to numerical tolerance, which is possible because the
+separable optimizer does not depend on it; the construction is verified to
+$10^{-12}$ in Frobenius norm on every cell. Starting from $m_0=2e_1$, $C_0=\Id$ then places
 the covariance inside the band from the first iteration, so the trajectory
 measures non-Gaussian localization rather than a covariance burn-in. The grid is
 $N_\theta\in\{10,50\}$, $\kappa_{\mathrm{base}}\in\{1,10,10^2\}$,
@@ -161,8 +179,9 @@ measured per-iteration contraction is compared with $1-\Delta t\,\gamma_\star$ f
 \eqref{upd:KL}. The three radii agree with one another to five significant
 figures, so the measured rate is a property of the mode and not of the initial
 amplitude, and the residual discrepancy against the prediction is the
-second-order term of the discretization: $10^{-5}$ on the targets with the
-smaller certified step and $10^{-3}$ on those with the step five times larger.
+second-order term of the discretization: at most $3.5\times10^{-5}$ on the
+$\rho=1$ targets and $1.1\times10^{-3}$ on the $\rho=0.1$ targets, whose certified
+step is five times larger.
 
 \subsection{Bayesian logistic regression}
 \label{subsec:numerics-logistic}
@@ -171,45 +190,43 @@ The last group is a genuine variational-inference problem: synthetic Bayesian
 logistic regression with a proper Gaussian prior
 $\theta\sim\N(0,\lambda^{-1}\Id)$, $\lambda=1$, in $N_\theta=50$ with $500$
 training and $5000$ held-out points, at feature conditionings
-$\kappa_X\in\{1,10^2,10^4\}$ and five independently generated datasets each. All
-methods start from the prior, $m_0=0$, $C_0=\lambda^{-1}\Id$, which overshoots
-$C_\star$ by about two orders of magnitude and so exercises the covariance
-burn-in that the whitened targets of
+$\kappa_X\in\{1,10^2,10^4\}$ and five independently generated datasets each, one
+master seed per dataset. All methods start from the prior, $m_0=0$,
+$C_0=\lambda^{-1}\Id$, which overshoots $C_\star$ by about two orders of magnitude
+and so exercises the covariance burn-in that the whitened targets of
 Section~\ref{subsec:numerics-nongaussian} deliberately avoid.
 
-All three iterative schemes reach the reference on every conditioning and every
-dataset, with terminal Fisher--Rao gradient norms between $10^{-14}$ and
-$10^{-8}$. Panels~(a) and~(b) of Figure~\ref{fig:logistic} show the objective gap
-at $\kappa_X=10^4$ against iteration and against the time spent inside the update.
+Panels~(a) and~(b) of Figure~\ref{fig:logistic} show the objective gap at
+$\kappa_X=10^4$ against iteration and against the time spent inside the update.
+All three schemes converge geometrically over more than fourteen decades. The
+terminal Fisher--Rao gradient norms are below $10^{-11}$ at $\kappa_X=10^4$ and
+below $3\times10^{-8}$ at $\kappa_X=10^2$; at $\kappa_X=1$ the Fisher--Rao schemes
+are still at $2.5\times10^{-3}$ after $2000$ iterations, which is where their
+stepsize is smallest.
 
-Two observations are worth recording, and they run in opposite directions.
-
-First, no method dominates. The median iteration count to a $10^{-6}$ relative gap
-is
+No method dominates. The median iteration count to a $10^{-6}$ relative gap is
 \[
 \begin{array}{lccc}
  & \kappa_X=1 & \kappa_X=10^2 & \kappa_X=10^4\\
 \text{FR-R} & 1180 & 490 & 360\\
-\text{FR-KL} & 1180 & 500 & 360\\
-\text{FB-GVI} & 60 & 360 & 470.
+\text{FR-KL} & 1180 & 500 & 370\\
+\text{BW-FB} & 60 & 360 & 470.
 \end{array}
 \]
-FB-GVI is an order of magnitude faster on the best-conditioned problem and slower
+BW-FB is an order of magnitude faster on the best-conditioned problem and slower
 on the worst, and the crossover is near $\kappa_X=10^2$. This is the expected
 shape: the Bures--Wasserstein guarantee places the conditioning in the rate and
 the Fisher--Rao guarantee places it in the admissible stepsize, so the two trade
-places as the conditioning grows. The two Fisher--Rao schemes are within two per
-cent of one another throughout.
+places as the conditioning grows. The two Fisher--Rao schemes agree with one
+another to within three per cent throughout.
 
-Second, the cost per iteration is the same for all three methods to within two
-per cent, $246$ to $250$ milliseconds, so panel~(b) simply repeats the shape of
-panel~(a). On a problem of this form the cost is dominated by the expectation,
-which is $O(Snd)$ for $S=4096$ quadrature points and $n=500$ observations, and
-not by the $O(d^3)$ linear algebra that separates the matrix exponential of
-\eqref{upd:Riem} from the resolvent solve of \eqref{upd:KL}; the two differ by
-about three orders of magnitude in flop count here. The distinction between the
-two discretizations would become visible in wall-clock terms only at large $d$
-with a cheap expectation.
+The cost per iteration is the same for all three methods to within eight per
+cent, $12.3$ to $14.1$ milliseconds, so panel~(b) repeats the shape of panel~(a).
+The cost is dominated by the expectation, which is $O(nQ)$ for $n=500$
+observations and $Q$ quadrature nodes, rather than by the $O(N_\theta^3)$ linear
+algebra that separates the matrix exponential of \eqref{upd:Riem} from the
+resolvent solve of \eqref{upd:KL}. That distinction would become visible in
+wall-clock terms only at large $N_\theta$ with a cheaper expectation.
 
 The held-out predictive negative log-likelihood at termination is reported in
 Table~\ref{tab:logistic-predictive}. All three iterative schemes agree to four
@@ -218,7 +235,8 @@ converge to the same optimizer; the differences between them are in how fast the
 reach that common answer, not in the answer. The Laplace approximation, which is
 a fixed point of none of the schemes, attains a \emph{lower} predictive negative
 log-likelihood than the Gaussian variational optimum at all three conditionings,
-by $0.008$, $0.005$ and $0.001$ respectively, while its objective gap is larger by
-five to seven orders of magnitude. This is the familiar under-dispersion of the
-reverse Kullback--Leibler objective, and it is a property of the variational
-problem rather than of any algorithm that solves it.
+by $0.0083$, $0.0047$ and $0.0012$ respectively, while its objective gap is larger
+by many orders of magnitude. Minimizing the reverse Kullback--Leibler divergence
+over Gaussians is therefore not the same as optimizing held-out predictive
+quality on this problem; we report the observation without attributing it to a
+mechanism, which these experiments do not isolate.

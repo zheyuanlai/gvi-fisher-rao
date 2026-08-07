@@ -35,11 +35,7 @@
     },
     "trajectories": 131
   },
-  "errors": [
-    "figure_1: figure was built from a dirty working tree",
-    "figure_2: figure was built from a dirty working tree",
-    "figure_3: figure was built from a dirty working tree"
-  ],
+  "errors": [],
   "references": {
     "checked": [
       {
