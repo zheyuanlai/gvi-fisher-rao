@@ -1,0 +1,544 @@
+{
+  "algorithm_seconds": 0.00831312988884747,
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/manuscript/figure1_gaussian_burnin configs/manuscript/figure1_affine_equivariance configs/manuscript/figure1_anisotropic_gaussian configs/manuscript/figure2_logcosh_global configs/manuscript/figure2_logcosh_local configs/manuscript/figure3_logistic --jobs 60 --budget-hours 3",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.9697884989231075,
+      "FR--KL": 0.48076923076923006,
+      "FR--KL--STL": 0.125,
+      "FR--R": 0.24038461538461503,
+      "FR--R--STL": 1.0,
+      "S--FB--GVI": 0.9697884989231075
+    },
+    "experiment": "B",
+    "grid": {
+      "dimension": 10,
+      "figure": "1b",
+      "transform_condition": 100.0
+    },
+    "id": "F1affine_d10_S1e2",
+    "iterations": 60,
+    "master_seed": 20260422,
+    "methods": [
+      {
+        "certified_step_size": 0.24038461538461503,
+        "name": "FR--R",
+        "normalized_step_size": 0.5,
+        "step_size": 0.12019230769230752
+      },
+      {
+        "certified_step_size": 0.48076923076923006,
+        "name": "FR--KL",
+        "normalized_step_size": 0.5,
+        "step_size": 0.24038461538461503
+      },
+      {
+        "certified_step_size": 0.9697884989231075,
+        "name": "FB--GVI",
+        "normalized_step_size": 0.5,
+        "step_size": 0.48489424946155374
+      }
+    ],
+    "target": {
+      "dimension": 10,
+      "kind": "gaussian",
+      "transform_condition": 100.0
+    },
+    "tier": "manuscript"
+  },
+  "config_hash": "725c8a850ecbf07e3e71aa1eca886cd952c604ca4ec7220b0200b95ee2c114aa",
+  "config_path": "configs/manuscript/figure1_affine_equivariance/F1affine_d10_S1e2.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 0.00011058595492910969,
+    "alpha_star": 1.0,
+    "beta": 1.03115267000015,
+    "beta_star": 1.0,
+    "certified_step_sizes": {
+      "FB--GVI": 0.9697884989231075,
+      "FR--KL": 0.48076923076923006,
+      "FR--KL--STL": 0.125,
+      "FR--R": 0.24038461538461503,
+      "FR--R--STL": 1.0,
+      "S--FB--GVI": 0.9697884989231075
+    },
+    "condition": 9324.445140082778,
+    "exact": true,
+    "kappa_star": 1.0,
+    "lambda_0_star": 0.27999999999997166,
+    "lambda_0_star_max": 2.080000000000003,
+    "lambda_max_star": 2.080000000000003,
+    "source": "gaussian_exact"
+  },
+  "end_utc": "2026-08-07T00:07:18.234468+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 0.7180305039081689,
+  "git_commit": "5e6b24161dd69b98450c75037ae2710bbc064257",
+  "git_dirty": false,
+  "git_status": "",
+  "iterations_completed": 60,
+  "method_specification": {
+    "certified_step_size": 0.9697884989231075,
+    "name": "FB--GVI",
+    "normalized_step_size": 0.5,
+    "step_size": 0.48489424946155374
+  },
+  "minimum_covariance_eigenvalue": 0.969788498913901,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 60,
+    "expectation_evaluations": 60,
+    "gradient_evaluations": 60,
+    "hessian_evaluations": 60,
+    "iterations": 60,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 60,
+    "oracle_pairs": 60,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/manuscript/B/F1affine_d10_S1e2/fb-gvi_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 93016,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "affine_condition": 10000.0,
+    "base_initial_covariance": [
+      [
+        0.4,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.5333333333333334,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.6666666666666667,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.8,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9333333333333335,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0666666666666669,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.2000000000000002,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.3333333333333335,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.4666666666666668,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.6
+      ]
+    ],
+    "base_initial_mean": [
+      0.5,
+      0.4111111111111111,
+      0.3222222222222222,
+      0.23333333333333334,
+      0.14444444444444443,
+      0.055555555555555525,
+      -0.033333333333333326,
+      -0.12222222222222223,
+      -0.21111111111111114,
+      -0.3
+    ],
+    "base_mean": [
+      -0.2,
+      -0.14444444444444446,
+      -0.0888888888888889,
+      -0.033333333333333354,
+      0.0222222222222222,
+      0.07777777777777778,
+      0.1333333333333333,
+      0.18888888888888883,
+      0.2444444444444444,
+      0.3
+    ],
+    "base_precision": [
+      [
+        0.7,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.7666666666666666,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.8333333333333333,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.9,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.9666666666666667,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0333333333333332,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.1,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.1666666666666667,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.2333333333333334,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.3
+      ]
+    ],
+    "shift": [
+      -0.558641204401016,
+      -0.4930514779812117,
+      -1.38845694781802,
+      1.7088071190735319,
+      -0.5301524312645095,
+      0.22070735271029268,
+      0.06373743576337873,
+      0.2380036340613422,
+      -0.8585249781932869,
+      -0.8947777996653019
+    ],
+    "transform": [
+      [
+        17.075713247840305,
+        -19.544391771797958,
+        -7.031149074677135,
+        -0.5773922002695185,
+        -6.779045228971773,
+        33.3614664037084,
+        22.597837609829398,
+        -28.65473805617043,
+        -9.219602940642178,
+        25.845797878689478
+      ],
+      [
+        13.72117249402528,
+        -1.1532631425178204,
+        -5.226669353747138,
+        5.3922630931734306,
+        -1.5468912528320604,
+        11.294140895284412,
+        15.968480834183714,
+        -11.938531984698505,
+        -7.406771209656395,
+        8.65882200153802
+      ],
+      [
+        -9.478114985638816,
+        9.692571417912957,
+        2.7795171067152142,
+        1.760913424502852,
+        5.56191783520794,
+        -5.147669347372983,
+        -4.042731819352795,
+        -12.464319245891405,
+        7.485132281170798,
+        19.773742240890986
+      ],
+      [
+        -4.8542867847621896,
+        -2.910505852913595,
+        -6.932921218875575,
+        -10.951437334032873,
+        -7.491733945549867,
+        18.19528564890292,
+        -3.0499856102887457,
+        -4.55624643228656,
+        -2.8657274018309065,
+        12.388622295219085
+      ],
+      [
+        18.28109102059991,
+        7.539889639030632,
+        3.6427137761777115,
+        12.983778418363,
+        0.9161219908480253,
+        -11.69947061870763,
+        7.033252930313457,
+        11.369891539065998,
+        0.14899730263871497,
+        -20.496934381977994
+      ],
+      [
+        -9.641256308498411,
+        0.7359523320457177,
+        -17.298666461444213,
+        -8.987876699818479,
+        -6.44008007284272,
+        21.236398142183823,
+        -5.961986225453032,
+        -19.880421714318935,
+        5.353602476601686,
+        31.600879673182757
+      ],
+      [
+        -21.376476805572867,
+        -2.967914950352741,
+        -3.293953953897831,
+        -12.081097369568388,
+        -3.8227452717001666,
+        -1.168282568447508,
+        -17.810840636992836,
+        7.485156225017757,
+        2.854225015846546,
+        -6.208974640666224
+      ],
+      [
+        1.3175607249888583,
+        -10.867998426564817,
+        -1.4934293318277536,
+        0.7104119793965857,
+        -4.792515420479089,
+        1.1048273887848021,
+        -7.584691014329947,
+        3.6517568016435247,
+        1.2162967332677783,
+        -7.952360261523311
+      ],
+      [
+        -14.684987814984607,
+        6.596656079507871,
+        2.5858791249989204,
+        -0.44355761613246175,
+        7.028786945091251,
+        -20.003215557175114,
+        -11.418861976792048,
+        22.235452228601037,
+        -0.011848368449404333,
+        -22.959595821647195
+      ],
+      [
+        10.502061263380947,
+        -10.213668969089888,
+        9.270346528410707,
+        8.17478653063416,
+        9.080698252748043,
+        8.347156446192281,
+        26.313502856392905,
+        -19.286175748071788,
+        -4.367728101089936,
+        23.3322700528907
+      ]
+    ],
+    "transform_condition": 100.0
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 0.0,
+    "fisher_rao_residual_squared": 0.0,
+    "objective": -18.120664057888042,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_F1affine_d10_S1e2.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 3589029683,
+  "schema_version": 1,
+  "start_utc": "2026-08-07T00:07:18.125704+00:00",
+  "status": "completed",
+  "target_seed": 2402158131,
+  "wall_time_seconds": 0.10750618705060333
+}

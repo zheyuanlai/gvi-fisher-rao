@@ -8,9 +8,9 @@
   },
   "campaign": {
     "commits": [
-      "5f9ec4ea7f3c6ca475ae739beb508fb8e135781c"
+      "5e6b24161dd69b98450c75037ae2710bbc064257"
     ],
-    "dirty_trajectories": 122,
+    "dirty_trajectories": 0,
     "expected_by_group": {
       "figure1_affine_equivariance": 12,
       "figure1_anisotropic_gaussian": 3,
@@ -28,7 +28,7 @@
     },
     "repaired_trajectories": 0,
     "source_hashes": [
-      "9dc14b934500650d1284fa0f93f3573b1e4d3078fca353f279bd603f859a5296"
+      "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b"
     ],
     "statuses": {
       "completed": 131
@@ -36,8 +36,6 @@
     "trajectories": 131
   },
   "errors": [
-    "122 trajectories were produced from a dirty working tree; commit and tag the revision before the final campaign",
-    "F1aniso_d10_kappa1e9: the reference's certified suboptimality 2.830e-18 (residual 2.479e-08) is only 0.6 decades below the smallest plotted gap 1.188e-17",
     "figure_1: figure was built from a dirty working tree",
     "figure_2: figure was built from a dirty working tree",
     "figure_3: figure was built from a dirty working tree"
@@ -45,11 +43,11 @@
   "references": {
     "checked": [
       {
-        "certified_gap_bound": 2.8295090415659482e-18,
+        "certified_gap_bound": 0.0,
         "experiment": "C",
         "job_id": "F1aniso_d10_kappa1e9",
-        "margin_decades": 0.6229953883459712,
-        "residual_on_design": 2.4794347697868548e-08,
+        "margin_decades": Infinity,
+        "residual_on_design": 0.0,
         "smallest_plotted_gap": 1.1876992285616653e-17
       },
       {

@@ -1,0 +1,166 @@
+{
+  "algorithm_seconds": 24.407170213584322,
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/manuscript/figure1_gaussian_burnin configs/manuscript/figure1_affine_equivariance configs/manuscript/figure1_anisotropic_gaussian configs/manuscript/figure2_logcosh_global configs/manuscript/figure2_logcosh_local configs/manuscript/figure3_logistic --jobs 60 --budget-hours 3",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.004729545043644876,
+      "FR--KL": 0.00269460929711294,
+      "FR--KL--STL": 0.00033682616213911754,
+      "FR--R": 0.00134730464855647,
+      "FR--R--STL": 0.0026946092971129403,
+      "S--FB--GVI": 0.004729545043644876
+    },
+    "curvature": {
+      "alpha": 1.0,
+      "alpha_star": 0.006865661754314514,
+      "beta": 211.4368275958609,
+      "beta_star": 2.5479247628480035,
+      "certified_step_sizes": {
+        "FB--GVI": 0.004729545043644876,
+        "FR--KL": 0.00269460929711294,
+        "FR--KL--STL": 0.00033682616213911754,
+        "FR--R": 0.00134730464855647,
+        "FR--R--STL": 0.0026946092971129403,
+        "S--FB--GVI": 0.004729545043644876
+      },
+      "condition": 211.4368275958609,
+      "exact": true,
+      "kappa_star": 371.1113151251354,
+      "lambda_0_star": 41.21402023129188,
+      "lambda_0_star_max": 145.6523836717677,
+      "lambda_max_star": 145.6523836717678,
+      "source": "logistic_interval_exact"
+    },
+    "evaluation_quadrature_order": 96,
+    "experiment": "L",
+    "grid": {
+      "dataset": 3,
+      "dimension": 50,
+      "feature_condition": 1.0,
+      "figure": "3",
+      "prior_precision": 1.0
+    },
+    "id": "F3logistic_d50_kX1e0_s3_fb-gvi",
+    "iterations": 2000,
+    "master_seed": 20260703,
+    "methods": [
+      {
+        "certified_step_size": 0.004729545043644876,
+        "name": "FB--GVI",
+        "normalized_step_size": 1.0,
+        "step_scale": 0.002694609297112942,
+        "step_size": 0.002694609297112942
+      }
+    ],
+    "quadrature_order": 48,
+    "record_every": 10,
+    "target": {
+      "dimension": 50,
+      "feature_condition": 1.0,
+      "initial_covariance": "prior",
+      "kind": "logistic",
+      "prior_precision": 1.0,
+      "samples": 500,
+      "test_samples": 5000
+    },
+    "tier": "manuscript"
+  },
+  "config_hash": "70d1b5b7abab48e4582e67e1c7c1dd0b240eb0fa2c9876c104f3e9b321465c77",
+  "config_path": "configs/manuscript/figure3_logistic/F3logistic_d50_kX1e0_s3_fb-gvi.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.006865661754314514,
+    "beta": 211.4368275958609,
+    "beta_star": 2.5479247628480035,
+    "certified_step_sizes": {
+      "FB--GVI": 0.004729545043644876,
+      "FR--KL": 0.00269460929711294,
+      "FR--KL--STL": 0.00033682616213911754,
+      "FR--R": 0.00134730464855647,
+      "FR--R--STL": 0.0026946092971129403,
+      "S--FB--GVI": 0.004729545043644876
+    },
+    "condition": 211.4368275958609,
+    "exact": true,
+    "kappa_star": 371.1113151251354,
+    "lambda_0_star": 41.21402023129188,
+    "lambda_0_star_max": 145.6523836717677,
+    "lambda_max_star": 145.6523836717678,
+    "source": "logistic_interval_exact"
+  },
+  "end_utc": "2026-08-07T00:08:22.934359+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 0.0,
+  "git_commit": "5e6b24161dd69b98450c75037ae2710bbc064257",
+  "git_dirty": false,
+  "git_status": "",
+  "iterations_completed": 2000,
+  "method_specification": {
+    "certified_step_size": 0.004729545043644876,
+    "name": "FB--GVI",
+    "normalized_step_size": 1.0,
+    "step_scale": 0.002694609297112942,
+    "step_size": 0.002694609297112942
+  },
+  "minimum_covariance_eigenvalue": 0.006865661754314723,
+  "operation_counts": {
+    "cholesky_factorizations": 0,
+    "cholesky_solves": 0,
+    "eigendecompositions": 2000,
+    "expectation_evaluations": 2000,
+    "gradient_evaluations": 2000,
+    "hessian_evaluations": 2000,
+    "iterations": 2000,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 2000,
+    "oracle_pairs": 2000,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/manuscript/L/F3logistic_d50_kX1e0_s3_fb-gvi/fb-gvi_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 211804,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "feature_condition": 1.0,
+    "initial_covariance_scale": 1.0,
+    "prior_precision": 1.0,
+    "samples": 500,
+    "test_samples": 5000,
+    "true_parameter_norm": 0.9540998220590126
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 7.724492577642612e-24,
+    "fisher_rao_residual_squared": 1.3088578540441749e-25,
+    "objective": 411.9289777521732,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_F3logistic_d50_kX1e0_s3_fb-gvi.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 1370418747,
+  "schema_version": 1,
+  "start_utc": "2026-08-07T00:07:21.353372+00:00",
+  "status": "completed",
+  "target_seed": 1338968280,
+  "wall_time_seconds": 61.57995706400834
+}

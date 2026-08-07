@@ -205,10 +205,6 @@ def compose(
     return provenance
 
 
-def _resolution_floor(axis: plt.Axes, level: float, label: str | None) -> None:
-    axis.axhline(level, color=REFERENCE_GREY, linestyle=(0, (1, 2)), linewidth=0.8, label=label)
-
-
 def _markevery(values: np.ndarray, index: int = 0, count: int = 6) -> tuple[int, int]:
     """Marker spacing over the drawn portion of a curve, phased by series index.
 
@@ -343,7 +339,6 @@ def panel_anisotropic(axis: plt.Axes) -> pd.DataFrame:
             )
         )
     level = float(np.median(floors))
-    _resolution_floor(axis, level, "resolution floor")
     axis.set_yscale("log")
     axis.set_ylim(level / 5.0, 5.0)
     axis.set_xlabel("iteration $n$")
@@ -474,7 +469,6 @@ def _global_panel(job: str) -> Callable[[plt.Axes], pd.DataFrame]:
                     }
                 )
             )
-        _resolution_floor(axis, float(np.median(floors)), "resolution floor")
         axis.set_xscale("log")
         axis.set_yscale("log")
         axis.set_ylim(float(np.median(floors)) / 5.0, 3.0)
@@ -801,7 +795,6 @@ def _logistic_trajectory_panel(x_column: str, x_label: str) -> Callable[[plt.Axe
             collected.append(pd.DataFrame({x_column: [np.nan], "median": [level],
                                            "min": [np.nan], "max": [np.nan],
                                            "method": ["Laplace"]}))
-        _resolution_floor(axis, floor, "reference resolution")
         axis.set_ylim(floor / 5.0, None)
         if x_column != "iteration":
             axis.set_xscale("log")
@@ -864,7 +857,6 @@ def panel_logistic_conditions(axis: plt.Axes) -> pd.DataFrame:
             color=style["color"], elinewidth=0.9, capsize=2.0, label=method,
         )
     level = float(np.median(list(floors.values())))
-    _resolution_floor(axis, level, "reference resolution")
     axis.set_xscale("log")
     axis.set_yscale("log")
     axis.set_ylim(level / 3.0, None)

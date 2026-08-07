@@ -1,0 +1,180 @@
+{
+  "algorithm_seconds": 0.42235783830983564,
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py configs/manuscript/figure1_gaussian_burnin configs/manuscript/figure1_affine_equivariance configs/manuscript/figure1_anisotropic_gaussian configs/manuscript/figure2_logcosh_global configs/manuscript/figure2_logcosh_local configs/manuscript/figure3_logistic --jobs 60 --budget-hours 3",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.634163058234474,
+      "FR--KL": 0.5,
+      "FR--KL--STL": 0.0625,
+      "FR--R": 0.25,
+      "FR--R--STL": 0.5,
+      "S--FB--GVI": 0.634163058234474
+    },
+    "curvature": {
+      "alpha": 0.7884407543258872,
+      "alpha_star": 0.7884407543257401,
+      "beta": 1.5768815086517736,
+      "beta_star": 1.5768815086514802,
+      "certified_step_sizes": {
+        "FB--GVI": 0.634163058234474,
+        "FR--KL": 0.5,
+        "FR--KL--STL": 0.0625,
+        "FR--R": 0.25,
+        "FR--R--STL": 0.5,
+        "S--FB--GVI": 0.634163058234474
+      },
+      "condition": 1.999999999999999,
+      "exact": true,
+      "kappa_star": 2.0,
+      "lambda_0_star": 1.0000000000001725,
+      "lambda_0_star_max": 1.0000000000001867,
+      "lambda_max_star": 1.2683261164691841,
+      "source": "logcosh_separable_exact"
+    },
+    "experiment": "D",
+    "grid": {
+      "condition": 10.0,
+      "dimension": 10,
+      "figure": "2a-2c",
+      "representative": false,
+      "rho": 0.1
+    },
+    "id": "F2global_d10_k10_rho0.1",
+    "iterations": 400,
+    "master_seed": 20261511,
+    "methods": [
+      {
+        "certified_step_size": 0.25,
+        "name": "FR--R",
+        "normalized_step_size": 2.0,
+        "step_scale": 0.6341630582344736,
+        "step_size": 1.2683261164689472
+      },
+      {
+        "certified_step_size": 0.5,
+        "name": "FR--KL",
+        "normalized_step_size": 2.0,
+        "step_scale": 0.6341630582344736,
+        "step_size": 1.2683261164689472
+      },
+      {
+        "certified_step_size": 0.634163058234474,
+        "name": "FB--GVI",
+        "normalized_step_size": 1.0,
+        "step_scale": 0.6341630582344736,
+        "step_size": 0.6341630582344736
+      }
+    ],
+    "record_every": 1,
+    "target": {
+      "condition": 10.0,
+      "dimension": 10,
+      "initial_covariance_scale": 1.0,
+      "initial_mean_axis_scale": 2.0,
+      "kind": "logcosh",
+      "rho": 0.1,
+      "shift": 0.0,
+      "whiten_optimizer": true
+    },
+    "tier": "manuscript"
+  },
+  "config_hash": "4a20eea343cf118e8cac416788855ffd3a85a7dc2edb15922b57596a34706fad",
+  "config_path": "configs/manuscript/figure2_logcosh_global/F2global_d10_k10_rho0.1.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 0.7884407543258872,
+    "alpha_star": 0.7884407543258877,
+    "beta": 1.5768815086517736,
+    "beta_star": 1.5768815086517753,
+    "certified_step_sizes": {
+      "FB--GVI": 0.634163058234474,
+      "FR--KL": 0.5,
+      "FR--KL--STL": 0.0625,
+      "FR--R": 0.25,
+      "FR--R--STL": 0.5,
+      "S--FB--GVI": 0.634163058234474
+    },
+    "condition": 1.999999999999999,
+    "exact": true,
+    "kappa_star": 2.0,
+    "lambda_0_star": 0.9999999999999988,
+    "lambda_0_star_max": 1.000000000000001,
+    "lambda_max_star": 1.2683261164689468,
+    "source": "logcosh_separable_exact"
+  },
+  "end_utc": "2026-08-07T00:07:21.160895+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": -8.881784197001252e-16,
+  "git_commit": "5e6b24161dd69b98450c75037ae2710bbc064257",
+  "git_dirty": false,
+  "git_status": "",
+  "iterations_completed": 400,
+  "method_specification": {
+    "certified_step_size": 0.5,
+    "name": "FR--KL",
+    "normalized_step_size": 2.0,
+    "step_scale": 0.6341630582344736,
+    "step_size": 1.2683261164689472
+  },
+  "minimum_covariance_eigenvalue": 0.9994130270526289,
+  "operation_counts": {
+    "cholesky_factorizations": 800,
+    "cholesky_solves": 800,
+    "eigendecompositions": 0,
+    "expectation_evaluations": 400,
+    "gradient_evaluations": 400,
+    "hessian_evaluations": 400,
+    "iterations": 400,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 0,
+    "oracle_pairs": 400,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/manuscript/D/F2global_d10_k10_rho0.1/fr-kl_seed0.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 136684,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "affine_condition": 2.887484478244242,
+    "base_condition_bound": 11.0,
+    "base_curvature_max": 1.1,
+    "base_curvature_min": 0.1,
+    "marginal_deviation_max": 2.8079187209139223,
+    "marginal_deviation_min": 0.9724446112421354,
+    "optimizer_whitened": true
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 2.87786699819293e-25,
+    "fisher_rao_residual_squared": 1.4292342553815839e-25,
+    "objective": 5.296776804750502,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_F2global_d10_k10_rho0.1.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+  },
+  "run_seed": 3251044656,
+  "schema_version": 1,
+  "start_utc": "2026-08-07T00:07:20.105652+00:00",
+  "status": "completed",
+  "target_seed": 3955790936,
+  "wall_time_seconds": 1.0537884079967625
+}
