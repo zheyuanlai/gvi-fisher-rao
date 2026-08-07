@@ -8,7 +8,7 @@
   },
   "campaign": {
     "commits": [
-      "bd7021a10e0743da3042d77769187ba3879ad2da"
+      "f5a66436b180a4a9bab8d90c1a633e15a208647e"
     ],
     "dirty_trajectories": 0,
     "expected_by_group": {
@@ -20,7 +20,7 @@
       "figure3_logistic": 60
     },
     "expected_trajectories": 131,
-    "matches_current_source": false,
+    "matches_current_source": true,
     "matches_head_commit": true,
     "methods": {
       "FB--GVI": 32,
@@ -30,7 +30,7 @@
     },
     "repaired_trajectories": 0,
     "source_hashes": [
-      "a1e013f7298d97ee91b5036863053530d51038c77e4531f1f235dc2cc455197c"
+      "456e06dcb573138cb2363734ef472181c150e046e6ad9f5b2dc5b685d4f094ef"
     ],
     "statuses": {
       "completed": 131
@@ -41,12 +41,7 @@
   "configs": {
     "configs_checked": 93
   },
-  "errors": [
-    "the campaign's source hash is not the current source; rerun the trajectories or restore the revision they were produced from",
-    "figure_1: figure was built from a dirty working tree",
-    "figure_2: figure was built from a dirty working tree",
-    "figure_3: figure was built from a dirty working tree"
-  ],
+  "errors": [],
   "pilot_isolation": {
     "datasets_per_cell": {
       "10000:FB--GVI": 5,
