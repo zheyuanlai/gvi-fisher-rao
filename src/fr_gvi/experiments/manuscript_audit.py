@@ -168,7 +168,7 @@ def check_references() -> tuple[list[str], list[str], dict[str, object]]:
     if references.empty or gaps.empty:
         warnings.append("no reference or gap records found")
         return errors, warnings, {}
-    smallest = dict(zip(gaps["experiment"], gaps["smallest_positive_gap"], strict=True))
+    smallest = dict(zip(gaps["experiment"], gaps["smallest_plotted_gap"], strict=True))
     checked: list[dict[str, object]] = []
     for _, row in references.iterrows():
         experiment = str(row["experiment"])
@@ -187,7 +187,7 @@ def check_references() -> tuple[list[str], list[str], dict[str, object]]:
                 "experiment": experiment,
                 "residual_on_design": residual,
                 "certified_gap_bound": certified,
-                "smallest_reported_gap": target,
+                "smallest_plotted_gap": target,
                 "margin_decades": margin,
             }
         )
@@ -195,7 +195,7 @@ def check_references() -> tuple[list[str], list[str], dict[str, object]]:
             errors.append(
                 f"{row['job_id']}: the reference's certified suboptimality {certified:.3e} "
                 f"(residual {residual:.3e}) is only {margin:.1f} decades below the "
-                f"smallest reported gap {target:.3e}"
+                f"smallest plotted gap {target:.3e}"
             )
     # A negative gap means a trajectory passed below the reference, which is direct
     # evidence that the reference is not the minimizer.  Machine-precision

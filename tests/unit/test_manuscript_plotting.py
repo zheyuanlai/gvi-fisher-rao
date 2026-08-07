@@ -6,12 +6,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from fr_gvi.plotting.manuscript_figures import (
-    PLATEAU_THRESHOLD,
-    _markevery,
-    _truncate_at_floor,
-    reference_resolution_floor,
-)
+from fr_gvi.diagnostics.core import PLATEAU_THRESHOLD, truncate_at_floor
+from fr_gvi.plotting.manuscript_figures import _markevery, reference_resolution_floor
 
 
 def test_plateau_is_dropped() -> None:
@@ -20,7 +16,7 @@ def test_plateau_is_dropped() -> None:
     decay = 2.0 * 0.1 ** np.arange(12)
     plateau = np.array([1e-12, 1.4e-12, 0.9e-12, 1.2e-12])
     values = np.concatenate([decay, plateau])
-    truncated, level = _truncate_at_floor(values)
+    truncated, level = truncate_at_floor(values)
     drawn = np.isfinite(truncated)
     assert drawn[: len(decay)].all()
     assert not drawn[len(decay) + 1 :].any()
@@ -35,13 +31,13 @@ def test_early_transient_is_kept() -> None:
     """
 
     values = np.array([2.0, 0.70, 0.85, 0.15, 0.13, 3.3e-2, 2.1e-2, 8e-3, 4e-3])
-    truncated, _ = _truncate_at_floor(values)
+    truncated, _ = truncate_at_floor(values)
     assert np.isfinite(truncated).all()
 
 
 def test_analytic_floor_is_a_second_cut() -> None:
     values = np.array([1.0, 1e-3, 1e-6, 1e-9, 1e-12])
-    truncated, level = _truncate_at_floor(values, floor=1e-8)
+    truncated, level = truncate_at_floor(values, floor=1e-8)
     assert np.isfinite(truncated[:3]).all()
     assert not np.isfinite(truncated[3:]).any()
     assert level == pytest.approx(1e-6)
@@ -52,7 +48,7 @@ def test_plateau_threshold_is_relative_to_the_start() -> None:
 
     start = 1.0e6
     values = np.array([start, start * 1e-10, start * 1e-10])
-    truncated, _ = _truncate_at_floor(values)
+    truncated, _ = truncate_at_floor(values)
     assert np.isfinite(truncated[:2]).all()
     assert not np.isfinite(truncated[2])
     assert PLATEAU_THRESHOLD > 0.0

@@ -1,7 +1,8 @@
 {
   "figure": "figure_1",
   "git": {
-    "commit": "b0ac19c04582351fcf13522e804102a26bf20c83",
+    "code_hash": "9dc14b934500650d1284fa0f93f3573b1e4d3078fca353f279bd603f859a5296",
+    "commit": "5f9ec4ea7f3c6ca475ae739beb508fb8e135781c",
     "dirty": true
   },
   "outputs": [

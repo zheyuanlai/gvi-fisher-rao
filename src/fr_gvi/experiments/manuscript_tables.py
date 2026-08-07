@@ -22,6 +22,7 @@ from fr_gvi.experiments.manuscript import (
     LOGISTIC_UPDATE_ORDER,
     SELECTED_STEPS,
 )
+from fr_gvi.diagnostics.core import truncate_at_floor
 from fr_gvi.experiments.tables import _write
 from fr_gvi.plotting.style import load_experiment
 
@@ -137,7 +138,14 @@ def reference_certification_table() -> pd.DataFrame:
 
 
 def smallest_reported_gaps() -> pd.DataFrame:
-    """Smallest strictly positive gap each figure resolves, per experiment."""
+    """Smallest gap each figure actually draws, per experiment.
+
+    The raw trajectories continue past the point where the objective difference
+    reaches its own resolution, and those trailing values are roundoff rather than
+    measurements: the figures truncate them and so must the certification, or the
+    reference would be held to a tolerance set by numerical noise.  The truncation
+    is the one the panels use, applied per trajectory.
+    """
 
     rows: list[dict[str, object]] = []
     for experiment in ("C", "D", "G", "L"):
@@ -146,15 +154,18 @@ def smallest_reported_gaps() -> pd.DataFrame:
             continue
         frame = frame[~frame["job_id"].astype(str).str.startswith("pilot")]
         column = "exact_gaussian_kl" if experiment == "C" else "objective_gap"
-        values = frame[column].to_numpy(dtype=np.float64)
-        positive = values[np.isfinite(values) & (values > 0.0)]
+        drawn: list[float] = []
+        for _, trajectory in frame.groupby(["job_id", "method", "seed"]):
+            values = trajectory.sort_values("iteration")[column].to_numpy(dtype=np.float64)
+            visible, _ = truncate_at_floor(values)
+            visible = visible[np.isfinite(visible) & (visible > 0.0)]
+            if visible.size:
+                drawn.append(float(visible.min()))
         rows.append(
             {
                 "experiment": experiment,
-                "trajectories": int(
-                    frame.groupby(["job_id", "method", "seed"]).ngroups
-                ),
-                "smallest_positive_gap": float(positive.min()) if positive.size else np.nan,
+                "trajectories": int(frame.groupby(["job_id", "method", "seed"]).ngroups),
+                "smallest_plotted_gap": float(min(drawn)) if drawn else np.nan,
             }
         )
     return pd.DataFrame(rows)
@@ -224,9 +235,10 @@ def main(arguments: list[str] | None = None) -> int:
     _write(
         smallest_reported_gaps(),
         "manuscript_reported_gaps",
-        "Smallest strictly positive objective gap each experiment resolves, for "
-        "comparison with the reference residuals.",
-        {"smallest_positive_gap": ".3e"},
+        "Smallest objective gap each experiment actually draws, after the same "
+        "resolution truncation the panels use, for comparison with the certified "
+        "suboptimality of each reference.",
+        {"smallest_plotted_gap": ".3e"},
     )
     predictive = predictive_table()
     if not predictive.empty:

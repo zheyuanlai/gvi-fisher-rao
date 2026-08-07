@@ -1,7 +1,8 @@
 {
   "figure": "figure_3",
   "git": {
-    "commit": "b0ac19c04582351fcf13522e804102a26bf20c83",
+    "code_hash": "9dc14b934500650d1284fa0f93f3573b1e4d3078fca353f279bd603f859a5296",
+    "commit": "5f9ec4ea7f3c6ca475ae739beb508fb8e135781c",
     "dirty": true
   },
   "outputs": [
@@ -127,7 +128,10 @@
         "F3logistic_d50_kX1e4_s4_fb-gvi",
         "F3logistic_d50_kX1e4_s4_fr-kl",
         "F3logistic_d50_kX1e4_s4_fr-r",
-        "F3logistic_d50_kX1e4_s4_laplace"
+        "F3logistic_d50_kX1e4_s4_laplace",
+        "pilot_logistic_d50_kX1e2_fb-gvi",
+        "pilot_logistic_d50_kX1e2_fr-kl",
+        "pilot_logistic_d50_kX1e2_fr-r"
       ],
       "panel": "c",
       "processed_csv": "results/processed/manuscript/figure_3_c.csv",

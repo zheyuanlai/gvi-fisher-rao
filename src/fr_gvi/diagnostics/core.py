@@ -105,6 +105,46 @@ def gaussian_sharp_threshold(rate: float) -> float:
     return 0.5 * (half - 1.0 - float(np.log(half)))
 
 
+# A trajectory is treated as having reached its resolution floor only once it is
+# this far below its own starting value; above that, a step that fails to decrease
+# is part of the transient, not roundoff.
+PLATEAU_THRESHOLD = 1.0e-8
+
+
+def truncate_at_floor(values: np.ndarray, floor: float = 0.0) -> tuple[np.ndarray, float]:
+    """Drop the roundoff plateau at the end of a trajectory, keeping the transient.
+
+    A deterministic trajectory descends to the precision of the quantity being
+    measured and then fluctuates at that level.  The plateau is located from the
+    data, because the analytic floor is only a lower bound on where it starts: the
+    exact Gaussian KL gap, for instance, is evaluated through a congruence whose
+    conditioning raises its resolution far above ``eps``.
+
+    It is located as the first step that fails to decrease *while already deep in
+    convergence*.  The depth condition matters: at a practical stepsize the early
+    transient is not monotone, and a rule that cuts at the first non-decrease
+    truncates a perfectly good trajectory after one iteration.  The analytic floor
+    is applied as a second, independent cut.  Truncating rather than masking
+    pointwise keeps a numerical plateau from ever being drawn as convergence.
+    """
+
+    values = np.asarray(values, dtype=np.float64)
+    if not len(values):
+        return values, floor
+    deep = PLATEAU_THRESHOLD * abs(float(values[0]))
+    stop = len(values)
+    for index in range(1, len(values)):
+        current, previous = values[index], values[index - 1]
+        plateaued = current >= previous and previous <= deep
+        if not np.isfinite(current) or current <= floor or plateaued:
+            stop = index
+            break
+    truncated = values.copy()
+    truncated[stop:] = np.nan
+    level = float(values[stop - 1]) if stop else float("nan")
+    return truncated, max(level, floor)
+
+
 def certified_gap_bound(
     *,
     fisher_rao_squared: float,

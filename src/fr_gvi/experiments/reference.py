@@ -299,7 +299,9 @@ def solve_reference(
         state = GaussianState(target.mean, target.covariance)
         exact = ExactGaussianExpectation()
         objective_value, _ = objective(target, state, exact)
-        return ReferenceSolution(state, objective_value, 0.0, 0.0, {"backend": "exact"})
+        return ReferenceSolution(
+            state, objective_value, 0.0, 0.0, {"backend": "exact", "analytic": True}
+        )
     if isinstance(target, ShiftedLogCoshTarget):
         order = max(32, min(64, points // 32))
         state = _logcosh_reference(target, order)

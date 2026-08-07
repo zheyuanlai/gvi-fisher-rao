@@ -117,6 +117,13 @@ def reference_hashes() -> dict[str, str]:
     }
 
 
+# The paths that determine what a run computes.  A campaign writes its own results
+# and manifests as it goes, so a plain ``git status`` is dirty from the second
+# trajectory onwards and would report every later run as unreproducible.  The flag
+# has to mean "the source differs from the commit", not "outputs exist".
+SOURCE_PATHS = ("src", "configs", "scripts", "pyproject.toml", "requirements-lock.txt")
+
+
 def git_metadata() -> tuple[str, bool, str]:
     def run(*arguments: str) -> str:
         result = subprocess.run(
@@ -125,7 +132,7 @@ def git_metadata() -> tuple[str, bool, str]:
         return result.stdout.strip()
 
     commit = run("rev-parse", "HEAD") or "unborn"
-    status = run("status", "--short")
+    status = run("status", "--short", "--", *SOURCE_PATHS)
     return commit, bool(status), status
 
 
@@ -964,21 +971,38 @@ def run_config(
         )
         # Re-evaluate the reference on the *evaluation* engine, the same one every
         # trajectory objective is measured with, so a gap is a difference of two
-        # numbers produced by one rule.  The residuals are recomputed there too:
-        # carrying over the solver's residuals would certify the reference against
-        # a rule that no reported quantity uses.
+        # numbers produced by one rule.  For a quadrature-based reference the
+        # residuals are recomputed there too, since carrying over the solver's
+        # residuals would certify it against a rule no reported quantity uses.
+        #
+        # An analytic reference is left alone.  For a Gaussian target the optimizer
+        # is the target itself and its suboptimality is exactly zero by
+        # construction; re-measuring that zero through the residual formula puts a
+        # whitening congruence of condition number 1e9 in the way and returns 1e-8,
+        # which is the conditioning of the diagnostic and not a property of the
+        # reference.
         reference_objective, reference_expectation = objective(
             problem.target, reference.state, evaluation_engine
         )
-        reference_certificate = residuals(reference.state, reference_expectation)
+        if reference.metadata.get("analytic"):
+            fisher_rao_squared = reference.fisher_rao_residual_squared
+            bures_squared = reference.bures_wasserstein_residual_squared
+            extra: dict[str, Any] = {}
+        else:
+            reference_certificate = residuals(reference.state, reference_expectation)
+            fisher_rao_squared = reference_certificate.fisher_rao_squared
+            bures_squared = reference_certificate.bures_wasserstein_squared
+            extra = {
+                "solver_fisher_rao_residual_squared": reference.fisher_rao_residual_squared,
+            }
         reference = ReferenceSolution(
             reference.state,
             reference_objective,
-            reference_certificate.fisher_rao_squared,
-            reference_certificate.bures_wasserstein_squared,
+            fisher_rao_squared,
+            bures_squared,
             {
                 **reference.metadata,
-                "solver_fisher_rao_residual_squared": reference.fisher_rao_residual_squared,
+                **extra,
                 "evaluation_backend": type(evaluation_engine).__name__,
             },
         )

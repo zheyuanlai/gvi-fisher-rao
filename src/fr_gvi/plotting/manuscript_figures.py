@@ -30,6 +30,7 @@ from fr_gvi.experiments.manuscript import (
     LOGISTIC_DATASETS,
     SELECTED_STEPS,
 )
+from fr_gvi.diagnostics.core import PLATEAU_THRESHOLD, truncate_at_floor
 from fr_gvi.plotting.figures import ordered_methods
 from fr_gvi.plotting.style import (
     COLORS,
@@ -79,9 +80,11 @@ def _git_state() -> dict[str, object]:
         )
         return result.stdout.strip()
 
-    from fr_gvi.experiments.campaign import code_hash
+    from fr_gvi.experiments.campaign import SOURCE_PATHS, code_hash
 
-    status = run("status", "--short")
+    # Dirty means the source differs from the commit; regenerating figures writes
+    # tracked outputs and must not by itself mark the figure unreproducible.
+    status = run("status", "--short", "--", *SOURCE_PATHS)
     return {
         "commit": run("rev-parse", "HEAD") or "unborn",
         "dirty": bool(status),
@@ -206,46 +209,6 @@ def _resolution_floor(axis: plt.Axes, level: float, label: str | None) -> None:
     axis.axhline(level, color=REFERENCE_GREY, linestyle=(0, (1, 2)), linewidth=0.8, label=label)
 
 
-# A trajectory is treated as having reached its resolution floor only once it is
-# this far below its own starting value; above that, a step that fails to decrease
-# is part of the transient, not roundoff.
-PLATEAU_THRESHOLD = 1.0e-8
-
-
-def _truncate_at_floor(values: np.ndarray, floor: float = 0.0) -> tuple[np.ndarray, float]:
-    """Drop the roundoff plateau at the end of a trajectory, keeping the transient.
-
-    A deterministic trajectory descends to the precision of the quantity being
-    measured and then fluctuates at that level.  The plateau is located from the
-    data, because the analytic floor is only a lower bound on where it starts: the
-    exact Gaussian KL gap, for instance, is evaluated through a congruence whose
-    conditioning raises its resolution far above ``eps``.
-
-    It is located as the first step that fails to decrease *while already deep in
-    convergence*.  The depth condition matters: at a practical stepsize the early
-    transient is not monotone, and a rule that cuts at the first non-decrease
-    truncates a perfectly good trajectory after one iteration.  The analytic floor
-    is applied as a second, independent cut.  Truncating rather than masking
-    pointwise keeps a numerical plateau from ever being drawn as convergence.
-    """
-
-    values = np.asarray(values, dtype=np.float64)
-    if not len(values):
-        return values, floor
-    deep = PLATEAU_THRESHOLD * abs(float(values[0]))
-    stop = len(values)
-    for index in range(1, len(values)):
-        current, previous = values[index], values[index - 1]
-        plateaued = current >= previous and previous <= deep
-        if not np.isfinite(current) or current <= floor or plateaued:
-            stop = index
-            break
-    truncated = values.copy()
-    truncated[stop:] = np.nan
-    level = float(values[stop - 1]) if stop else float("nan")
-    return truncated, max(level, floor)
-
-
 def _markevery(values: np.ndarray, index: int = 0, count: int = 6) -> tuple[int, int]:
     """Marker spacing over the drawn portion of a curve, phased by series index.
 
@@ -360,7 +323,7 @@ def panel_anisotropic(axis: plt.Axes) -> pd.DataFrame:
         # The KL gap of a Gaussian pair is quadratic in the state error, so its
         # double-precision resolution is eps^2 relative to the initial gap.  Below
         # that the recorded values are roundoff and are not part of the curve.
-        visible, floor = _truncate_at_floor(normalized)
+        visible, floor = truncate_at_floor(normalized)
         floors.append(floor)
         axis.plot(
             subset["iteration"], positive(visible), label=method,
@@ -489,7 +452,7 @@ def _global_panel(job: str) -> Callable[[plt.Axes], pd.DataFrame]:
         for index, method in enumerate(ordered_methods(cell)):
             subset = cell[cell["method"] == method]
             iterations, gaps, analytic = _normalized_gap(subset)
-            visible, floor = _truncate_at_floor(gaps, analytic)
+            visible, floor = truncate_at_floor(gaps, analytic)
             floors.append(floor)
             drawn = iterations[np.isfinite(visible)]
             extent = max(extent, float(drawn.max()) if drawn.size else 1.0)
@@ -783,7 +746,7 @@ def _median_band(
     grouped_x = frame.groupby("iteration")[x]
     grouped = frame.groupby("iteration")[y]
     xs = grouped_x.median().to_numpy(dtype=np.float64)
-    median, level = _truncate_at_floor(grouped.median().to_numpy(), floor)
+    median, level = truncate_at_floor(grouped.median().to_numpy(), floor)
     drawn = np.isfinite(median)
     lower = np.where(drawn, positive(grouped.min().to_numpy()), np.nan)
     upper = np.where(drawn, positive(grouped.max().to_numpy()), np.nan)
