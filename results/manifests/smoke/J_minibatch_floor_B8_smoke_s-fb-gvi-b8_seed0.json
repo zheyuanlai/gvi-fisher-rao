@@ -1,8 +1,8 @@
 {
-  "algorithm_seconds": 0.014243600075133145,
+  "algorithm_seconds": 0.014170889218803495,
   "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
   "burn_in_iteration": null,
-  "code_hash": "4b75c25490e82023e0d5d60a698498d647502a3bb0c80821070ce7f780aa090b",
+  "code_hash": "a1e013f7298d97ee91b5036863053530d51038c77e4531f1f235dc2cc455197c",
   "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py /home/zheyuanlai/gvi-fisher-rao/configs/smoke --budget-hours 0.5",
   "config": {
     "batch_size": 8,
@@ -87,11 +87,11 @@
     "lambda_max_star": 2.9455604650034917,
     "source": "logcosh_separable_exact"
   },
-  "end_utc": "2026-08-07T00:12:57.054800+00:00",
+  "end_utc": "2026-08-07T00:54:53.914982+00:00",
   "failure_iteration": null,
   "failure_reason": "",
   "final_objective_gap": 0.1451837670686844,
-  "git_commit": "f93cffcc2a9a45e91fcf20c81d404a5f8793d003",
+  "git_commit": "b5857cc93ca7707af7c64302d3229926388d8a48",
   "git_dirty": false,
   "git_status": "",
   "iterations_completed": 70,
@@ -124,7 +124,7 @@
     "pytest": "9.0.2",
     "scipy": "1.18.0"
   },
-  "peak_rss_kib": 171588,
+  "peak_rss_kib": 174228,
   "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
   "problem_instance": 0,
   "problem_metadata": {
@@ -152,8 +152,8 @@
   },
   "run_seed": 2563146674,
   "schema_version": 1,
-  "start_utc": "2026-08-07T00:12:56.950487+00:00",
+  "start_utc": "2026-08-07T00:54:53.806719+00:00",
   "status": "completed",
   "target_seed": 2798275874,
-  "wall_time_seconds": 0.07493169797817245
+  "wall_time_seconds": 0.07544229802442715
 }

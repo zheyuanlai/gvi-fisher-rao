@@ -39,11 +39,7 @@
   "configs": {
     "configs_checked": 93
   },
-  "errors": [
-    "figure_1: figure was built from a dirty working tree",
-    "figure_2: figure was built from a dirty working tree",
-    "figure_3: figure was built from a dirty working tree"
-  ],
+  "errors": [],
   "pilot_isolation": {
     "datasets_per_cell": {
       "10000:FB--GVI": 5,
