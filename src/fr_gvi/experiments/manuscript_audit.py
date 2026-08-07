@@ -55,6 +55,15 @@ NEGATIVE_GAP_TOLERANCE = 1.0e-13
 FIGURE_NAMES = ("figure_1", "figure_2", "figure_3")
 
 
+def _head_commit() -> str:
+    import subprocess
+
+    result = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=False
+    )
+    return result.stdout.strip()
+
+
 def _expected_trajectories() -> dict[str, int]:
     expected: dict[str, int] = {}
     for name in GROUPS:
@@ -101,6 +110,23 @@ def check_campaign() -> tuple[list[str], list[str], dict[str, object]]:
         )
     if len(commits) > 1:
         errors.append(f"{len(commits)} distinct commits across the campaign: {sorted(commits)}")
+    # The recorded revision must still be the one on disk.  "One hash" is not
+    # enough on its own: a campaign can be internally consistent and yet describe
+    # source that no longer exists.
+    from fr_gvi.experiments.campaign import code_hash
+
+    current = code_hash()
+    head = _head_commit()
+    if hashes and set(hashes) != {current}:
+        errors.append(
+            "the campaign's source hash is not the current source; rerun the "
+            "trajectories or restore the revision they were produced from"
+        )
+    if head and commits and set(commits) != {head}:
+        errors.append(
+            f"the campaign records commit {sorted(commits)[0][:8]} but HEAD is "
+            f"{head[:8]}; the artifacts do not describe the checked-out revision"
+        )
     dirty = sum(1 for manifest in manifests if manifest.get("git_dirty"))
     if dirty:
         errors.append(
@@ -143,6 +169,8 @@ def check_campaign() -> tuple[list[str], list[str], dict[str, object]]:
         "source_hashes": sorted(hashes),
         "commits": sorted(commits),
         "dirty_trajectories": dirty,
+        "matches_current_source": bool(hashes) and set(hashes) == {current},
+        "matches_head_commit": bool(commits) and set(commits) == {head},
     }
     return errors, warnings, summary
 

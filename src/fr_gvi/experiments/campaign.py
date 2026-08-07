@@ -94,12 +94,25 @@ def hash_file(path: Path) -> str:
     return hash_bytes(path.read_bytes())
 
 
+# Modules that read results and write reports.  They cannot change a trajectory, so
+# they stay out of the numerical source hash: otherwise correcting a caption or
+# tightening an audit check would invalidate a completed campaign and force a rerun
+# that could not alter a single number.  The plotting package is excluded for the
+# same reason and always has been.
+REPORTING_MODULES = frozenset(
+    {"audit.py", "tables.py", "manuscript_audit.py", "manuscript_tables.py"}
+)
+
+
 def code_hash() -> str:
+    """Hash of everything that can affect what a trajectory computes."""
+
     digest = hashlib.sha256()
     paths = [
         path
         for path in sorted((ROOT / "src").rglob("*.py"))
         if "plotting" not in path.relative_to(ROOT / "src").parts
+        and path.name not in REPORTING_MODULES
     ]
     paths += [ROOT / "pyproject.toml", ROOT / "requirements-lock.txt"]
     paths = sorted(paths)
