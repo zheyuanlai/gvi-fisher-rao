@@ -1,27 +1,27 @@
 job_id,experiment,method,step_size,certified_step_size,step_over_certified,step_scale,protocol
-F1burnin_d20_lam1e-2,A,FR--KL,0.1,1.0,0.1,,theorem compatible
-F1burnin_d20_lam1e-2,A,FR--R,0.1,0.5,0.2,,theorem compatible
-F1burnin_d20_lam1e-4,A,FR--KL,0.1,1.0,0.1,,theorem compatible
-F1burnin_d20_lam1e-4,A,FR--R,0.1,0.5,0.2,,theorem compatible
-F1burnin_d20_lam1e-6,A,FR--KL,0.1,1.0,0.1,,theorem compatible
-F1burnin_d20_lam1e-6,A,FR--R,0.1,0.5,0.2,,theorem compatible
-F1burnin_d20_lam1e-8,A,FR--KL,0.1,1.0,0.1,,theorem compatible
-F1burnin_d20_lam1e-8,A,FR--R,0.1,0.5,0.2,,theorem compatible
-F1affine_d10_S1e0,B,FB--GVI,0.3846153846153846,0.7692307692307692,0.5,,theorem compatible
-F1affine_d10_S1e0,B,FR--KL,0.24038461538461536,0.4807692307692307,0.5,,theorem compatible
-F1affine_d10_S1e0,B,FR--R,0.12019230769230768,0.24038461538461536,0.5,,theorem compatible
-F1affine_d10_S1e2,B,FB--GVI,0.48489424946155374,0.9697884989231075,0.5,,theorem compatible
-F1affine_d10_S1e2,B,FR--KL,0.24038461538461503,0.48076923076923006,0.5,,theorem compatible
-F1affine_d10_S1e2,B,FR--R,0.12019230769230752,0.24038461538461503,0.5,,theorem compatible
-F1affine_d10_S1e4,B,FB--GVI,0.4641647272810289,0.9283294545620578,0.5,,theorem compatible
-F1affine_d10_S1e4,B,FR--KL,0.24038461539853412,0.48076923079706824,0.5,,theorem compatible
-F1affine_d10_S1e4,B,FR--R,0.12019230769926706,0.24038461539853412,0.5,,theorem compatible
-F1affine_d10_S1e6,B,FB--GVI,0.6103456220346587,1.2206912440693174,0.5,,theorem compatible
-F1affine_d10_S1e6,B,FR--KL,0.24038461488032833,0.48076922976065667,0.5,,theorem compatible
-F1affine_d10_S1e6,B,FR--R,0.12019230744016417,0.24038461488032833,0.5,,theorem compatible
-F1aniso_d10_kappa1e9,C,FB--GVI,0.9999999999999998,0.9999999999999998,1.0,,theorem compatible
-F1aniso_d10_kappa1e9,C,FR--KL,0.9999999991421913,0.9999999991421913,1.0,,theorem compatible
-F1aniso_d10_kappa1e9,C,FR--R,0.49999999957109564,0.49999999957109564,1.0,,theorem compatible
+F1burnin_d20_lam1e-2,A,FR--KL,0.1,1.0,0.1,,certified
+F1burnin_d20_lam1e-2,A,FR--R,0.1,0.5,0.2,,certified
+F1burnin_d20_lam1e-4,A,FR--KL,0.1,1.0,0.1,,certified
+F1burnin_d20_lam1e-4,A,FR--R,0.1,0.5,0.2,,certified
+F1burnin_d20_lam1e-6,A,FR--KL,0.1,1.0,0.1,,certified
+F1burnin_d20_lam1e-6,A,FR--R,0.1,0.5,0.2,,certified
+F1burnin_d20_lam1e-8,A,FR--KL,0.1,1.0,0.1,,certified
+F1burnin_d20_lam1e-8,A,FR--R,0.1,0.5,0.2,,certified
+F1affine_d10_S1e0,B,FB--GVI,0.3846153846153846,0.7692307692307692,0.5,,certified
+F1affine_d10_S1e0,B,FR--KL,0.24038461538461536,0.4807692307692307,0.5,,certified
+F1affine_d10_S1e0,B,FR--R,0.12019230769230768,0.24038461538461536,0.5,,certified
+F1affine_d10_S1e2,B,FB--GVI,0.48489424946155374,0.9697884989231075,0.5,,certified
+F1affine_d10_S1e2,B,FR--KL,0.24038461538461503,0.48076923076923006,0.5,,certified
+F1affine_d10_S1e2,B,FR--R,0.12019230769230752,0.24038461538461503,0.5,,certified
+F1affine_d10_S1e4,B,FB--GVI,0.4641647272810289,0.9283294545620578,0.5,,certified
+F1affine_d10_S1e4,B,FR--KL,0.24038461539853412,0.48076923079706824,0.5,,certified
+F1affine_d10_S1e4,B,FR--R,0.12019230769926706,0.24038461539853412,0.5,,certified
+F1affine_d10_S1e6,B,FB--GVI,0.6103456220346587,1.2206912440693174,0.5,,certified
+F1affine_d10_S1e6,B,FR--KL,0.24038461488032833,0.48076922976065667,0.5,,certified
+F1affine_d10_S1e6,B,FR--R,0.12019230744016417,0.24038461488032833,0.5,,certified
+F1aniso_d10_kappa1e9,C,FB--GVI,0.9999999999999998,0.9999999999999998,1.0,,certified
+F1aniso_d10_kappa1e9,C,FR--KL,0.9999999991421913,0.9999999991421913,1.0,,certified
+F1aniso_d10_kappa1e9,C,FR--R,0.49999999957109564,0.49999999957109564,1.0,,certified
 F2global_d10_k100_rho0.1,D,FB--GVI,0.19658096344070336,0.1965809634407033,1.0000000000000002,0.19658096344070336,"frozen practical, eta=1"
 F2global_d10_k100_rho0.1,D,FR--KL,0.3931619268814067,0.09090909090909091,4.324781195695474,0.19658096344070336,"frozen practical, eta=2"
 F2global_d10_k100_rho0.1,D,FR--R,0.3931619268814067,0.045454545454545456,8.649562391390948,0.19658096344070336,"frozen practical, eta=2"
@@ -58,18 +58,44 @@ F2global_d50_k1_rho0.1,D,FR--R,1.922682451259586,0.45275621256230647,4.246617490
 F2global_d50_k1_rho1,D,FB--GVI,0.8361044513067254,0.8361044513067284,0.9999999999999964,0.8361044513067254,"frozen practical, eta=1"
 F2global_d50_k1_rho1,D,FR--KL,1.6722089026134508,0.49202509322046895,3.3986252442294838,0.8361044513067254,"frozen practical, eta=2"
 F2global_d50_k1_rho1,D,FR--R,1.6722089026134508,0.24601254661023447,6.7972504884589675,0.8361044513067254,"frozen practical, eta=2"
-F2local_d10_k10_rho0p1_r0p01,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,theorem compatible
-F2local_d10_k10_rho0p1_r0p01,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,theorem compatible
-F2local_d10_k10_rho0p1_r0p05,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,theorem compatible
-F2local_d10_k10_rho0p1_r0p05,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,theorem compatible
-F2local_d10_k10_rho0p1_r0p1,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,theorem compatible
-F2local_d10_k10_rho0p1_r0p1,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p01,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p01,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p05,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p05,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p1,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,theorem compatible
-F2local_d10_k10_rho1_r0p1,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,theorem compatible
+F2local_d10_k10_rho0p1_r0p01,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,certified
+F2local_d10_k10_rho0p1_r0p01,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,certified
+F2local_d10_k10_rho0p1_r0p05,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,certified
+F2local_d10_k10_rho0p1_r0p05,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,certified
+F2local_d10_k10_rho0p1_r0p1,G,FR--KL,0.5000000000000001,0.5000000000000001,1.0,,certified
+F2local_d10_k10_rho0p1_r0p1,G,FR--R,0.25000000000000006,0.25000000000000006,1.0,,certified
+F2local_d10_k10_rho1_r0p01,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,certified
+F2local_d10_k10_rho1_r0p01,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,certified
+F2local_d10_k10_rho1_r0p05,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,certified
+F2local_d10_k10_rho1_r0p05,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,certified
+F2local_d10_k10_rho1_r0p1,G,FR--KL,0.09090909090909093,0.09090909090909093,1.0,,certified
+F2local_d10_k10_rho1_r0p1,G,FR--R,0.04545454545454546,0.04545454545454546,1.0,,certified
+F3cancel_d10,H,BBVI--STL,0.12499999999999997,,,0.9999999999999998,implementable grid
+F3cancel_d10,H,FR--KL--STL,0.5,,,1.0,implementable grid
+F3cancel_d10,H,FR--R--STL,0.5,,,1.0,implementable grid
+F3cancel_d10,H,Price--BBVI,0.12499999999999997,,,0.9999999999999998,implementable grid
+F3cancel_d10,H,S--FB--GVI,0.12499999999999997,,,0.9999999999999998,implementable grid
+F3floor_d8_B1,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B1,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B1,J,S--FB--GVI,0.02,0.4999999999999999,0.04000000000000001,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B16,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B16,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B16,J,S--FB--GVI,0.02,0.5000000000000002,0.03999999999999998,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B2,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B2,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B2,J,S--FB--GVI,0.02,0.4999999999999998,0.04000000000000002,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B32,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B32,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B32,J,S--FB--GVI,0.02,0.5000000000000001,0.039999999999999994,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B4,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B4,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B4,J,S--FB--GVI,0.02,0.4999999999999998,0.04000000000000002,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B64,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B64,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B64,J,S--FB--GVI,0.02,0.4999999999999999,0.04000000000000001,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B8,J,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B8,J,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3floor_d8_B8,J,S--FB--GVI,0.02,0.4999999999999998,0.04000000000000002,,"fixed practical, mechanism diagnostic"
 F3logistic_d50_kX1e0_s0_fb-gvi,L,FB--GVI,0.003367654300331631,0.004774537092757439,0.7053362943687405,0.003367654300331631,"frozen practical, eta=1"
 F3logistic_d50_kX1e0_s0_fr-kl,L,FR--KL,0.006735308600663262,0.0033676543003316305,2.0000000000000004,0.003367654300331631,"frozen practical, eta=2"
 F3logistic_d50_kX1e0_s0_fr-r,L,FR--R,0.006735308600663262,0.0016838271501658153,4.000000000000001,0.003367654300331631,"frozen practical, eta=2"
@@ -115,33 +141,76 @@ F3logistic_d50_kX1e4_s3_fr-r,L,FR--R,0.014992478943906125,0.003748119735976527,4
 F3logistic_d50_kX1e4_s4_fb-gvi,L,FB--GVI,0.0072020956639389025,0.007656442264351843,0.9406582607527305,0.0072020956639389025,"frozen practical, eta=1"
 F3logistic_d50_kX1e4_s4_fr-kl,L,FR--KL,0.014404191327877805,0.007202095663938871,2.000000000000009,0.0072020956639389025,"frozen practical, eta=2"
 F3logistic_d50_kX1e4_s4_fr-r,L,FR--R,0.014404191327877805,0.0036010478319694356,4.000000000000018,0.0072020956639389025,"frozen practical, eta=2"
-F4real_ionosphere_fb-gvi,R,FB--GVI,0.005665605984876572,,,0.005665605984876572,"frozen practical, eta=1"
-F4real_ionosphere_fr-kl,R,FR--KL,1.0,,,1.0,"frozen practical, eta=2"
-F4real_ionosphere_fr-r,R,FR--R,0.03125,,,1.0,"frozen practical, eta=2"
-F4real_pima_fb-gvi,R,FB--GVI,0.0037171859365621274,,,0.007434371873124255,"frozen practical, eta=1"
-F4real_pima_fr-kl,R,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-F4real_pima_fr-r,R,FR--R,0.03125,,,1.0,"frozen practical, eta=2"
-F4real_sonar_fb-gvi,R,FB--GVI,0.010324889838524599,,,0.010324889838524599,"frozen practical, eta=1"
-F4real_sonar_fr-kl,R,FR--KL,1.0,,,1.0,"frozen practical, eta=2"
-F4real_sonar_fr-r,R,FR--R,0.25,,,1.0,"frozen practical, eta=2"
-F4real_spambase_fb-gvi,R,FB--GVI,0.0027077047789507247,,,0.0013538523894753623,"frozen practical, eta=1"
-F4real_spambase_fr-kl,R,FR--KL,0.25,,,1.0,"frozen practical, eta=2"
-F4real_spambase_fr-r,R,FR--R,0.00390625,,,1.0,"frozen practical, eta=2"
-F4real_wdbc_fb-gvi,R,FB--GVI,0.011255392445830414,,,0.0028138481114576034,"frozen practical, eta=1"
-F4real_wdbc_fr-kl,R,FR--KL,1.0,,,1.0,"frozen practical, eta=2"
-F4real_wdbc_fr-r,R,FR--R,0.0078125,,,1.0,"frozen practical, eta=2"
-Ascale_d10,S,FB--GVI,0.028013466710727273,,,0.056026933421454546,"frozen practical, eta=1"
-Ascale_d10,S,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d10,S,FR--R,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d100,S,FB--GVI,0.005992764495365975,,,0.01198552899073195,"frozen practical, eta=1"
-Ascale_d100,S,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d100,S,FR--R,0.0625,,,1.0,"frozen practical, eta=2"
-Ascale_d200,S,FB--GVI,0.003951628953427374,,,0.007903257906854748,"frozen practical, eta=1"
-Ascale_d200,S,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d200,S,FR--R,0.03125,,,1.0,"frozen practical, eta=2"
-Ascale_d25,S,FB--GVI,0.014466086730436771,,,0.028932173460873543,"frozen practical, eta=1"
-Ascale_d25,S,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d25,S,FR--R,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d50,S,FB--GVI,0.009287964046991365,,,0.01857592809398273,"frozen practical, eta=1"
-Ascale_d50,S,FR--KL,0.5,,,1.0,"frozen practical, eta=2"
-Ascale_d50,S,FR--R,0.125,,,1.0,"frozen practical, eta=2"
+F4real_ionosphere_bbvi-stl,R,BBVI--STL,0.005665605984876572,,,0.005665605984876572,implementable grid
+F4real_ionosphere_fb-gvi,R,FB--GVI,0.005665605984876572,,,0.005665605984876572,implementable grid
+F4real_ionosphere_fr-kl,R,FR--KL,1.0,,,1.0,implementable grid
+F4real_ionosphere_fr-kl-stl,R,FR--KL--STL,0.125,,,1.0,implementable grid
+F4real_ionosphere_fr-r,R,FR--R,0.03125,,,1.0,implementable grid
+F4real_ionosphere_fr-r-stl,R,FR--R--STL,0.03125,,,1.0,implementable grid
+F4real_ionosphere_price-bbvi,R,Price--BBVI,0.005665605984876572,,,0.005665605984876572,implementable grid
+F4real_ionosphere_s-fb-gvi,R,S--FB--GVI,0.005665605984876572,,,0.005665605984876572,implementable grid
+F4real_ionosphere_sq-ngvi,R,Sq--NGVI,0.015625,,,1.0,implementable grid
+F4real_pima_bbvi-stl,R,BBVI--STL,0.0037171859365621274,,,0.007434371873124255,implementable grid
+F4real_pima_fb-gvi,R,FB--GVI,0.0037171859365621274,,,0.007434371873124255,implementable grid
+F4real_pima_fr-kl,R,FR--KL,0.5,,,1.0,implementable grid
+F4real_pima_fr-kl-stl,R,FR--KL--STL,0.125,,,1.0,implementable grid
+F4real_pima_fr-r,R,FR--R,0.03125,,,1.0,implementable grid
+F4real_pima_fr-r-stl,R,FR--R--STL,0.0625,,,1.0,implementable grid
+F4real_pima_price-bbvi,R,Price--BBVI,0.0018585929682810637,,,0.007434371873124255,implementable grid
+F4real_pima_s-fb-gvi,R,S--FB--GVI,0.0018585929682810637,,,0.007434371873124255,implementable grid
+F4real_pima_sq-ngvi,R,Sq--NGVI,0.015625,,,1.0,implementable grid
+F4real_sonar_bbvi-stl,R,BBVI--STL,0.0051624449192622995,,,0.010324889838524599,implementable grid
+F4real_sonar_fb-gvi,R,FB--GVI,0.010324889838524599,,,0.010324889838524599,implementable grid
+F4real_sonar_fr-kl,R,FR--KL,1.0,,,1.0,implementable grid
+F4real_sonar_fr-kl-stl,R,FR--KL--STL,0.125,,,1.0,implementable grid
+F4real_sonar_fr-r,R,FR--R,0.25,,,1.0,implementable grid
+F4real_sonar_fr-r-stl,R,FR--R--STL,0.0625,,,1.0,implementable grid
+F4real_sonar_price-bbvi,R,Price--BBVI,0.010324889838524599,,,0.010324889838524599,implementable grid
+F4real_sonar_s-fb-gvi,R,S--FB--GVI,0.010324889838524599,,,0.010324889838524599,implementable grid
+F4real_sonar_sq-ngvi,R,Sq--NGVI,0.03125,,,1.0,implementable grid
+F4real_spambase_bbvi-stl,R,BBVI--STL,0.0006769261947376812,,,0.0013538523894753623,implementable grid
+F4real_spambase_fb-gvi,R,FB--GVI,0.0027077047789507247,,,0.0013538523894753623,implementable grid
+F4real_spambase_fr-kl,R,FR--KL,0.25,,,1.0,implementable grid
+F4real_spambase_fr-kl-stl,R,FR--KL--STL,0.25,,,1.0,implementable grid
+F4real_spambase_fr-r,R,FR--R,0.00390625,,,1.0,implementable grid
+F4real_spambase_fr-r-stl,R,FR--R--STL,0.00390625,,,1.0,implementable grid
+F4real_spambase_price-bbvi,R,Price--BBVI,0.0027077047789507247,,,0.0013538523894753623,implementable grid
+F4real_spambase_s-fb-gvi,R,S--FB--GVI,0.0027077047789507247,,,0.0013538523894753623,implementable grid
+F4real_spambase_sq-ngvi,R,Sq--NGVI,0.00390625,,,1.0,implementable grid
+F4real_wdbc_bbvi-stl,R,BBVI--STL,0.0028138481114576034,,,0.0028138481114576034,implementable grid
+F4real_wdbc_fb-gvi,R,FB--GVI,0.011255392445830414,,,0.0028138481114576034,implementable grid
+F4real_wdbc_fr-kl,R,FR--KL,1.0,,,1.0,implementable grid
+F4real_wdbc_fr-kl-stl,R,FR--KL--STL,0.25,,,1.0,implementable grid
+F4real_wdbc_fr-r,R,FR--R,0.0078125,,,1.0,implementable grid
+F4real_wdbc_fr-r-stl,R,FR--R--STL,0.0078125,,,1.0,implementable grid
+F4real_wdbc_price-bbvi,R,Price--BBVI,0.011255392445830414,,,0.0028138481114576034,implementable grid
+F4real_wdbc_s-fb-gvi,R,S--FB--GVI,0.011255392445830414,,,0.0028138481114576034,implementable grid
+F4real_wdbc_sq-ngvi,R,Sq--NGVI,0.0078125,,,1.0,implementable grid
+Ascale_d10,S,FB--GVI,0.028013466710727273,,,0.056026933421454546,implementable grid
+Ascale_d10,S,FR--KL,0.5,,,1.0,implementable grid
+Ascale_d10,S,FR--R,0.5,,,1.0,implementable grid
+Ascale_d10,S,Sq--NGVI,0.125,,,1.0,implementable grid
+Ascale_d100,S,FB--GVI,0.005992764495365975,,,0.01198552899073195,implementable grid
+Ascale_d100,S,FR--KL,0.5,,,1.0,implementable grid
+Ascale_d100,S,FR--R,0.0625,,,1.0,implementable grid
+Ascale_d100,S,Sq--NGVI,0.03125,,,1.0,implementable grid
+Ascale_d200,S,FB--GVI,0.003951628953427374,,,0.007903257906854748,implementable grid
+Ascale_d200,S,FR--KL,0.5,,,1.0,implementable grid
+Ascale_d200,S,FR--R,0.03125,,,1.0,implementable grid
+Ascale_d200,S,Sq--NGVI,0.015625,,,1.0,implementable grid
+Ascale_d25,S,FB--GVI,0.014466086730436771,,,0.028932173460873543,implementable grid
+Ascale_d25,S,FR--KL,0.5,,,1.0,implementable grid
+Ascale_d25,S,FR--R,0.5,,,1.0,implementable grid
+Ascale_d25,S,Sq--NGVI,0.0625,,,1.0,implementable grid
+Ascale_d50,S,FB--GVI,0.009287964046991365,,,0.01857592809398273,implementable grid
+Ascale_d50,S,FR--KL,0.5,,,1.0,implementable grid
+Ascale_d50,S,FR--R,0.125,,,1.0,implementable grid
+Ascale_d50,S,Sq--NGVI,0.03125,,,1.0,implementable grid
+F3step_d8_x0p25,T,FR--KL--STL,0.005,0.011363636363636364,0.44,,"fixed practical, mechanism diagnostic"
+F3step_d8_x0p25,T,FR--R--STL,0.005,0.09090909090909091,0.055,,"fixed practical, mechanism diagnostic"
+F3step_d8_x0p5,T,FR--KL--STL,0.01,0.011363636363636364,0.88,,"fixed practical, mechanism diagnostic"
+F3step_d8_x0p5,T,FR--R--STL,0.01,0.09090909090909091,0.11,,"fixed practical, mechanism diagnostic"
+F3step_d8_x1,T,FR--KL--STL,0.02,0.011363636363636364,1.76,,"fixed practical, mechanism diagnostic"
+F3step_d8_x1,T,FR--R--STL,0.02,0.09090909090909091,0.22,,"fixed practical, mechanism diagnostic"
+F3step_d8_x2,T,FR--KL--STL,0.04,0.011363636363636364,3.52,,"fixed practical, mechanism diagnostic"
+F3step_d8_x2,T,FR--R--STL,0.04,0.09090909090909091,0.44,,"fixed practical, mechanism diagnostic"
