@@ -1,0 +1,187 @@
+{
+  "algorithm_seconds": 1.8266199930221774,
+  "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
+  "burn_in_iteration": null,
+  "code_hash": "1de68ba789915169b55ef6d1b1ede8a129818da38e955ffe8b4dbb2f27929f3f",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_gaussian_burnin /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_affine_equivariance /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_anisotropic_gaussian /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_global /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_local /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_logistic /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_cancellation /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_floor /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_step /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure4_real_datasets /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/appendix_scaling --jobs 60 --budget-hours 10 --force",
+  "config": {
+    "certified_step_sizes": {
+      "FB--GVI": 0.5000000000000001,
+      "FR--KL": 0.09090909090909091,
+      "FR--KL--STL": 0.011363636363636364,
+      "FR--R": 0.045454545454545456,
+      "FR--R--STL": 0.09090909090909091,
+      "S--FB--GVI": 0.5000000000000001
+    },
+    "curvature": {
+      "alpha": 0.10000000000000005,
+      "alpha_star": 0.16209626917402561,
+      "beta": 1.9999999999999998,
+      "beta_star": 1.7830589609142817,
+      "certified_step_sizes": {
+        "FB--GVI": 0.5000000000000001,
+        "FR--KL": 0.09090909090909091,
+        "FR--KL--STL": 0.011363636363636364,
+        "FR--R": 0.045454545454545456,
+        "FR--R--STL": 0.09090909090909091,
+        "S--FB--GVI": 0.5000000000000001
+      },
+      "condition": 19.99999999999999,
+      "exact": true,
+      "kappa_star": 11.0,
+      "lambda_0_star": 0.43184214144280136,
+      "lambda_0_star_max": 1.1705462318296393,
+      "lambda_max_star": 6.169173449182879,
+      "source": "logcosh_separable_exact"
+    },
+    "experiment": "T",
+    "grid": {
+      "batch_size": 8,
+      "condition": 10.0,
+      "dimension": 8,
+      "figure": "3c",
+      "rho": 1.0,
+      "step_multiplier": 1.0
+    },
+    "id": "F3step_d8_x1",
+    "iterations": 6000,
+    "master_seed": 20261800,
+    "methods": [
+      {
+        "batch_size": 8,
+        "certified_step_size": 0.09090909090909091,
+        "name": "FR--R--STL",
+        "normalized_step_size": 0.22,
+        "quadratic_rescue": true,
+        "seeds": 30,
+        "step_rule": "capped_practical",
+        "step_size": 0.02
+      },
+      {
+        "batch_size": 8,
+        "certified_step_size": 0.011363636363636364,
+        "name": "FR--KL--STL",
+        "normalized_step_size": 1.76,
+        "quadratic_rescue": true,
+        "seeds": 30,
+        "step_rule": "capped_practical",
+        "step_size": 0.02
+      }
+    ],
+    "record_every": 10,
+    "target": {
+      "affine_condition": 1.0,
+      "condition": 10.0,
+      "dimension": 8,
+      "initial_covariance_scale": 0.7,
+      "kind": "logcosh",
+      "rho": 1.0
+    },
+    "tier": "manuscript"
+  },
+  "config_hash": "26d7fd2495c9c2277f2024f6534c6f692cee1ff35ecaddba951adc8764438ad4",
+  "config_path": "/home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_step/F3step_d8_x1.json",
+  "cpu_count": 256,
+  "curvature": {
+    "alpha": 0.10000000000000005,
+    "alpha_star": 0.1620962691740644,
+    "beta": 1.9999999999999998,
+    "beta_star": 1.7830589609147083,
+    "certified_step_sizes": {
+      "FB--GVI": 0.5000000000000001,
+      "FR--KL": 0.09090909090909091,
+      "FR--KL--STL": 0.011363636363636364,
+      "FR--R": 0.045454545454545456,
+      "FR--R--STL": 0.09090909090909091,
+      "S--FB--GVI": 0.5000000000000001
+    },
+    "condition": 19.99999999999999,
+    "exact": true,
+    "kappa_star": 11.0,
+    "lambda_0_star": 0.4318421414426978,
+    "lambda_0_star_max": 1.1705462318294204,
+    "lambda_max_star": 6.169173449181403,
+    "source": "logcosh_separable_exact"
+  },
+  "end_utc": "2026-08-08T04:03:45.634171+00:00",
+  "failure_iteration": null,
+  "failure_reason": "",
+  "final_objective_gap": 0.000327096657225745,
+  "git_commit": "b3ff7227685b907d00c889c7858b1b637f906a5f",
+  "git_dirty": false,
+  "git_status": "",
+  "iterations_completed": 6000,
+  "method_specification": {
+    "batch_size": 8,
+    "certified_step_size": 0.011363636363636364,
+    "name": "FR--KL--STL",
+    "normalized_step_size": 1.76,
+    "quadratic_rescue": true,
+    "seeds": 30,
+    "step_rule": "capped_practical",
+    "step_size": 0.02
+  },
+  "minimum_covariance_eigenvalue": 0.5427792497185783,
+  "operation_counts": {
+    "cholesky_factorizations": 18002,
+    "cholesky_solves": 18002,
+    "eigendecompositions": 6000,
+    "expectation_evaluations": 0,
+    "gradient_evaluations": 48001,
+    "hessian_evaluations": 48001,
+    "iterations": 6000,
+    "linear_algebra_seconds": 1.4248144755256362,
+    "matrix_exponentials": 0,
+    "matrix_square_roots": 6000,
+    "oracle_pairs": 48001,
+    "oracle_seconds": 0.3695258818916045,
+    "projection_activations": 0,
+    "roundoff_repairs": 0
+  },
+  "output_paths": [
+    "/home/zheyuanlai/gvi-fisher-rao/results/raw/manuscript/T/F3step_d8_x1/fr-kl-stl-qr-b8_seed22.csv"
+  ],
+  "packages": {
+    "matplotlib": "3.11.0",
+    "numpy": "2.5.0",
+    "pytest": "9.0.2",
+    "scipy": "1.18.0"
+  },
+  "peak_rss_kib": 133496,
+  "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
+  "problem_instance": 0,
+  "problem_metadata": {
+    "affine_condition": 1.0,
+    "base_condition_bound": 20.0,
+    "base_curvature_max": 2.0,
+    "base_curvature_min": 0.1,
+    "optimizer_whitened": false
+  },
+  "processor": "x86_64",
+  "python": "3.13.13 | packaged by Anaconda, Inc. | (main, Apr 14 2026, 06:19:41) [GCC 14.3.0]",
+  "reference": {
+    "bures_wasserstein_residual_squared": 2.3242928998481662e-25,
+    "fisher_rao_residual_squared": 1.1501012148327937e-25,
+    "objective": 4.565240842619767,
+    "path": "/home/zheyuanlai/gvi-fisher-rao/results/manifests/reference_F3step_d8_x1.json"
+  },
+  "reference_hashes": {
+    "references/2205.15902.pdf": "c09f4ca16065f3aa0c15a2f9948f6f01ea1f02e0674e3ce620b18f1ba63366f7",
+    "references/2302.11024.pdf": "54932a25645ca81608ea225625b59db8b134116fd685b45dcd032829586a872e",
+    "references/2304.05398.pdf": "11a192c078ca30c0fba9d356cbc817eee61fd76941ac31114dafcaea71d8ab69",
+    "references/2307.14642.pdf": "6986330e17e977e0b50e53dfc74e3ef4a5d519e330da9a211b600b3894314ebb",
+    "references/2507.07853.pdf": "547565583e09fb7c498fbe56aeea241d36e7874bdb3f45681d4a85344fbe8115",
+    "references/2602.18718.pdf": "4efffac4b99737061570d65e1a957c87a1f23ecb4cc1113dbc372fdaebf27501",
+    "references/NUMERICS_HANDOFF.md": "f4d09ba93ae458cc8f4d6dd91ed95c6c506ba1d84e3e2b20ba879cc8e0656162",
+    "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9",
+    "references/numerics_appendix.tex": "ca43f9259d4225c55a8ebb53591524b0320ae7c4c0ac0591e7e2e16da143e011",
+    "references/numerics_section.tex": "7d1742db122814dab152918dea39f2bbc870d35ad26018cfb024c66059c6ef3b"
+  },
+  "run_seed": 2648262712,
+  "schema_version": 1,
+  "start_utc": "2026-08-08T04:03:43.272368+00:00",
+  "status": "completed",
+  "target_seed": 1251455286,
+  "wall_time_seconds": 2.3600396189722233
+}

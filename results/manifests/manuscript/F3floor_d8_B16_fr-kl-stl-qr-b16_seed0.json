@@ -1,9 +1,9 @@
 {
-  "algorithm_seconds": 1.9714277111925185,
+  "algorithm_seconds": 1.8980431202799082,
   "blas": "Build Dependencies:\n  blas:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\n  lapack:\n    detection method: pkgconfig\n    found: true\n    include directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/include\n    lib directory: /opt/_internal/cpython-3.13.12/lib/python3.13/site-packages/scipy_openblas64/lib\n    name: scipy-openblas\n    openblas configuration: OpenBLAS 0.3.33.112.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY\n      Haswell MAX_THREADS=64\n    pc file directory: /project/.openblas\n    version: 0.3.33.112.0\nCompilers:\n  c:\n    commands: cc\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  c++:\n    commands: c++\n    linker: ld.bfd\n    name: gcc\n    version: 14.2.1\n  cython:\n    commands: cython\n    linker: cython\n    name: cython\n    version: 3.2.5\nMachine Information:\n  build:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\n  host:\n    cpu: x86_64\n    endian: little\n    family: x86_64\n    system: linux\nPython Information:\n  path: /tmp/build-env-vyszk7w2/bin/python\n  version: '3.13'\nSIMD Extensions:\n  baseline:\n  - X86_V2\n  found:\n  - X86_V3\n  - X86_V4\n  - AVX512_ICL\n  not found:\n  - AVX512_SPR\n\n",
   "burn_in_iteration": null,
-  "code_hash": "24c5cc9e1b92f24238f669c305d80eacac2c3a5f9693f7a195ff796e882ff339",
-  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_gaussian_burnin /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_affine_equivariance /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_anisotropic_gaussian /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_global /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_local /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_logistic /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_cancellation /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_floor /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_decreasing /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure4_real_datasets /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/appendix_scaling --jobs 60 --budget-hours 10 --force",
+  "code_hash": "1de68ba789915169b55ef6d1b1ede8a129818da38e955ffe8b4dbb2f27929f3f",
+  "command": "/home/zheyuanlai/gvi-fisher-rao/src/fr_gvi/experiments/campaign.py /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_gaussian_burnin /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_affine_equivariance /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure1_anisotropic_gaussian /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_global /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure2_logcosh_local /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_logistic /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_cancellation /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_floor /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure3_stochastic_step /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/figure4_real_datasets /home/zheyuanlai/gvi-fisher-rao/configs/manuscript/appendix_scaling --jobs 60 --budget-hours 10 --force",
   "config": {
     "certified_step_sizes": {
       "FB--GVI": 0.5000000000000002,
@@ -133,13 +133,13 @@
     "lambda_max_star": 6.169173449181405,
     "source": "logcosh_separable_exact"
   },
-  "end_utc": "2026-08-08T01:46:18.265651+00:00",
+  "end_utc": "2026-08-08T04:03:57.734948+00:00",
   "failure_iteration": null,
   "failure_reason": "",
   "final_objective_gap": 0.0002316499014183293,
-  "git_commit": "09fcc303d8307d67f42d3d648c3fd37dd4fc8541",
-  "git_dirty": true,
-  "git_status": "M src/fr_gvi/experiments/manuscript_audit.py\n M src/fr_gvi/plotting/manuscript_figures.py",
+  "git_commit": "b3ff7227685b907d00c889c7858b1b637f906a5f",
+  "git_dirty": false,
+  "git_status": "",
   "iterations_completed": 6000,
   "method_specification": {
     "batch_size": 16,
@@ -160,11 +160,11 @@
     "gradient_evaluations": 96001,
     "hessian_evaluations": 96001,
     "iterations": 6000,
-    "linear_algebra_seconds": 1.5341270459466614,
+    "linear_algebra_seconds": 1.4793228699127212,
     "matrix_exponentials": 0,
     "matrix_square_roots": 6000,
     "oracle_pairs": 96001,
-    "oracle_seconds": 0.4017617836361751,
+    "oracle_seconds": 0.38429933303268626,
     "projection_activations": 0,
     "roundoff_repairs": 0
   },
@@ -177,7 +177,7 @@
     "pytest": "9.0.2",
     "scipy": "1.18.0"
   },
-  "peak_rss_kib": 185804,
+  "peak_rss_kib": 187348,
   "platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.39",
   "problem_instance": 0,
   "problem_metadata": {
@@ -202,14 +202,16 @@
     "references/2307.14642.pdf": "6986330e17e977e0b50e53dfc74e3ef4a5d519e330da9a211b600b3894314ebb",
     "references/2507.07853.pdf": "547565583e09fb7c498fbe56aeea241d36e7874bdb3f45681d4a85344fbe8115",
     "references/2602.18718.pdf": "4efffac4b99737061570d65e1a957c87a1f23ecb4cc1113dbc372fdaebf27501",
+    "references/NUMERICS_HANDOFF.md": "f4d09ba93ae458cc8f4d6dd91ed95c6c506ba1d84e3e2b20ba879cc8e0656162",
     "references/SOURCES.md": "6049bdbf6aa30013ed6789437eecfe27e59913e5f04a8d2ebd35d1351c87101d",
-    "references/manuscript.tex": "2c2f506647e39ea4a4daa758d724924ba49795ca1efd9d437404944ceea5c9d8",
-    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9"
+    "references/numerical_experiment_plan.md": "a7197af799da5b7d36cb4c65e44b588f0eb8ee590daff39150a5466924226cb9",
+    "references/numerics_appendix.tex": "ca43f9259d4225c55a8ebb53591524b0320ae7c4c0ac0591e7e2e16da143e011",
+    "references/numerics_section.tex": "7d1742db122814dab152918dea39f2bbc870d35ad26018cfb024c66059c6ef3b"
   },
   "run_seed": 893068000,
   "schema_version": 1,
-  "start_utc": "2026-08-08T01:46:15.742079+00:00",
+  "start_utc": "2026-08-08T04:03:55.299950+00:00",
   "status": "completed",
   "target_seed": 3982024536,
-  "wall_time_seconds": 2.5223067949991673
+  "wall_time_seconds": 2.433674487983808
 }

@@ -1109,6 +1109,10 @@ def _floor_table(experiment: str = "J") -> pd.DataFrame:
     """
 
     frame = require(load_experiment(experiment, TIER), experiment)
+    # The initial state is recorded with ``step_size = 0``.  It belongs to no
+    # step regime, and grouping on the step would otherwise turn it into a cell
+    # of its own whose "floor" is the initial gap.
+    frame = frame[frame["step_size"] > 0.0]
     keys = ["method", "variant", "batch_size", "seed"]
     if "step_size" in frame:
         keys.insert(2, "step_size")
@@ -1712,7 +1716,7 @@ def _scaling_cost_caption(data: pd.DataFrame) -> str:
         f"at most and {float(ratio.min()):.0f} at least, and it does not stop doing so: "
         f"with $n=10d$ the expectation costs $O(nQ + nd^2) = O(d^3)$ as well, so both "
         "sides of the comparison have the same order and the crossover is a property of "
-        "the $n/d$ regime rather than of $d$ alone. That is worth knowing in itself --- "
+        "the $n/d$ regime rather than of $d$ alone. That is worth knowing in itself: "
         "on a problem whose data grows with its dimension, the dense full-covariance "
         "algebra is not what a method pays for, which is why the main-text wall-clock "
         "panels largely repeat the shape of their iteration-count panels. Within the "

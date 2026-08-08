@@ -269,10 +269,16 @@ def panel_letter(axis: plt.Axes, letter: str, title: str) -> None:
 def tidy_log_axes(*axes: plt.Axes) -> None:
     """Suppress log minor-tick labels, which collide on narrow decades."""
 
-    from matplotlib.ticker import LogLocator, NullFormatter
+    from matplotlib.ticker import FixedLocator, LogLocator, NullFormatter
 
     for axis in axes:
         for scale, which in ((axis.get_xscale(), axis.xaxis), (axis.get_yscale(), axis.yaxis)):
-            if scale == "log":
-                which.set_minor_formatter(NullFormatter())
-                which.set_major_locator(LogLocator(numticks=6))
+            if scale != "log":
+                continue
+            which.set_minor_formatter(NullFormatter())
+            # A panel that set its own ticks meant them: the batch-size axis is
+            # sampled at powers of two, and a decade locator would label one of
+            # the seven points it actually has.
+            if isinstance(which.get_major_locator(), FixedLocator):
+                continue
+            which.set_major_locator(LogLocator(numticks=6))

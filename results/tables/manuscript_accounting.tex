@@ -3,14 +3,14 @@
 \toprule
 method & gradient\_calls\_per\_iteration & hessian\_calls\_per\_iteration & matrix\_exponentials\_per\_iteration & factorizations\_per\_iteration & oracle\_ms\_per\_iteration & algebra\_ms\_per\_iteration & total\_ms\_per\_iteration & covariance\_words & projection\_activations & algebra \\
 \midrule
-FR--R & 1.00 & 1.00 & 1.00 & 2.00 & 7.585 & 1.154 & 8.307 & d^2 & 0 & symmetric root and matrix exponential \\
-FR--KL & 1.00 & 1.00 & 0.00 & 2.00 & 7.711 & 1.215 & 8.490 & d^2 & 0 & one precision inverse and one resolvent solve \\
-FB--GVI & 1.00 & 1.00 & 0.00 & 1.00 & 7.700 & 0.684 & 8.202 & d^2 & 0 & one eigendecomposition for the JKO entropy map \\
-Sq--NGVI & 1.00 & 1.00 & 0.00 & 1.00 & 7.002 & 0.474 & 7.429 & d^2 & 0 & forward Euler on the Cholesky factor \\
-FR--R--STL & 16.00 & 16.00 & 1.00 & 4.00 & 0.344 & 1.485 & 1.800 & d^2 & 0 & sampled \\
-FR--KL--STL & 16.00 & 16.00 & 0.00 & 4.00 & 0.330 & 1.796 & 2.119 & d^2 & 0 & sampled \\
-S--FB--GVI & 16.00 & 16.00 & 0.00 & 2.00 & 0.322 & 0.869 & 1.183 & d^2 & 0 & sampled \\
-Price--BBVI & 16.00 & 16.00 & 0.00 & 1.00 & 0.348 & 0.461 & 0.835 & d^2 & 0 & triangular energy step and closed-form entropy prox \\
-BBVI--STL & 16.00 & 0.00 & 0.00 & 1.00 & 0.219 & 0.657 & 0.860 & d^2 & 0 & gradient only; one triangular solve \\
+FR--R & 1.00 & 1.00 & 1.00 & 2.00 & 7.703 & 0.951 & 8.463 & d^2 & 0 & symmetric root and matrix exponential \\
+FR--KL & 1.00 & 1.00 & 0.00 & 2.00 & 7.397 & 1.262 & 8.193 & d^2 & 0 & one precision inverse and one resolvent solve \\
+FB--GVI & 1.00 & 1.00 & 0.00 & 1.00 & 7.615 & 0.787 & 8.102 & d^2 & 0 & one eigendecomposition for the JKO entropy map \\
+Sq--NGVI & 1.00 & 1.00 & 0.00 & 1.00 & 7.109 & 0.534 & 7.538 & d^2 & 0 & forward Euler on the Cholesky factor \\
+FR--R--STL & 16.00 & 16.00 & 1.00 & 4.00 & 0.317 & 1.344 & 1.697 & d^2 & 0 & sampled \\
+FR--KL--STL & 16.00 & 16.00 & 0.00 & 4.00 & 0.334 & 1.539 & 1.850 & d^2 & 0 & sampled \\
+S--FB--GVI & 16.00 & 16.00 & 0.00 & 2.00 & 0.322 & 0.796 & 1.117 & d^2 & 0 & sampled \\
+Price--BBVI & 16.00 & 16.00 & 0.00 & 1.00 & 0.347 & 0.437 & 0.772 & d^2 & 0 & triangular energy step and closed-form entropy prox \\
+BBVI--STL & 16.00 & 0.00 & 0.00 & 1.00 & 0.226 & 0.687 & 0.894 & d^2 & 0 & gradient only; one triangular solve \\
 \bottomrule
 \end{tabular}
