@@ -358,47 +358,39 @@ def figure_1() -> dict[str, object]:
     panels = [
         Panel(
             "a", "Covariance entry time",
-            "Fisher--Rao entry time into the optimizer-whitened covariance band "
-            "$\\lambda_{\\min}(C_n)\\ge 1/2$ for the standard Gaussian target in $d=20$, "
-            "over $\\lambda_0\\in\\{10^{-2},10^{-4},10^{-6},10^{-8}\\}$ at the common step "
-            "$h=0.1$. The entry time grows with unit slope in the initialization term "
-            "$\\log_+[1/(\\beta_\\star\\lambda_{0,\\star})]$ of the global theorem over four "
-            "decades of $\\lambda_0$: the retraction sits on the predicted line to three "
-            "digits, fitted slope $0.999$ and intercept $-0.000$, and the Bregman scheme "
-            "runs about five per cent above it. This is a Fisher--Rao only measurement; no "
-            "warm start is involved.",
+            "Entry time into the optimizer-whitened covariance band "
+            "$\\lambda_{\\min}(C_n)\\ge1/(2\\beta_\\star)$, standard Gaussian target in "
+            "$N_\\theta=20$, $C_0=\\lambda_0\\Id$ over four decades of $\\lambda_0$ at the "
+            "common step $h=0.1$. The horizontal axis is the burn-in term "
+            "$\\log_+[1/(\\beta_\\star\\lambda_{0,\\star})]$ predicted by the global "
+            "theorems, not a fit: the retraction lands on the identity to three digits "
+            "(slope $0.999$) and the Bregman scheme $5$--$6\\%$ above it.",
             panel_burn_in,
             [f"F1burnin_d20_lam1e-{e}" for e in (2, 4, 6, 8)],
         ),
         Panel(
             "b", "Affine equivariance",
-            "Largest discrepancy along the trajectory after mapping the iterates of the "
-            "transformed problem $x\\mapsto Sx+b$ back to the base coordinates, against "
-            "$\\mathrm{cond}(S)$. Both Fisher--Rao schemes agree with the base trajectory to "
-            "roundoff, the residual growing like $\\varepsilon_{\\rm mach}\\,"
-            "\\mathrm{cond}(S)^2$: from $10^{-15}$ at $\\mathrm{cond}(S)=1$ through "
-            "$10^{-12}$ and $10^{-9}$. The exponent is two because the covariance "
-            "is carried by the congruence $C\\mapsto SCS^\\top$, so this is floating-point "
-            "amplification through an ill-conditioned map rather than a loss of "
-            "equivariance. FB--GVI, whose Bures--Wasserstein geometry "
-            "is not affine invariant, departs by an $O(1)$ amount as soon as $S$ is not "
-            "orthogonal. The grid stops at $\\mathrm{cond}(S)=10^6$ because one decade further "
-            "$\\mathrm{cond}(S)^2$ reaches $\\varepsilon_{\\rm mach}^{-1}$, the transported "
-            "covariance is no longer representable in double precision, and no method can "
-            "be measured. Every point drawn is a complete trajectory that required no "
-            "repair.",
+            "Largest discrepancy along the trajectory after the iterates of the "
+            "transformed problem $x\\mapsto Sx+b$ are mapped back to base coordinates. "
+            "Both Fisher--Rao schemes track the base trajectory to roundoff, growing like "
+            "$\\varepsilon_{\\rm mach}\\,\\mathrm{cond}(S)^2$ because the covariance is "
+            "carried by the congruence $C\\mapsto SCS^\\top$; this is floating-point "
+            "amplification through an ill-conditioned map, not a loss of equivariance. "
+            "FB--GVI departs by an $O(1)$ amount as soon as $S$ is non-orthogonal. The "
+            "grid stops at $\\mathrm{cond}(S)=10^6$ because one decade further the "
+            "transported covariance is not representable in double precision.",
             panel_affine,
             [f"F1affine_d10_S1e{e}" for e in (0, 2, 4, 6)],
         ),
         Panel(
             "c", r"$\kappa=10^9$, $\kappa_\star=1$",
-            "Normalized exact KL gap on the anisotropic Gaussian target of Diao et al. in "
-            "$d=10$ with logarithmically spaced precision eigenvalues, each method at its own "
-            "certified step. Coordinate anisotropy and intrinsic conditioning differ maximally "
-            "here: after optimizer whitening $\\kappa_\\star=1$, so the Fisher--Rao schemes "
-            "reach the double-precision floor, while FB--GVI remains limited by the "
-            "original-coordinate conditioning. The target is chosen to separate the two "
-            "notions of conditioning and is not evidence that Fisher--Rao always dominates.",
+            "Normalized exact KL gap on the anisotropic Gaussian of Diao et al., "
+            "$N_\\theta=10$, precision eigenvalues logarithmically spaced over nine "
+            "decades, each method at its own certified step. Optimizer whitening sends "
+            "$\\kappa=10^9$ to $\\kappa_\\star=1$: the Fisher--Rao schemes reach the "
+            "double-precision floor while FB--GVI stays at $0.45$, governed by the "
+            "original-coordinate anisotropy. The target is built to make that separation "
+            "maximal and is not evidence of dominance in general.",
             panel_anisotropic,
             ["F1aniso_d10_kappa1e9"],
         ),
@@ -409,12 +401,10 @@ def figure_1() -> dict[str, object]:
         shape=(1, 3),
         height=2.55,
         lead=(
-            "Gaussian structure and affine invariance of the Fisher--Rao schemes. "
-            "FB--GVI denotes the forward--backward Bures--Wasserstein scheme of Diao "
-            "et al., written here as the Bures--Wasserstein entry to match the geometry "
-            "first naming of the two Fisher--Rao entries. All panels are deterministic "
-            "and use the population gradient and Hessian, which are available in closed "
-            "form for Gaussian targets."
+            "Gaussian structure and affine invariance. FB--GVI is the forward--backward "
+            "Bures--Wasserstein scheme of Diao et al., named for its geometry to match "
+            "the two Fisher--Rao entries. All panels are deterministic and use the "
+            "population gradient and Hessian, closed form on Gaussian targets."
         ),
         legend_columns=6,
     )
@@ -1136,11 +1126,65 @@ def _floor_table(experiment: str = "J") -> pd.DataFrame:
                 "rescue": "-qr" in str(variant),
                 "batch_size": int(batch),
                 "step_size": float(group["step_size"].iloc[-1]),
+                # The step as a multiple of what this method's own theorem
+                # certifies.  It is not below one for every method here, and the
+                # captions say so rather than asserting a uniform cap.
+                "normalized_step": float(group["normalized_step_size"].iloc[-1]),
                 "seed": int(seed),
                 "floor": float(np.mean(gaps)),
             }
         )
     return pd.DataFrame(rows)
+
+
+def _certificate_note(table: pd.DataFrame, framing: bool = True) -> str:
+    """State, per method, where the step sits relative to its own certificate.
+
+    The earlier caption claimed a uniform cap below the certified step.  That is
+    false for the Bregman arm, which runs above its own certificate throughout
+    the batch sweep and crosses it inside the stepsize sweep, so a reader was
+    being told these panels sit inside the theorem constants when they do not.
+    What they actually establish is the exponent, and the text now says which
+    arms are inside and which are not.
+    """
+
+    ratios = table.groupby("method")["normalized_step"].agg(["min", "max"])
+    below, above, crossing = [], [], []
+    for method, row in ratios.iterrows():
+        low, high = float(row["min"]), float(row["max"])
+        # An en-dash between two math groups renders as a minus sign, so a span
+        # reads as a subtraction; spell the range out instead.
+        span = f"${low:.2g}\\times$" if np.isclose(low, high) else (
+            f"${low:.2g}\\times$ to ${high:.2g}\\times$"
+        )
+        bucket = below if high <= 1.0 else (above if low > 1.0 else crossing)
+        bucket.append(f"{figure_text(method)} at {span}")
+    if not (above or crossing):
+        return "Every arm runs below its own certified step (" + ", ".join(below) + ")."
+
+    lead = (
+        "These are mechanism diagnostics rather than validations of the theorem "
+        "constants: what they measure is how the floor scales, and not every arm "
+        "runs inside its own certificate. "
+        if framing
+        else ""
+    )
+    def clause(entries: list[str], singular: str, plural: str) -> str:
+        return ", ".join(entries) + " " + (singular if len(entries) == 1 else plural)
+
+    clauses = []
+    if above:
+        clauses.append(clause(above, "runs above it", "run above it"))
+    if crossing:
+        clauses.append(clause(crossing, "crosses it", "cross it"))
+    if below:
+        clauses.append(clause(below, "stays below", "stay below"))
+    return (
+        lead
+        + "As a multiple of the step each method's own theorem admits, "
+        + "; ".join(clauses)
+        + "."
+    )
 
 
 def _floor_summary(table: pd.DataFrame) -> pd.DataFrame:
@@ -1158,6 +1202,9 @@ def _floor_summary(table: pd.DataFrame) -> pd.DataFrame:
     summary = grouped.median().reset_index().rename(columns={"floor": "median_floor"})
     summary["lower"] = grouped.quantile(0.1).to_numpy()
     summary["upper"] = grouped.quantile(0.9).to_numpy()
+    summary["normalized_step"] = (
+        keep.groupby(["method", "batch_size"])["normalized_step"].first().to_numpy()
+    )
     return summary
 
 
@@ -1223,14 +1270,18 @@ def _batch_floor_caption(data: pd.DataFrame) -> str:
         f"{figure_text(method)} ${value:.2f}$" for method, value in sorted(exponents.items())
     )
     return (
-        "Stationary objective gap against batch size at a fixed stepsize, median over "
+        "Stationary objective gap against batch size at one fixed stepsize, median over "
         "paired seeds with a 10--90 per cent band, on the optimizer-whitened log-cosh "
-        "target. Theorems 4.16 and 4.17 predict a floor proportional to $\\Delta t/B$; "
-        f"the fitted batch exponents are {listed}, all within "
-        f"${worst:.2f}$ of $-1$. The step is capped below the certified one: the "
-        "certified step scales like $1/\\kappa_\\star$, and at that step the horizon "
-        "needed to leave the deterministic transient exceeds any affordable budget, so "
-        "a measured floor would be flat in $B$ for a reason unrelated to the theorem."
+        "target. Theorems~\\ref{thm:Riemannian-stochastic-global} "
+        "and~\\ref{thm:KL-stochastic-global} predict a floor proportional to "
+        f"$\\Delta t/B$; the fitted batch exponents are {listed}, all within "
+        f"${worst:.2f}$ of $-1$ over six doublings of $B$. "
+        + _certificate_note(data)
+        + " Running every arm inside its certificate is not affordable here: those "
+        "steps scale like $1/\\kappa_\\star$, and the horizon needed to leave the "
+        "deterministic transient at that step exceeds any budget we can spend, so the "
+        "measured level would be flat in $B$ for a reason unrelated to the theorem. "
+        "What the panel establishes is the exponent, which is common to both."
     )
 
 
@@ -1242,6 +1293,9 @@ def _step_summary() -> pd.DataFrame:
     summary = grouped.median().reset_index().rename(columns={"floor": "median_floor"})
     summary["lower"] = grouped.quantile(0.1).to_numpy()
     summary["upper"] = grouped.quantile(0.9).to_numpy()
+    summary["normalized_step"] = (
+        table.groupby(["method", "step_size"])["normalized_step"].first().to_numpy()
+    )
     summary["batch_size"] = int(table["batch_size"].iloc[0])
     return summary
 
@@ -1289,6 +1343,19 @@ def panel_step_floor(axis: plt.Axes) -> pd.DataFrame:
     axis.set_ylabel(r"stationary gap $\Delta$")
     axis.set_xscale("log")
     axis.set_yscale("log")
+    # Both axes span well under a decade, so the decade locator labels one tick on
+    # each and the panel becomes unreadable as a measurement.  Label the sampled
+    # steps themselves, as panel (b) does with the batch sizes, and let the y axis
+    # carry half-decade ticks.
+    axis.set_xticks(steps)
+    axis.set_xticklabels([f"{value:g}" for value in steps])
+    levels = positive(summary["median_floor"])
+    decades = np.arange(np.floor(np.log10(np.nanmin(levels))), np.ceil(np.log10(np.nanmax(levels))) + 1)
+    ticks = np.concatenate([np.array([1.0, 2.0, 5.0]) * 10.0**exponent for exponent in decades])
+    inside = ticks[(ticks >= np.nanmin(levels) / 1.6) & (ticks <= np.nanmax(levels) * 1.6)]
+    axis.set_yticks(inside)
+    axis.set_yticklabels([f"{value:g}" for value in inside])
+    axis.minorticks_off()
     return summary
 
 
@@ -1311,12 +1378,17 @@ def _step_floor_caption(data: pd.DataFrame) -> str:
         "$\\Delta t$, median over paired seeds with a 10--90 per cent band. "
         f"The fitted exponents are {listed}, all within ${worst:.2f}$ of $+1$. Panel (b) "
         "measures the $1/B$ factor and this one the $\\Delta t$ factor, so together they "
-        "establish the $\\Delta t / B$ floor of Theorems~\\ref{thm:Riemannian-stochastic-global} "
-        "and~\\ref{thm:KL-stochastic-global} rather than half of it. Each cell runs for the "
-        "same elapsed flow time $N\\Delta t$ rather than the same iteration count: the "
-        "deterministic transient is governed by flow time, and a common iteration budget "
-        "would leave the smallest step still inside its transient and report a level that "
-        "is not a floor."
+        "establish the $\\Delta t/B$ scaling of "
+        "Theorems~\\ref{thm:Riemannian-stochastic-global} "
+        "and~\\ref{thm:KL-stochastic-global} rather than half of it. "
+        + _certificate_note(data, framing=False)
+        + " The crossing is informative rather than a defect: the exponent does not "
+        "change as the Bregman arm passes out of its own certified range. Each cell "
+        "runs for the same "
+        "elapsed flow time $N\\Delta t$ rather than the same iteration count, because "
+        "the deterministic transient is governed by flow time and a common iteration "
+        "budget would leave the smallest step still inside its transient, reporting a "
+        "level that is not a floor."
     )
 
 
@@ -1527,22 +1599,60 @@ def panel_time_to_tolerance(axis: plt.Axes) -> pd.DataFrame:
     positions = {name: index for index, name in enumerate(datasets)}
     methods = ordered_methods(table)
     width = 0.8 / max(len(methods), 1)
+    # The scale has to be set before any limit is: setting a limit on a linear
+    # axis and switching to log afterwards rescales it into nonsense.
+    axis.set_yscale("log")
+
+    # A cell that never reached the tolerance is drawn, not omitted.  An absent
+    # marker reads as "not run" rather than "ran and did not converge", and the
+    # second is the finding.  Each failure gets its method's own hollow marker in
+    # a reserved band above every measured time, separated by a rule so the band
+    # cannot be misread as a very slow time.
+    finite = positive(table["seconds"])
+    low, high = float(np.nanmin(finite)), float(np.nanmax(finite))
+    separator, unreached_level = high * 3.0, high * 9.0
+    misses = 0
     for index, method in enumerate(methods):
         subset = table[table["method"] == method]
-        summary = subset.groupby("dataset")["seconds"].median()
-        offsets, values = [], []
-        for dataset, value in summary.items():
-            offsets.append(positions[dataset] + (index - (len(methods) - 1) / 2.0) * width)
-            values.append(value)
+        offset = (index - (len(methods) - 1) / 2.0) * width
         style = {k: v for k, v in method_style(method, index).items() if k != "linestyle"}
+        summary = subset.groupby("dataset")["seconds"].median()
         axis.plot(
-            offsets, positive(values), linestyle="none", markersize=4.0,
-            fillstyle="none", label=method, **style,
+            [positions[name] + offset for name in summary.index],
+            positive(summary.to_numpy()),
+            linestyle="none", markersize=4.0, fillstyle="none", label=method, **style,
         )
+        failed = sorted(
+            subset.loc[~subset["reached"], "dataset"].unique(), key=positions.__getitem__
+        )
+        if failed:
+            misses += len(failed)
+            axis.plot(
+                [positions[name] + offset for name in failed],
+                [unreached_level] * len(failed),
+                linestyle="none", markersize=4.0, fillstyle="none",
+                markeredgewidth=1.1, **style,
+            )
+    if misses:
+        axis.axhspan(separator, unreached_level * 3.0, color=REFERENCE_GREY, alpha=0.07,
+                     linewidth=0.0)
+        axis.axhline(separator, color=REFERENCE_GREY, linestyle="-", linewidth=0.6)
+        axis.text(
+            -0.45, unreached_level * 2.2, "did not reach", fontsize=6.5,
+            color=REFERENCE_GREY, va="center", ha="left",
+        )
+        # No tick inside the band: a labelled decade there would read as a time,
+        # and the markers above the rule have none.
+        decades = 10.0 ** np.arange(
+            np.floor(np.log10(low)), np.floor(np.log10(separator)) + 1
+        )
+        axis.set_yticks(decades[decades >= low / 3.0])
+        axis.minorticks_off()
+    axis.set_ylim(low / 3.0, unreached_level * 3.0 if misses else high * 2.0)
+    axis.set_xlim(-0.6, len(datasets) - 0.4)
     axis.set_xticks(range(len(datasets)))
     axis.set_xticklabels(datasets, rotation=25, ha="right")
     axis.set_ylabel(f"time to ${BENCHMARK_TOLERANCE:g}$ relative gap (s)")
-    axis.set_yscale("log")
     return table
 
 
@@ -1565,14 +1675,16 @@ def _tolerance_caption(data: pd.DataFrame) -> str:
         f"{figure_text(method)} {value:.1f}" for method, value in ranks.head(3).items()
     )
     note = (
-        f" Absent markers did not reach the tolerance inside the horizon: {', '.join(missing)}."
+        " Markers in the shaded band above the rule did not reach the tolerance inside "
+        f"the horizon at all, and carry no time: {', '.join(figure_text(m) for m in missing)}."
         if missing
         else " Every method reached the tolerance on every dataset."
     )
     return (
         f"Algorithm time to a relative objective gap of ${BENCHMARK_TOLERANCE:g}$ on each "
         "dataset, median over seeds for the stochastic arms; markers are offset "
-        "horizontally for legibility. Averaged over the five datasets the best mean ranks "
+        "horizontally for legibility and keep the colour and shape they have in (a)--(c). "
+        "Averaged over the five datasets the best mean ranks "
         f"are {leaderboard}." + note + " No method is uniformly fastest, which is the "
         "expected outcome once every method is tuned by the same implementable rule: "
         "affine invariance is a structural property, not a claim of numerical dominance."

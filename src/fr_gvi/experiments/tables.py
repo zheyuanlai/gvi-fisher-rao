@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from fr_gvi.plotting.style import load_experiment
+from fr_gvi.plotting.style import figure_text, load_experiment
 
 ROOT = Path(__file__).resolve().parents[3]
 TABLES = ROOT / "results" / "tables"
@@ -23,6 +23,28 @@ def _write(frame: pd.DataFrame, name: str, caption: str, formats: dict[str, str]
     TABLES.mkdir(parents=True, exist_ok=True)
     frame.to_csv(TABLES / f"{name}.csv", index=False)
     formatted = frame.copy()
+    # The CSV above keeps the stored identifiers so raw data, configs, manifests and
+    # the audit gates all stay keyed on one spelling.  The LaTeX body is what a
+    # reader sees, so it carries the manuscript's names: single hyphens, and the
+    # Bures--Wasserstein entries named for their geometry rather than for Diao et
+    # al.'s discretization.  Every text column is renamed, not just the one called
+    # "method", since the stepsize table also spells methods into ``job_id``.
+    #
+    # This runs before the numeric formatting, not after: that pass writes "--" for
+    # a missing value, and ``figure_text`` collapses "--" to a single hyphen.
+    # Selecting on ``dtype == object`` would also miss every column here, because
+    # pandas 3 gives string columns the ``str`` dtype.
+    # Underscores are escaped first, on the stored spellings.  Doing it afterwards
+    # would escape the subscript in the ``N_\theta`` the rename introduces and emit
+    # ``N\_\theta``, and doing it here also means a job identifier's underscore
+    # shields the character after it from the dimension rule.
+    for column in formatted.columns:
+        if not pd.api.types.is_numeric_dtype(formatted[column]):
+            formatted[column] = formatted[column].map(
+                lambda value: figure_text(value.replace("_", r"\_"))
+                if isinstance(value, str)
+                else value
+            )
     for column, spec in formats.items():
         if column in formatted.columns:
             formatted[column] = formatted[column].map(
@@ -31,6 +53,7 @@ def _write(frame: pd.DataFrame, name: str, caption: str, formats: dict[str, str]
                 and np.isfinite(float(value))
                 else "--"
             )
+
     # A plain booktabs body, written directly so the package does not depend on
     # jinja2 through pandas' styler path.
     columns = list(formatted.columns)
@@ -42,11 +65,7 @@ def _write(frame: pd.DataFrame, name: str, caption: str, formats: dict[str, str]
         r"\midrule",
     ]
     for _, row in formatted.iterrows():
-        lines.append(
-            # Method names deliberately keep their en-dash form, matching the
-            # manuscript's FR--R / FB--GVI nomenclature.
-            " & ".join(str(value).replace("_", r"\_") for value in row) + r" \\"
-        )
+        lines.append(" & ".join(str(value) for value in row) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     (TABLES / f"{name}.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"  {name}: {len(frame)} rows")

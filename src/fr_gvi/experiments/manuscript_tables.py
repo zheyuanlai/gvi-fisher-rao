@@ -41,6 +41,20 @@ def _manuscript_manifests() -> list[dict]:
     return manifests
 
 
+# One label per stepsize rule the campaign records, so the table names the
+# protocol a run was actually under.  ``capped_practical`` is deliberately not
+# called "capped below certified": the two stochastic floor sweeps run the
+# Bregman arm above its own certificate, and the ratio column says so.
+_PROTOCOL_LABELS = {
+    "certified": "certified",
+    "certified_schedule": "certified schedule",
+    "pilot_frozen": "frozen practical, eta={eta:g}",
+    "capped_practical": "fixed practical, mechanism diagnostic",
+    "implementable_grid": "implementable grid",
+    "non-iterative": "non-iterative",
+}
+
+
 def stepsize_protocol_table() -> pd.DataFrame:
     """What each method ran at, beside what its own theorem certifies."""
 
@@ -53,12 +67,18 @@ def stepsize_protocol_table() -> pd.DataFrame:
         specification = manifest.get("method_specification", {})
         name = str(specification.get("name", ""))
         job = str(config.get("id", ""))
-        if name not in ITERATIVE or (job, name) in seen or job.startswith("pilot"):
+        # Every method that takes a step, not only the three deterministic ones.
+        # Restricting to ``ITERATIVE`` left the stochastic sweeps out of the
+        # protocol record entirely -- including the two cells where an arm runs
+        # above its own certificate, which are precisely the rows a reader
+        # checking the stepsize claims needs to see.
+        if not name or name == "Laplace" or (job, name) in seen or job.startswith("pilot"):
             continue
         seen.add((job, name))
         certified = float(specification.get("certified_step_size", np.nan))
         step = float(specification.get("step_size", np.nan))
         scale = specification.get("step_scale")
+        rule = str(specification.get("step_rule", ""))
         rows.append(
             {
                 "job_id": job,
@@ -68,10 +88,16 @@ def stepsize_protocol_table() -> pd.DataFrame:
                 "certified_step_size": certified,
                 "step_over_certified": step / certified if certified else np.nan,
                 "step_scale": float(scale) if scale is not None else np.nan,
-                "protocol": (
-                    f"frozen practical, eta={multipliers.get(name, np.nan):g}"
-                    if scale is not None
-                    else "theorem compatible"
+                # Read the rule the run actually recorded.  Deriving it from
+                # whether a step scale is present collapses five rules into two
+                # and mislabels the whole real-data benchmark as "frozen
+                # practical", which is the opposite of what its protocol says:
+                # the implementable grid reads no optimizer-whitened constant at
+                # all.  Where the label is ambiguous the ratio column beside it
+                # is the authority, and for the capped arms it is not always
+                # below one.
+                "protocol": _PROTOCOL_LABELS.get(rule, rule or "unrecorded").format(
+                    eta=multipliers.get(name, float("nan"))
                 ),
             }
         )
@@ -325,7 +351,8 @@ def computational_accounting_table() -> pd.DataFrame:
                 ),
                 # Dense storage in units of d^2 doubles: every method here carries
                 # one full covariance or one full factor.
-                "covariance_words": "d^2",
+                # Math mode: a bare ``^`` outside it is a LaTeX error, not a caret.
+                "covariance_words": "$d^2$",
                 "projection_activations": int(subset["projection_activations"].sum())
                 if "projection_activations" in subset
                 else 0,

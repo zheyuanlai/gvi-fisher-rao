@@ -6,6 +6,7 @@ distinct linestyle and marker so the figures survive greyscale printing.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import matplotlib
@@ -177,13 +178,48 @@ DISPLAY_NAMES = {
 }
 
 
+# The dimension is ``N_\theta`` throughout the manuscript, but the configs, job
+# identifiers and most of the plotting code call it ``d``.  A figure that labels
+# an axis ``d`` while the surrounding text says ``N_\theta`` makes the reader do
+# the translation, so the substitution happens here rather than at eighteen call
+# sites -- and cannot be forgotten at the nineteenth.
+#
+# The rewrite applies inside math mode only.  Prose is full of things that look
+# like a lone ``d`` to a regex and are not the dimension: the panel letter ``(d)``,
+# the abbreviation ``s.d.``, a job identifier's ``_d10``.  Guarding against each
+# in turn is a losing game -- two of those three were found only after they had
+# been rendered into a figure -- whereas "it is the dimension when it is a math
+# identifier" is the actual rule and needs no exceptions.
+#
+# Within math, ``d`` still has to stand alone: not part of ``\mathrm{cond}``, not
+# a differential ``dx``, not ``\delta``.
+_MATH_SEGMENT = re.compile(r"(?<![A-Za-z\\_{])d(?![A-Za-z])")
+
+
+def _rewrite_dimension(text: str) -> str:
+    """Spell the dimension as ``N_\\theta`` in every math span of ``text``."""
+
+    # Odd-indexed pieces of a split on "$" are the math spans.  An unbalanced "$"
+    # leaves the tail outside math, which is the safe direction to fail.
+    pieces = text.split("$")
+    for index in range(1, len(pieces), 2):
+        # ``nd^2`` is a product, so its ``d`` follows a letter and the standalone
+        # rule will not see it.
+        piece = pieces[index].replace("nd^2", r"nN_\theta^2")
+        pieces[index] = _MATH_SEGMENT.sub(r"N_\\theta", piece)
+    return "$".join(pieces)
+
+
 def figure_text(value: object) -> str:
     """Return manuscript-visible text with the repository's typographic fixes.
 
-    Three normalisations, all display-only so the underlying identifiers stay put:
+    Four normalisations, all display-only so the underlying identifiers stay put:
 
     * compound method names are set with single hyphens, while experiment data and
       plotting styles keep their established double-hyphen identifiers;
+    * the Bures--Wasserstein entries are named for their geometry, matching the
+      geometry-first naming of the Fisher--Rao entries;
+    * the dimension is spelled as the manuscript spells it;
     * every ``\\star`` is braced.  TeX classes ``\\star`` as a binary operator, and
       mathtext keeps that operator spacing wherever it appears, which opens a
       visible gap in both ``\\kappa_\\star`` and ``\\lambda_{0,\\star}``.  Bracing
@@ -196,6 +232,7 @@ def figure_text(value: object) -> str:
     for identifier in sorted(DISPLAY_NAMES, key=len, reverse=True):
         text = text.replace(identifier, DISPLAY_NAMES[identifier])
     text = text.replace("--", "-")
+    text = _rewrite_dimension(text)
     # Unbrace first so the rule is idempotent over repeated normalisation.
     return text.replace(r"{\star}", r"\star").replace(r"\star", r"{\star}")
 
@@ -236,7 +273,14 @@ def save_figure(figure: plt.Figure, name: str, caption: str, data: pd.DataFrame 
 
 
 def band(axis: plt.Axes, x, lower, upper, color) -> None:
-    axis.fill_between(x, lower, upper, color=color, alpha=0.16, linewidth=0.0)
+    """Across-seed spread, kept subordinate to the median it surrounds.
+
+    Five or more overlapping bands at the previous 0.16 read as a single wash on
+    the benchmark panels, and where they crossed, the stacked alpha was darker
+    than some of the lines.  The band is context; the median is the measurement.
+    """
+
+    axis.fill_between(x, lower, upper, color=color, alpha=0.10, linewidth=0.0)
 
 
 def seed_summary(frame: pd.DataFrame, x: str, y: str) -> pd.DataFrame:

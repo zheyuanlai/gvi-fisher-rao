@@ -34,6 +34,43 @@ def test_star_subscripts_are_braced_for_mathtext() -> None:
     assert figure_text(figure_text(r"$\kappa_\star$")) == r"$\kappa_{\star}$"
 
 
+def test_dimension_is_spelled_as_the_manuscript_spells_it() -> None:
+    """A panel labelled ``d`` beside text saying ``N_\\theta`` makes the reader translate."""
+
+    assert figure_text(r"$d=10$") == r"$N_\theta=10$"
+    assert figure_text("dimension $d$") == r"dimension $N_\theta$"
+    assert figure_text(r"$d\in\{10,50\}$") == r"$N_\theta\in\{10,50\}$"
+    assert figure_text("$d^2$") == r"$N_\theta^2$"
+    assert figure_text(r"$O(nQ + nd^2) = O(d^3)$") == r"$O(nQ + nN_\theta^2) = O(N_\theta^3)$"
+    assert figure_text("$n=10d$") == r"$n=10N_\theta$"
+    # Inside math a parenthesised d is the dimension, unlike the panel letter.
+    assert figure_text("$O(d)$") == r"$O(N_\theta)$"
+
+
+def test_dimension_rewrite_leaves_identifiers_and_words_alone() -> None:
+    """Job identifiers name directories on disk and must keep their spelling."""
+
+    for untouched in (
+        "F2global_d10_k1_rho1",
+        "F4real_ionosphere_fb-gvi",
+        "wdbc",
+        "dimension",
+        "and the seed used",
+        "held-out predictive",
+        "standardized",
+        r"$\Delta t$",
+        # The fourth panel letter, in a title and in its caption.  Rewriting it
+        # renumbers every four-panel figure in the paper.
+        "(d) Across datasets",
+        "**(d)** The quadratic rescue, charged in joint oracle pairs.",
+        # An abbreviation, not an identifier -- and it is an axis label.  The
+        # stars are already braced so this fixture isolates the dimension rule.
+        r"across-seed s.d. of $\|a_n - a_{\star}\|_{\star}$",
+        "the certified step, and d is not the dimension here",
+    ):
+        assert figure_text(untouched) == untouched
+
+
 def test_normalize_figure_text_covers_axes_annotations_and_legends() -> None:
     figure, axis = plt.subplots()
     axis.set_title("FR--R")
