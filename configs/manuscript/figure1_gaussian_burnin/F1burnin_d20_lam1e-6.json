@@ -21,12 +21,14 @@
       "certified_step_size": 0.5,
       "name": "FR--R",
       "normalized_step_size": 0.1,
+      "step_rule": "certified",
       "step_size": 0.1
     },
     {
       "certified_step_size": 1.0,
       "name": "FR--KL",
       "normalized_step_size": 0.1,
+      "step_rule": "certified",
       "step_size": 0.1
     }
   ],

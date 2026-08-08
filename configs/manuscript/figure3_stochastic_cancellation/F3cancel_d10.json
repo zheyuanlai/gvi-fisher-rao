@@ -1,0 +1,112 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.9999999999999998,
+    "FR--KL": 0.9999999999999993,
+    "FR--KL--STL": 0.125,
+    "FR--R": 0.49999999999999967,
+    "FR--R--STL": 1.0,
+    "S--FB--GVI": 0.9999999999999998
+  },
+  "curvature": {
+    "alpha": 0.010000000000000035,
+    "alpha_star": 1.0,
+    "beta": 1.0000000000000002,
+    "beta_star": 1.0,
+    "certified_step_sizes": {
+      "FB--GVI": 0.9999999999999998,
+      "FR--KL": 0.9999999999999993,
+      "FR--KL--STL": 0.125,
+      "FR--R": 0.49999999999999967,
+      "FR--R--STL": 1.0,
+      "S--FB--GVI": 0.9999999999999998
+    },
+    "condition": 99.99999999999967,
+    "exact": true,
+    "kappa_star": 1.0,
+    "lambda_0_star": 0.9999999999999977,
+    "lambda_0_star_max": 1.0000000000000007,
+    "lambda_max_star": 1.0000000000000007,
+    "source": "gaussian_exact"
+  },
+  "experiment": "H",
+  "grid": {
+    "dimension": 10,
+    "figure": "3a"
+  },
+  "id": "F3cancel_d10",
+  "iterations": 300,
+  "master_seed": 20261310,
+  "methods": [
+    {
+      "batch_size": 1,
+      "name": "FR--R--STL",
+      "normalized_step_size": 0.5,
+      "seeds": 30,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.5,
+      "tuning_censored": false,
+      "tuning_exponent": 1,
+      "tuning_oracle_pairs": 2575
+    },
+    {
+      "batch_size": 1,
+      "name": "FR--KL--STL",
+      "normalized_step_size": 0.5,
+      "seeds": 30,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.5,
+      "tuning_censored": false,
+      "tuning_exponent": 1,
+      "tuning_oracle_pairs": 2700
+    },
+    {
+      "batch_size": 1,
+      "name": "BBVI--STL",
+      "normalized_step_size": 0.125,
+      "seeds": 30,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.9999999999999998,
+      "step_size": 0.12499999999999997,
+      "tuning_censored": false,
+      "tuning_exponent": 3,
+      "tuning_oracle_pairs": 3
+    },
+    {
+      "batch_size": 1,
+      "name": "S--FB--GVI",
+      "normalized_step_size": 0.125,
+      "seeds": 30,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.9999999999999998,
+      "step_size": 0.12499999999999997,
+      "tuning_censored": false,
+      "tuning_exponent": 3,
+      "tuning_oracle_pairs": 2431
+    },
+    {
+      "batch_size": 1,
+      "name": "Price--BBVI",
+      "normalized_step_size": 0.125,
+      "seeds": 30,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.9999999999999998,
+      "step_size": 0.12499999999999997,
+      "tuning_censored": false,
+      "tuning_exponent": 3,
+      "tuning_oracle_pairs": 2581
+    }
+  ],
+  "record_every": 1,
+  "target": {
+    "condition": 100.0,
+    "dimension": 10,
+    "initial_covariance": "target",
+    "initial_mean_scale": 1.0,
+    "kind": "gaussian",
+    "mean_scale": 0.3,
+    "rotation": true
+  },
+  "tier": "manuscript"
+}

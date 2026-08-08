@@ -632,10 +632,8 @@ def panel_local_rate(axis: plt.Axes) -> pd.DataFrame:
     return table
 
 
-def figure_2() -> dict[str, object]:
-    global_sources = sorted(_global_frame()["job_id"].unique())
-    local_sources = sorted(_local_frame()["job_id"].unique())
-    panels = [
+def _representative_panels() -> list[Panel]:
+    return [
         Panel(
             letter, title,
             f"Normalized objective gap on the {description} cell of the "
@@ -652,9 +650,11 @@ def figure_2() -> dict[str, object]:
             strict=True,
         )
     ]
-    panels += [
-        Panel(
-            "d", "Grid summary",
+
+
+def _grid_summary_panel(letter: str, global_sources: list[str]) -> Panel:
+    return Panel(
+            letter, "Grid summary",
             f"Iterations to $\\Delta(a_n)/\\Delta(a_0)\\le 10^{{-6}}$ over all twelve cells "
             f"($d\\in\\{{10,50\\}}$, $\\kappa_{{\\rm base}}\\in\\{{1,10,10^2\\}}$, "
             f"$\\rho\\in\\{{0.1,1\\}}$), against the affine-invariant condition number "
@@ -664,13 +664,16 @@ def figure_2() -> dict[str, object]:
             f"{{\\max}},1))$, and $\\beta_\\star$ ranges over $[1.04,5.09]$ here, so on the "
             f"least-conditioned cells the resulting $h\\gamma_\\star$ approaches $2$, the "
             f"one-step factor approaches $-1$, and the Fisher--Rao iteration count rises. "
-            f"That is the price of one frozen multiplier, not a property of the flow; panel "
-            f"(e) separates the two.",
+            f"That is the price of one frozen multiplier, not a property of the flow; the "
+            f"elapsed-flow-time panel of the online appendix separates the two.",
             panel_grid_iterations,
             global_sources,
-        ),
-        Panel(
-            "e", "Elapsed flow time",
+        )
+
+
+def _flow_time_panel(letter: str, global_sources: list[str]) -> Panel:
+    return Panel(
+            letter, "Elapsed flow time",
             "The same cells measured in elapsed flow time $N_{10^{-6}}h$ rather than in "
             "iterations. On the eight cells with $\\kappa_\\star\\ge2$ the three schemes "
             "agree to within a factor of $2.2$, which places the iteration-count "
@@ -682,9 +685,12 @@ def figure_2() -> dict[str, object]:
             "number rather than a property of the flow.",
             panel_grid_flow_time,
             global_sources,
-        ),
-        Panel(
-            "f", "Local rate",
+        )
+
+
+def _local_rate_panel(letter: str, local_sources: list[str]) -> Panel:
+    return Panel(
+            letter, "Local rate",
             "Measured against predicted per-iteration contraction for both local targets, "
             "$\\rho\\in\\{0.1,1\\}$, three initial radii "
             "$r\\in\\{10^{-1},5\\times10^{-2},10^{-2}\\}$ along the slowest eigenmode of the "
@@ -698,19 +704,56 @@ def figure_2() -> dict[str, object]:
             "certified step is five times larger, and $10^{-5}$ on the $\\rho=1$ targets.",
             panel_local_rate,
             local_sources,
-        ),
+        )
+
+
+LOGCOSH_LEAD = (
+    "Global-to-local deterministic convergence on the strongly log-concave "
+    "shifted log-cosh family, built in optimizer-whitened coordinates so that "
+    "$C_\\star=I$ and the initialization $m_0=2e_1$, $C_0=I$ isolates the "
+    "non-Gaussian localization from a covariance burn-in."
+)
+
+
+def figure_2() -> dict[str, object]:
+    """The compressed main-text figure: one trajectory, the scaling, the local rate.
+
+    The full twelve-cell grid and the remaining representative trajectories move
+    to the online appendix.  What the main text needs from this family is that a
+    single trajectory localizes, that the iteration count tracks the
+    affine-invariant condition number rather than the coordinate one, and that
+    the local contraction is the one the linearized generator predicts; the rest
+    is corroboration and belongs with the rest of the corroboration.
+    """
+
+    global_sources = sorted(_global_frame()["job_id"].unique())
+    local_sources = sorted(_local_frame()["job_id"].unique())
+    representative = _representative_panels()
+    # The difficult cell is the informative one for a single main-text trajectory.
+    headline = representative[-1]
+    headline.letter = "a"
+    panels = [
+        headline,
+        _grid_summary_panel("b", global_sources),
+        _local_rate_panel("c", local_sources),
     ]
+    return compose("figure_2", panels, shape=(1, 3), height=2.6, lead=LOGCOSH_LEAD, legend_columns=5)
+
+
+def figure_a1() -> dict[str, object]:
+    """Online appendix: the log-cosh material the main text compresses away."""
+
+    global_sources = sorted(_global_frame()["job_id"].unique())
+    representative = _representative_panels()[:2]
+    for letter, panel in zip("ab", representative, strict=True):
+        panel.letter = letter
+    panels = [*representative, _flow_time_panel("c", global_sources)]
     return compose(
-        "figure_2",
+        "figure_a1",
         panels,
-        shape=(2, 3),
-        height=4.55,
-        lead=(
-            "Global-to-local deterministic convergence on the strongly log-concave "
-            "shifted log-cosh family, built in optimizer-whitened coordinates so that "
-            "$C_\\star=I$ and the initialization $m_0=2e_1$, $C_0=I$ isolates the "
-            "non-Gaussian localization from a covariance burn-in."
-        ),
+        shape=(1, 3),
+        height=2.6,
+        lead=LOGCOSH_LEAD + " These are the panels compressed out of the main-text figure.",
         legend_columns=5,
     )
 
@@ -933,7 +976,7 @@ def figure_3() -> dict[str, object]:
             f"the {LOGISTIC_DATASETS} datasets with min-max bars; markers are offset "
             "horizontally for legibility. No method dominates: the Bures--Wasserstein "
             "baseline is fastest where the features are best conditioned and slowest where "
-            "they are worst, with the crossover near $\kappa_X=10^2$. That is the expected "
+            "they are worst, with the crossover near $\\kappa_X=10^2$. That is the expected "
             "shape, since its guarantee places the conditioning in the rate while the "
             "Fisher--Rao guarantee places it in the admissible stepsize. The Laplace "
             "approximation is a fixed point of none of the schemes and so has no "
@@ -961,7 +1004,765 @@ def figure_3() -> dict[str, object]:
     )
 
 
-BUILDERS = {1: figure_1, 2: figure_2, 3: figure_3}
+# ---------------------------------------------------------------------------
+# Figure 4: stochastic mechanisms
+# ---------------------------------------------------------------------------
+#
+# Numbered 4 in this module and renumbered to 3 in the manuscript, where the
+# synthetic logistic figure moves to the online appendix.  The module keeps the
+# build order so a rerun of one figure does not silently rename another.
+
+
+def _star_distance(frame: pd.DataFrame) -> pd.Series:
+    """``|a - a_star|_star`` from the whitened errors already in every row.
+
+    ``mean_error`` and ``covariance_error`` are recorded in optimizer-whitened
+    coordinates, and the equilibrium norm is
+    ``|(u, X)|_star^2 = |u|^2 + |X|_F^2 / 2``.
+    """
+
+    return np.sqrt(frame["mean_error"] ** 2 + 0.5 * frame["covariance_error"] ** 2)
+
+
+def _cancellation_table() -> pd.DataFrame:
+    frame = require(load_experiment("H", TIER), "H").copy()
+    frame["star_distance"] = _star_distance(frame)
+    rows: list[dict[str, object]] = []
+    for (method, iteration), group in frame.groupby(["method", "iteration"]):
+        distances = group["star_distance"].to_numpy(dtype=np.float64)
+        if distances.size < 2:
+            continue
+        rows.append(
+            {
+                "method": str(method),
+                "iteration": int(iteration),
+                # Across-seed dispersion is the quantity Corollary 4.20 speaks
+                # to: an estimator whose noise cancels pathwise puts every seed
+                # on the same trajectory.
+                "dispersion": float(np.std(distances, ddof=1)),
+                "median_distance": float(np.median(distances)),
+                "seeds": int(distances.size),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def panel_cancellation(axis: plt.Axes) -> pd.DataFrame:
+    table = _cancellation_table()
+    for index, method in enumerate(ordered_methods(table)):
+        subset = table[table["method"] == method].sort_values("iteration")
+        values = positive(subset["dispersion"])
+        axis.plot(
+            subset["iteration"],
+            values,
+            label=method,
+            markevery=_markevery(values, index),
+            **method_style(method, index),
+        )
+    axis.axhline(
+        EPS,
+        color=REFERENCE_GREY,
+        linestyle=":",
+        linewidth=1.0,
+        label=r"double-precision $\varepsilon$",
+    )
+    axis.set_xlabel("iteration $n$")
+    axis.set_ylabel(r"across-seed s.d. of $\|a_n-a_\star\|_\star$")
+    axis.set_yscale("log")
+    return table
+
+
+def _cancellation_caption(data: pd.DataFrame) -> str:
+    terminal = data.sort_values("iteration").groupby("method", as_index=False).last()
+    levels = {str(row["method"]): float(row["dispersion"]) for _, row in terminal.iterrows()}
+    landing = [name for name in ("FR--R--STL", "FR--KL--STL") if name in levels]
+    quiet = max((levels[name] for name in landing), default=float("nan"))
+    loud = max(
+        (levels[name] for name in ("S--FB--GVI", "Price--BBVI") if name in levels),
+        default=float("nan"),
+    )
+    seeds = int(terminal["seeds"].max())
+    return (
+        "Across-seed standard deviation of the optimizer-whitened distance, over "
+        f"{seeds} paired seeds, on a Gaussian target started with its covariance "
+        "already matched and its mean displaced. Three groups appear, and they are "
+        "not the three geometries. The Fisher--Rao sticking-the-landing schemes end at "
+        f"${quiet:.0e}$, floating-point scale: for a Gaussian target the sampled Hessian "
+        "is constant pathwise and the STL mean residual reduces to the deterministic "
+        r"$Q(m-\mu)$, so every seed follows one trajectory, which is Corollary 4.20. "
+        "BBVI--STL shares that score subtraction and its mean residual is deterministic "
+        r"too, but its covariance direction is the outer product $r\varepsilon^\top$, "
+        "which stays random until the mean also arrives; its dispersion therefore decays "
+        "rather than vanishing. S--BW--FB and Price--BBVI keep the raw Bonnet mean "
+        f"estimator and remain at ${loud:.0e}$ throughout. The split follows the "
+        "estimator, not the geometry: one Fisher--Rao and one parameter-space method sit "
+        "on each side."
+    )
+
+
+FLOOR_TAIL_FRACTION = 0.2
+
+
+def _floor_table() -> pd.DataFrame:
+    """Stationary objective gap of every ``(method, variant, batch)`` cell.
+
+    The floor is the level the iterates settle at, so it is read off the tail of
+    the horizon rather than from the last point: a single last iterate is one
+    draw from the stationary distribution, while the tail mean over the final
+    fifth of the run averages the fluctuation the theorem is about.
+    """
+
+    frame = require(load_experiment("J", TIER), "J")
+    rows: list[dict[str, object]] = []
+    for (method, variant, batch, seed), group in frame.groupby(
+        ["method", "variant", "batch_size", "seed"]
+    ):
+        group = group.sort_values("iteration")
+        horizon = int(group["iteration"].max())
+        tail = group[group["iteration"] >= (1.0 - FLOOR_TAIL_FRACTION) * horizon]
+        gaps = tail["objective_gap"].to_numpy(dtype=np.float64)
+        gaps = gaps[np.isfinite(gaps)]
+        if gaps.size == 0:
+            continue
+        rows.append(
+            {
+                "method": str(method),
+                "variant": str(variant),
+                "rescue": "-qr" in str(variant),
+                "batch_size": int(batch),
+                "seed": int(seed),
+                "floor": float(np.mean(gaps)),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _floor_summary(table: pd.DataFrame) -> pd.DataFrame:
+    grouped = table[table["rescue"]].groupby(["method", "batch_size"])["floor"]
+    summary = grouped.median().reset_index().rename(columns={"floor": "median_floor"})
+    summary["lower"] = grouped.quantile(0.1).to_numpy()
+    summary["upper"] = grouped.quantile(0.9).to_numpy()
+    return summary
+
+
+def _fitted_batch_exponent(summary: pd.DataFrame, method: str) -> float:
+    subset = summary[summary["method"] == method]
+    values = positive(subset["median_floor"])
+    finite = np.isfinite(values)
+    if finite.sum() < 3:
+        return float("nan")
+    return float(
+        np.polyfit(np.log(subset["batch_size"].to_numpy()[finite]), np.log(values[finite]), 1)[0]
+    )
+
+
+def panel_batch_floor(axis: plt.Axes) -> pd.DataFrame:
+    summary = _floor_summary(_floor_table())
+    for index, method in enumerate(ordered_methods(summary)):
+        subset = summary[summary["method"] == method].sort_values("batch_size")
+        axis.plot(
+            subset["batch_size"],
+            positive(subset["median_floor"]),
+            label=method,
+            **method_style(method, index),
+        )
+        band(
+            axis,
+            subset["batch_size"],
+            positive(subset["lower"]),
+            positive(subset["upper"]),
+            method_style(method, index)["color"],
+        )
+    batches = np.sort(summary["batch_size"].unique().astype(np.float64))
+    anchor = float(summary.loc[summary["batch_size"] == batches[0], "median_floor"].max())
+    axis.plot(
+        batches,
+        anchor * batches[0] / batches,
+        color=REFERENCE_GREY,
+        linestyle=":",
+        linewidth=1.0,
+        label=r"slope $-1$",
+    )
+    axis.set_xlabel("batch size $B$")
+    axis.set_ylabel(r"stationary gap $\Delta$")
+    axis.set_xscale("log", base=2)
+    axis.set_yscale("log")
+    return summary
+
+
+def _batch_floor_caption(data: pd.DataFrame) -> str:
+    exponents = {
+        method: _fitted_batch_exponent(data, method) for method in sorted(data["method"].unique())
+    }
+    worst = max(
+        (abs(value + 1.0) for value in exponents.values() if np.isfinite(value)), default=float("nan")
+    )
+    listed = ", ".join(
+        f"{figure_text(method)} ${value:.2f}$" for method, value in sorted(exponents.items())
+    )
+    return (
+        "Stationary objective gap against batch size at a fixed stepsize, median over "
+        "paired seeds with a 10--90 per cent band, on the optimizer-whitened log-cosh "
+        "target. Theorems 4.16 and 4.17 predict a floor proportional to $\\Delta t/B$; "
+        f"the fitted batch exponents are {listed}, all within "
+        f"${worst:.2f}$ of $-1$. The step is capped below the certified one: the "
+        "certified step scales like $1/\\kappa_\\star$, and at that step the horizon "
+        "needed to leave the deterministic transient exceeds any affordable budget, so "
+        "a measured floor would be flat in $B$ for a reason unrelated to the theorem."
+    )
+
+
+def _decreasing_frame() -> pd.DataFrame:
+    return require(load_experiment("K", TIER), "K")
+
+
+def panel_decreasing_step(axis: plt.Axes) -> pd.DataFrame:
+    frame = _decreasing_frame()
+    rows: list[dict[str, object]] = []
+    for (method, batch), group in frame.groupby(["method", "batch_size"]):
+        summary = group.groupby("iteration")["objective_gap"].mean()
+        for iteration, value in summary.items():
+            rows.append(
+                {
+                    "method": str(method),
+                    "batch_size": int(batch),
+                    "iteration": int(iteration),
+                    "expected_gap": float(value),
+                }
+            )
+    table = pd.DataFrame(rows)
+    for index, method in enumerate(ordered_methods(table)):
+        for batch in sorted(table["batch_size"].unique()):
+            subset = table[
+                (table["method"] == method) & (table["batch_size"] == batch)
+            ].sort_values("iteration")
+            values = positive(subset["expected_gap"])
+            style = method_style(method, index)
+            axis.plot(
+                subset["iteration"],
+                values,
+                label=method if batch == table["batch_size"].min() else None,
+                alpha=1.0 if batch == table["batch_size"].min() else 0.55,
+                marker="none",
+                color=style["color"],
+                linestyle=style["linestyle"],
+            )
+    iterations = np.asarray(sorted(table["iteration"].unique()), dtype=np.float64)
+    iterations = iterations[iterations > 0]
+    anchor = float(table.loc[table["iteration"] == iterations[0], "expected_gap"].max())
+    axis.plot(
+        iterations,
+        anchor * iterations[0] / iterations,
+        color=REFERENCE_GREY,
+        linestyle=":",
+        linewidth=1.0,
+        label=r"$N^{-1}$",
+    )
+    axis.set_xlabel("iteration $N$")
+    axis.set_ylabel(r"$\mathbb{E}\,\Delta_N$")
+    axis.set_xscale("log")
+    axis.set_yscale("log")
+    return table
+
+
+def _decreasing_caption(data: pd.DataFrame) -> str:
+    horizon = int(data["iteration"].max())
+    tail = data[data["iteration"] >= horizon // 2]
+    slopes = []
+    for (method, batch), group in tail.groupby(["method", "batch_size"]):
+        values = positive(group["expected_gap"])
+        finite = np.isfinite(values)
+        if finite.sum() < 3:
+            continue
+        slopes.append(
+            float(
+                np.polyfit(
+                    np.log(group["iteration"].to_numpy()[finite]), np.log(values[finite]), 1
+                )[0]
+            )
+        )
+    span = f"{min(slopes):.2f}$ to $ {max(slopes):.2f}" if slopes else "n/a"
+    batches = ", ".join(str(int(value)) for value in sorted(data["batch_size"].unique()))
+    return (
+        "Expected objective gap under the decreasing schedule "
+        r"$\Delta t_n = 8\kappa_\star/(n+n_0)$, averaged over paired seeds, at batch "
+        f"sizes $B \\in \\{{{batches}\\}}$ (the fainter curve is the larger batch). Over "
+        f"the second half of the {horizon}-iteration horizon the measured log--log "
+        f"slopes are ${span}$, against the $N^{{-1}}$ reference of Theorem 4.21, and no "
+        "additive floor appears: the residual level of the fixed-step analysis is what "
+        "the decreasing schedule removes."
+    )
+
+
+def panel_rescue_ablation(axis: plt.Axes) -> pd.DataFrame:
+    """Whether the quadratic rescue is a proof device or does visible work."""
+
+    frame = require(load_experiment("J", TIER), "J")
+    batch = int(np.median(sorted(frame["batch_size"].unique())))
+    cell = frame[(frame["batch_size"] == batch) & (frame["method"] == "FR--R--STL")]
+    rows: list[dict[str, object]] = []
+    for rescue, group in cell.groupby(cell["variant"].str.contains("-qr")):
+        summary = group.groupby("oracle_pairs")["objective_gap"].median()
+        for oracle_pairs, value in summary.items():
+            rows.append(
+                {
+                    "rescue": bool(rescue),
+                    "batch_size": batch,
+                    "oracle_pairs": int(oracle_pairs),
+                    "median_gap": float(value),
+                }
+            )
+    table = pd.DataFrame(rows)
+    for rescue, colour, label in (
+        (True, COLORS["FR--R--STL"], "with quadratic rescue"),
+        (False, REFERENCE_GREY, "without"),
+    ):
+        subset = table[table["rescue"] == rescue].sort_values("oracle_pairs")
+        axis.plot(
+            subset["oracle_pairs"],
+            positive(subset["median_gap"]),
+            color=colour,
+            linestyle="-" if rescue else "--",
+            linewidth=1.3,
+            label=label,
+        )
+    axis.set_xlabel("joint gradient--Hessian oracle pairs")
+    axis.set_ylabel(r"median gap $\Delta$")
+    axis.set_xscale("log")
+    axis.set_yscale("log")
+    return table
+
+
+def _rescue_caption(data: pd.DataFrame) -> str:
+    if data.empty:
+        return "No rescue-ablation data."
+    terminal = data.sort_values("oracle_pairs").groupby("rescue", as_index=False).last()
+    levels = {bool(row["rescue"]): float(row["median_gap"]) for _, row in terminal.iterrows()}
+    ratio = levels.get(False, np.nan) / levels.get(True, np.nan)
+    batch = int(data["batch_size"].iloc[0])
+    return (
+        f"FR--R--STL at $B={batch}$ with and without the single quadratic-rescue query, "
+        "against joint oracle pairs so the rescue's own query is charged. The rescue "
+        "places the covariance on the curvature scale before the stochastic iteration "
+        "begins: it removes the transient and reaches the floor in fewer oracle pairs, "
+        f"while the eventual floor is unchanged to within a factor of ${ratio:.2f}$. It "
+        "is therefore doing visible work rather than serving only to remove the "
+        "covariance-initialization term from the statement of the theorem."
+    )
+
+
+def figure_4() -> dict[str, object]:
+    cancellation = sorted(load_experiment("H", TIER)["job_id"].unique())
+    floors = sorted(load_experiment("J", TIER)["job_id"].unique())
+    decreasing = sorted(load_experiment("K", TIER)["job_id"].unique())
+    panels = [
+        Panel("a", "Gaussian cancellation", _cancellation_caption, panel_cancellation, cancellation),
+        Panel("b", r"Floor against $B$", _batch_floor_caption, panel_batch_floor, floors),
+        Panel("c", "Decreasing stepsize", _decreasing_caption, panel_decreasing_step, decreasing),
+        Panel("d", "Quadratic rescue", _rescue_caption, panel_rescue_ablation, floors),
+    ]
+    return compose(
+        "figure_4",
+        panels,
+        shape=(2, 2),
+        height=4.6,
+        lead=(
+            "The mechanisms behind the stochastic theory of Section~\\ref{sec:stochastic}. "
+            "All four panels use the joint gradient--Hessian oracle of "
+            "Section~\\ref{subsec:oracle-rescue} at a fixed stepsize, with paired seeds "
+            "across methods so that a difference between curves is a difference between "
+            "estimators rather than between random draws."
+        ),
+        legend_columns=4,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Figure 5: the practical benchmark on real posteriors
+# ---------------------------------------------------------------------------
+
+BENCHMARK_TOLERANCE = 1.0e-4
+HEADLINE_DATASET = "ionosphere"
+
+
+def _benchmark_frame() -> pd.DataFrame:
+    return require(load_experiment("R", TIER), "R")
+
+
+def _benchmark_curve(
+    frame: pd.DataFrame, column: str
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """Median and 10--90 per cent band of ``column`` against algorithm time."""
+
+    grouped = frame.groupby("iteration")
+    time = grouped["algorithm_seconds"].median().to_numpy()
+    median = grouped[column].median().to_numpy()
+    lower = grouped[column].quantile(0.1).to_numpy()
+    upper = grouped[column].quantile(0.9).to_numpy()
+    order = np.argsort(time)
+    return time[order], median[order], lower[order], upper[order]
+
+
+def _benchmark_panel(
+    methods: tuple[str, ...], column: str, label: str, *, log: bool = True
+):
+    def draw(axis: plt.Axes) -> pd.DataFrame:
+        frame = _benchmark_frame()
+        cell = frame[frame["grid_dataset"] == HEADLINE_DATASET]
+        rows: list[dict[str, object]] = []
+        for index, method in enumerate(methods):
+            subset = cell[cell["method"] == method]
+            if subset.empty:
+                continue
+            time, median, lower, upper = _benchmark_curve(subset, column)
+            values = positive(median) if log else median
+            axis.plot(
+                time,
+                values,
+                label=method,
+                markevery=_markevery(values, index),
+                **method_style(method, index),
+            )
+            if subset["seed"].nunique() > 1:
+                band(
+                    axis,
+                    time,
+                    positive(lower) if log else lower,
+                    positive(upper) if log else upper,
+                    method_style(method, index)["color"],
+                )
+            rows.extend(
+                {
+                    "method": method,
+                    "algorithm_seconds": float(t),
+                    "median": float(m),
+                    "lower": float(lo),
+                    "upper": float(hi),
+                }
+                for t, m, lo, hi in zip(time, median, lower, upper, strict=True)
+            )
+        laplace = cell[cell["method"] == "Laplace"]
+        if not laplace.empty and column in laplace:
+            value = float(laplace[column].iloc[-1])
+            axis.axhline(
+                value,
+                color=COLORS["Laplace"],
+                linestyle=":",
+                linewidth=1.0,
+                label="Laplace",
+            )
+            rows.append(
+                {
+                    "method": "Laplace",
+                    "algorithm_seconds": float(laplace["algorithm_seconds"].iloc[-1]),
+                    "median": value,
+                    "lower": value,
+                    "upper": value,
+                }
+            )
+        axis.set_xlabel("algorithm time (s)")
+        axis.set_ylabel(label)
+        axis.set_xscale("log")
+        if log:
+            axis.set_yscale("log")
+        return pd.DataFrame(rows)
+
+    return draw
+
+
+def _time_to_tolerance(frame: pd.DataFrame) -> pd.DataFrame:
+    """Algorithm time at which the relative objective gap first drops below the tolerance."""
+
+    rows: list[dict[str, object]] = []
+    for (dataset, method, seed), group in frame.groupby(["grid_dataset", "method", "seed"]):
+        group = group.sort_values("iteration")
+        initial = float(group["objective_gap"].iloc[0])
+        if not np.isfinite(initial) or initial <= 0.0:
+            continue
+        reached = group[group["objective_gap"] <= BENCHMARK_TOLERANCE * initial]
+        rows.append(
+            {
+                "dataset": str(dataset),
+                "method": str(method),
+                "seed": int(seed),
+                "seconds": float(reached["algorithm_seconds"].iloc[0])
+                if not reached.empty
+                else np.nan,
+                "reached": not reached.empty,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def panel_time_to_tolerance(axis: plt.Axes) -> pd.DataFrame:
+    frame = _benchmark_frame()
+    table = _time_to_tolerance(frame[frame["method"] != "Laplace"])
+    datasets = sorted(table["dataset"].unique())
+    positions = {name: index for index, name in enumerate(datasets)}
+    methods = ordered_methods(table)
+    width = 0.8 / max(len(methods), 1)
+    for index, method in enumerate(methods):
+        subset = table[table["method"] == method]
+        summary = subset.groupby("dataset")["seconds"].median()
+        offsets, values = [], []
+        for dataset, value in summary.items():
+            offsets.append(positions[dataset] + (index - (len(methods) - 1) / 2.0) * width)
+            values.append(value)
+        style = {k: v for k, v in method_style(method, index).items() if k != "linestyle"}
+        axis.plot(
+            offsets, positive(values), linestyle="none", markersize=4.0,
+            fillstyle="none", label=method, **style,
+        )
+    axis.set_xticks(range(len(datasets)))
+    axis.set_xticklabels(datasets, rotation=25, ha="right")
+    axis.set_ylabel(f"time to ${BENCHMARK_TOLERANCE:g}$ relative gap (s)")
+    axis.set_yscale("log")
+    return table
+
+
+def _tolerance_caption(data: pd.DataFrame) -> str:
+    if data.empty:
+        return "No benchmark data."
+    unreached = data[~data["reached"]]
+    missing = sorted({f"{row.method} on {row.dataset}" for row in unreached.itertuples()})
+    ranks = (
+        data.dropna(subset=["seconds"])
+        .groupby(["dataset", "method"])["seconds"]
+        .median()
+        .groupby("dataset")
+        .rank()
+        .groupby("method")
+        .mean()
+        .sort_values()
+    )
+    leaderboard = ", ".join(
+        f"{figure_text(method)} {value:.1f}" for method, value in ranks.head(3).items()
+    )
+    note = (
+        f" Absent markers did not reach the tolerance inside the horizon: {', '.join(missing)}."
+        if missing
+        else " Every method reached the tolerance on every dataset."
+    )
+    return (
+        f"Algorithm time to a relative objective gap of ${BENCHMARK_TOLERANCE:g}$ on each "
+        "dataset, median over seeds for the stochastic arms; markers are offset "
+        "horizontally for legibility. Averaged over the five datasets the best mean ranks "
+        f"are {leaderboard}." + note + " No method is uniformly fastest, which is the "
+        "expected outcome once every method is tuned by the same implementable rule: "
+        "affine invariance is a structural property, not a claim of numerical dominance."
+    )
+
+
+def figure_5() -> dict[str, object]:
+    frame = _benchmark_frame()
+    sources = sorted(frame["job_id"].unique())
+    headline = sorted(frame.loc[frame["grid_dataset"] == HEADLINE_DATASET, "job_id"].unique())
+    deterministic = ("FR--R", "FR--KL", "FB--GVI", "Sq--NGVI")
+    stochastic = ("FR--R--STL", "FR--KL--STL", "S--FB--GVI", "Price--BBVI", "BBVI--STL")
+    panels = [
+        Panel(
+            "a",
+            "Deterministic, objective",
+            "Objective gap against the time spent inside the update, on "
+            f"{HEADLINE_DATASET}. Every stepsize comes from the implementable dyadic "
+            "rule: a base scale computed from the geometry of the update and one "
+            "expected Hessian at the initialization, then a multiplier selected on a "
+            "disjoint subsample of the training rows by lowest training objective. No "
+            "optimizer-whitened constant and no reference solution enters the choice.",
+            _benchmark_panel(deterministic, "objective_gap", r"objective gap $\Delta$"),
+            headline,
+        ),
+        Panel(
+            "b",
+            "Stochastic, objective",
+            "The same problem for the stochastic arms at a common batch size, median "
+            "over seeds with a 10--90 per cent band. Reading (a) and (b) together "
+            "separates the two axes of the comparison: Price--BBVI shares its "
+            "second-order estimator with S--BW--FB and its parameter space with "
+            "BBVI--STL, so the pattern of agreement identifies which of the two the "
+            "behaviour follows.",
+            _benchmark_panel(stochastic, "objective_gap", r"objective gap $\Delta$"),
+            headline,
+        ),
+        Panel(
+            "c",
+            "Held-out predictive",
+            "Held-out predictive negative log-likelihood against algorithm time. The "
+            "curves converge to a common level, as they must: every iterative method "
+            "here targets the same Gaussian variational optimum, and the Laplace "
+            "reference targets a different Gaussian. What the panel measures is how "
+            "quickly a usable posterior approximation is reached, which is the "
+            "quantity a practitioner spends compute on.",
+            _benchmark_panel(
+                deterministic + stochastic, "predictive_nll", "test predictive NLL", log=False
+            ),
+            headline,
+        ),
+        Panel("d", "Across datasets", _tolerance_caption, panel_time_to_tolerance, sources),
+    ]
+    return compose(
+        "figure_5",
+        panels,
+        shape=(2, 2),
+        height=4.9,
+        lead=(
+            "Gaussian variational inference for Bayesian logistic regression on five real "
+            "binary-classification datasets, with a proper Gaussian prior "
+            "$\\theta\\sim\\mathcal N(0,I)$. Features are standardized with training-split "
+            "statistics and an intercept is appended, so every problem is strongly "
+            "log-concave and smooth with constants available in closed form. Objective "
+            "gaps are measured against an independently solved reference certified far "
+            "below the smallest gap drawn."
+        ),
+        legend_columns=5,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Online appendix: dimensional scaling and oracle cost
+# ---------------------------------------------------------------------------
+
+
+def _scaling_table() -> pd.DataFrame:
+    from fr_gvi.experiments.manuscript_tables import scaling_table
+
+    table = scaling_table()
+    if table.empty:
+        raise SystemExit(
+            "no manuscript results for experiment S: run 'make manuscript-runs' first"
+        )
+    return table
+
+
+def panel_scaling_cost(axis: plt.Axes) -> pd.DataFrame:
+    """Per-iteration cost against dimension, oracle and algebra drawn apart."""
+
+    table = _scaling_table()
+    for index, method in enumerate(ordered_methods(table)):
+        subset = table[table["method"] == method].sort_values("dimension")
+        style = method_style(method, index)
+        axis.plot(
+            subset["dimension"],
+            positive(subset["algebra_ms_per_iteration"]),
+            label=method,
+            **style,
+        )
+    oracle = table.groupby("dimension")["oracle_ms_per_iteration"].median()
+    axis.plot(
+        oracle.index,
+        positive(oracle.to_numpy()),
+        color=REFERENCE_GREY,
+        linestyle="-",
+        linewidth=1.2,
+        marker="none",
+        label="model oracle",
+    )
+    dimensions = np.asarray(sorted(table["dimension"].unique()), dtype=np.float64)
+    reference = table[table["dimension"] == dimensions[0]]["algebra_ms_per_iteration"].median()
+    axis.plot(
+        dimensions,
+        reference * (dimensions / dimensions[0]) ** 3,
+        color=REFERENCE_GREY,
+        linestyle=":",
+        linewidth=1.0,
+        marker="none",
+        label=r"$d^3$",
+    )
+    axis.set_xlabel("dimension $d$")
+    axis.set_ylabel("milliseconds per iteration")
+    axis.set_xscale("log")
+    axis.set_yscale("log")
+    return table
+
+
+def _scaling_cost_caption(data: pd.DataFrame) -> str:
+    largest = int(data["dimension"].max())
+    smallest = int(data["dimension"].min())
+    tail = data[data["dimension"] == largest]
+    head = data[data["dimension"] == smallest]
+    crossings = tail[tail["algebra_ms_per_iteration"] > tail["oracle_ms_per_iteration"]]
+    crossed = (
+        ", ".join(sorted(figure_text(name) for name in crossings["method"]))
+        if not crossings.empty
+        else "none"
+    )
+    return (
+        "Dense linear-algebra time per iteration against dimension, with the model "
+        "oracle drawn separately in grey and a $d^3$ reference. At $d="
+        f"{smallest}$ the oracle dominates every method's algebra by a factor of "
+        f"{float(head['oracle_ms_per_iteration'].median() / max(head['algebra_ms_per_iteration'].median(), 1e-12)):.0f}, "
+        "which is why the main-text wall-clock panels largely repeat the shape of their "
+        f"iteration-count panels. By $d={largest}$ the algebra has overtaken the oracle "
+        f"for {crossed}. This is where the full-covariance assumption starts to cost: "
+        "the storage is $O(d^2)$ and the per-iteration algebra is $O(d^3)$ for every "
+        "method here, and the schemes separate by their constants -- the matrix "
+        "exponential of the retraction against the resolvent solve of the Bregman scheme "
+        "against the single Cholesky update of the square-root method."
+    )
+
+
+def panel_scaling_accuracy(axis: plt.Axes) -> pd.DataFrame:
+    """Whether better iteration counts survive the cost of getting them."""
+
+    table = _scaling_table()
+    for index, method in enumerate(ordered_methods(table)):
+        subset = table[table["method"] == method].sort_values("dimension")
+        axis.plot(
+            subset["dimension"],
+            positive(subset["terminal_gap_median"]),
+            label=method,
+            **method_style(method, index),
+        )
+    axis.set_xlabel("dimension $d$")
+    axis.set_ylabel("objective gap at a fixed budget")
+    axis.set_xscale("log")
+    axis.set_yscale("log")
+    return table
+
+
+def figure_a2() -> dict[str, object]:
+    sources = sorted(load_experiment("S", TIER)["job_id"].unique())
+    panels = [
+        Panel("a", "Cost per iteration", _scaling_cost_caption, panel_scaling_cost, sources),
+        Panel(
+            "b",
+            "Accuracy at a fixed budget",
+            "Objective gap after a common iteration budget, median over problem "
+            "instances. Read with (a) this answers whether a method's iteration count "
+            "survives the cost of producing it: a scheme that needs fewer iterations but "
+            "pays more per iteration only wins where the gap between the curves in (a) is "
+            "smaller than the gap between the curves here.",
+            panel_scaling_accuracy,
+            sources,
+        ),
+    ]
+    return compose(
+        "figure_a2",
+        panels,
+        shape=(1, 2),
+        height=2.7,
+        lead=(
+            "Online appendix: where the dense full-covariance cost goes as the dimension "
+            "grows. Synthetic Bayesian logistic regression with $n=10d$ and a proper "
+            "Gaussian prior, five problem instances per dimension, every method at a "
+            "stepsize chosen by the same implementable rule as the practical benchmark. "
+            "Timings are within-machine comparisons on one host with BLAS pinned to a "
+            "single thread."
+        ),
+        legend_columns=6,
+    )
+
+
+BUILDERS = {
+    1: figure_1,
+    2: figure_2,
+    3: figure_3,
+    4: figure_4,
+    5: figure_5,
+    # The online appendix figures, built from the same campaign.
+    101: figure_a1,
+    102: figure_a2,
+}
 
 
 def main(arguments: list[str] | None = None) -> int:

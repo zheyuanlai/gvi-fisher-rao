@@ -45,6 +45,7 @@
       "certified_step_size": 0.008095296202776344,
       "name": "FB--GVI",
       "normalized_step_size": 1.0,
+      "step_rule": "pilot_frozen",
       "step_scale": 0.006543453706675741,
       "step_size": 0.006543453706675741
     }

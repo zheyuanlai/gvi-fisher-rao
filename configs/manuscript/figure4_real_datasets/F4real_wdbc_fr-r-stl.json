@@ -1,0 +1,64 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0006622354233784928,
+    "FR--KL": 8.233030188545265e-05,
+    "FR--KL--STL": 1.029128773568172e-05,
+    "FR--R": 4.1165150942726325e-05,
+    "FR--R--STL": 8.233030188545376e-05,
+    "S--FB--GVI": 0.0006622354233784928
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.014570149152593607,
+    "beta": 1510.03701206189,
+    "beta_star": 176.9718902873097,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0006622354233784928,
+      "FR--KL": 8.233030188545265e-05,
+      "FR--KL--STL": 1.029128773568172e-05,
+      "FR--R": 4.1165150942726325e-05,
+      "FR--R--STL": 8.233030188545376e-05,
+      "S--FB--GVI": 0.0006622354233784928
+    },
+    "condition": 1510.03701206189,
+    "exact": true,
+    "kappa_star": 12146.196201142335,
+    "lambda_0_star": 1.0005479871648613,
+    "lambda_0_star_max": 68.63347722298403,
+    "lambda_max_star": 68.63347722298403,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "R",
+  "grid": {
+    "dataset": "wdbc",
+    "dimension": 31,
+    "figure": "4",
+    "observations": 456
+  },
+  "id": "F4real_wdbc_fr-r-stl",
+  "iterations": 3000,
+  "master_seed": 20260901,
+  "methods": [
+    {
+      "batch_size": 16,
+      "name": "FR--R--STL",
+      "normalized_step_size": 0.0078125,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.0078125,
+      "tuning_censored": false,
+      "tuning_exponent": 7,
+      "tuning_oracle_pairs": 8736
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 5,
+  "target": {
+    "dataset": "wdbc",
+    "kind": "logistic_dataset",
+    "prior_precision": 1.0
+  },
+  "tier": "manuscript"
+}

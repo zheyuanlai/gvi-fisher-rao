@@ -456,6 +456,21 @@ def _run_trajectory(
         state = laplace_approximation(problem.target)
         setup_seconds = time.perf_counter() - laplace_started
         iterations = 0
+    # BBVI--STL is defined on Lambda_S = {sigma_min(C) >= 1/sqrt(S)} with S the
+    # log-smoothness of the target in the original coordinates.  That constant is
+    # a property of the model, available in closed form for every family here and
+    # computable without any knowledge of the optimizer, so supplying it does not
+    # leak the oracle quantities the practical protocol forbids.
+    projection_floor = None
+    if method == Method.BBVI_STL:
+        smoothness = float((curvature or {}).get("beta", float("nan")))
+        if not np.isfinite(smoothness) or smoothness <= 0.0:
+            raise ValueError(
+                "BBVI--STL needs the target's log-smoothness constant beta; the "
+                "config carries no finite curvature entry"
+            )
+        projection_floor = 1.0 / np.sqrt(smoothness)
+
     rng = np.random.default_rng(run_seed)
     counts = OperationCounts()
     if rescue:
@@ -614,6 +629,7 @@ def _run_trajectory(
                 batch_size=batch_size,
                 counts=counts,
                 raw_mean_ablation=bool(method_specification.get("raw_mean_ablation", False)),
+                projection_floor=projection_floor,
             )
             algorithm_elapsed += time.perf_counter() - update_started
             if base_state is not None and base_target is not None:

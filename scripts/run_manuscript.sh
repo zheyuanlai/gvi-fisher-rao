@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Run the reduced manuscript campaign: 131 deterministic trajectories over the
-# six preregistered config groups.  Safe to rerun: jobs whose config and code
-# hashes match a completed run are skipped.
+# Run the manuscript campaign over the preregistered config groups: the
+# deterministic mechanisms, the stochastic mechanisms, the real-data practical
+# benchmark and the dimensional-scaling appendix study.  Safe to rerun: jobs
+# whose config and code hashes match a completed run are skipped.
 set -euo pipefail
 
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
@@ -22,8 +23,8 @@ export NUMEXPR_NUM_THREADS="${THREADS}"
 export VECLIB_MAXIMUM_THREADS="${THREADS}"
 
 CORES=$(nproc)
-JOBS=${MANUSCRIPT_JOBS:-$(( CORES / THREADS > 32 ? 32 : (CORES / THREADS > 1 ? CORES / THREADS : 1) ))}
-BUDGET_HOURS=${MANUSCRIPT_BUDGET_HOURS:-4}
+JOBS=${MANUSCRIPT_JOBS:-$(( CORES / THREADS > 64 ? 64 : (CORES / THREADS > 1 ? CORES / THREADS : 1) ))}
+BUDGET_HOURS=${MANUSCRIPT_BUDGET_HOURS:-10}
 
 mkdir -p "${REPO_ROOT}/results/logs"
 "${REPO_ROOT}/.venv/bin/python" -m fr_gvi.experiments.campaign \
@@ -33,6 +34,11 @@ mkdir -p "${REPO_ROOT}/results/logs"
   "${CONFIGS}/figure2_logcosh_global" \
   "${CONFIGS}/figure2_logcosh_local" \
   "${CONFIGS}/figure3_logistic" \
+  "${CONFIGS}/figure3_stochastic_cancellation" \
+  "${CONFIGS}/figure3_stochastic_floor" \
+  "${CONFIGS}/figure3_stochastic_decreasing" \
+  "${CONFIGS}/figure4_real_datasets" \
+  "${CONFIGS}/appendix_scaling" \
   --jobs "${JOBS}" \
   --budget-hours "${BUDGET_HOURS}" "$@" \
   2>&1 | tee "${REPO_ROOT}/results/logs/manuscript_$(date -u +%Y%m%dT%H%M%SZ).log"

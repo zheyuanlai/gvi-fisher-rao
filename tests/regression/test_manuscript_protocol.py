@@ -13,7 +13,31 @@ from fr_gvi.experiments.reference import solve_reference
 from fr_gvi.plotting.style import load_experiment
 from fr_gvi.targets.core import ShiftedLogCoshTarget
 
-ALLOWED = {*manuscript.ITERATIVE, "Laplace"}
+ALLOWED = {
+    *manuscript.ITERATIVE,
+    "Laplace",
+    "FR--R--STL",
+    "FR--KL--STL",
+    "S--FB--GVI",
+    *manuscript.DETERMINISTIC_BENCHMARK,
+    *manuscript.STOCHASTIC_BENCHMARK,
+}
+
+# The preregistered shape of the campaign, group by group.  Asserting one total
+# would hide a group silently losing its cells to another gaining them.
+EXPECTED_TRAJECTORIES = {
+    "figure1_gaussian_burnin": 8,
+    "figure1_affine_equivariance": 12,
+    "figure1_anisotropic_gaussian": 3,
+    "figure2_logcosh_global": 36,
+    "figure2_logcosh_local": 12,
+    "figure3_logistic": 60,
+    "figure3_stochastic_cancellation": 150,
+    "figure3_stochastic_floor": 1050,
+    "figure3_stochastic_decreasing": 120,
+    "figure4_real_datasets": 150,
+    "appendix_scaling": 100,
+}
 
 
 def _all_configs() -> list[dict]:
@@ -30,8 +54,35 @@ def _all_configs() -> list[dict]:
 
 
 def test_campaign_declares_the_preregistered_trajectory_count() -> None:
-    configs = _all_configs()
-    assert manuscript.trajectory_count(configs) == 131
+    assert set(EXPECTED_TRAJECTORIES) == set(manuscript.GROUPS)
+    for name, expected in EXPECTED_TRAJECTORIES.items():
+        directory = manuscript.CONFIG_ROOT / name
+        if not directory.exists():
+            pytest.skip(f"{directory} not generated")
+        configs = [
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in sorted(directory.glob("*.json"))
+        ]
+        assert manuscript.trajectory_count(configs) == expected, name
+    assert manuscript.trajectory_count(_all_configs()) == sum(EXPECTED_TRAJECTORIES.values())
+
+
+def test_every_specification_declares_which_stepsize_rule_it_used() -> None:
+    """Three regimes coexist, so each must say which one it belongs to.
+
+    Certified where a panel verifies a theorem, pilot-frozen on the earlier
+    practical panels, and the implementable dyadic grid throughout the benchmark.
+    A specification that declares nothing would be checked by no gate.
+    """
+
+    from fr_gvi.experiments.manuscript_audit import STEP_RULES
+
+    for config in _all_configs():
+        for specification in config["methods"]:
+            assert specification.get("step_rule") in STEP_RULES, (
+                config["id"],
+                specification.get("name"),
+            )
 
 
 def test_only_protocol_methods_appear() -> None:
@@ -49,7 +100,7 @@ def test_configs_use_the_frozen_multipliers() -> None:
     seen = False
     for config in _all_configs():
         for specification in config["methods"]:
-            if "step_scale" not in specification:
+            if specification.get("step_rule") != "pilot_frozen":
                 continue
             seen = True
             name = specification["name"]
@@ -63,13 +114,44 @@ def test_configs_use_the_frozen_multipliers() -> None:
 def test_theorem_panels_stay_inside_their_certified_window() -> None:
     """Panels that verify a theorem must not exceed the step it admits."""
 
+    seen = False
     for config in _all_configs():
         for specification in config["methods"]:
-            if "step_scale" in specification or "certified_step_size" not in specification:
+            if specification.get("step_rule") != "certified":
                 continue
+            seen = True
             assert specification["step_size"] <= specification["certified_step_size"] * (
                 1.0 + 1e-12
             )
+    assert seen, "no certified-step panels found in the campaign"
+
+
+def test_benchmark_steps_reproduce_from_the_recorded_selection() -> None:
+    """Every implementable-grid step is its frozen multiplier times its base scale."""
+
+    from fr_gvi.experiments.tuning import PRACTICAL_STEPS, load_selected
+
+    if not PRACTICAL_STEPS.exists():
+        pytest.skip("practical_steps.json not generated")
+    selections = load_selected()
+    seen = 0
+    for config in _all_configs():
+        for specification in config["methods"]:
+            if specification.get("step_rule") != "implementable_grid":
+                continue
+            seen += 1
+            assert specification["step_size"] == pytest.approx(
+                specification["normalized_step_size"] * specification["step_scale"], rel=1e-12
+            )
+            # The multiplier must be one the tuner actually recorded, not a number
+            # written into the generator by hand.
+            recorded = {
+                float(value["multiplier"])
+                for key, value in selections.items()
+                if key.endswith(f":{specification['name']}")
+            }
+            assert specification["normalized_step_size"] in recorded
+    assert seen >= 50, seen
 
 
 @pytest.mark.parametrize(("dimension", "condition", "rho"), [(6, 10.0, 1.0), (12, 100.0, 0.1)])
@@ -203,5 +285,5 @@ def test_every_protocol_amendment_is_decided_and_matches_the_code() -> None:
 
     errors, _, summary = check_amendments()
     assert not errors, errors
-    assert set(summary["decisions"]) == {"A", "B", "C", "D"}
+    assert set(summary["decisions"]) == {"A", "B", "C", "D", "E", "F", "G", "H"}
     assert set(summary["decisions"].values()) == {"approved"}

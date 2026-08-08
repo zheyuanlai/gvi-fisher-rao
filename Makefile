@@ -1,6 +1,6 @@
 .PHONY: bootstrap test smoke configs full resume figures audit tables \
-        manuscript-pilot manuscript-configs manuscript-runs manuscript-figures \
-        manuscript-tables manuscript-audit manuscript
+        manuscript-pilot manuscript-datasets manuscript-tuning manuscript-configs \
+        manuscript-runs manuscript-figures manuscript-tables manuscript-audit manuscript
 
 bootstrap:
 	./scripts/bootstrap_env.sh
@@ -37,6 +37,16 @@ manuscript-pilot:
 	.venv/bin/python -m fr_gvi.experiments.manuscript --pilot
 	.venv/bin/python -m fr_gvi.experiments.campaign configs/manuscript/pilot --budget-hours 0.5
 	.venv/bin/python -m fr_gvi.experiments.pilot --write
+
+# The datasets are fetched once and pinned by digest; afterwards the campaign
+# runs with no network at all.
+manuscript-datasets:
+	.venv/bin/python -m fr_gvi.experiments.datasets --fetch --write-manifest
+
+# Selects the implementable stepsizes for the practical benchmark and the
+# scaling study.  Must run before manuscript-configs, which reads them.
+manuscript-tuning:
+	.venv/bin/python -u -m fr_gvi.experiments.tuning --batch-size 16
 
 manuscript-configs:
 	.venv/bin/python -m fr_gvi.experiments.manuscript

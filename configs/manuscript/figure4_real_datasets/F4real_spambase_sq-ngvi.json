@@ -1,0 +1,62 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0001624753520324701,
+    "FR--KL": 3.8728885513489e-06,
+    "FR--KL--STL": 4.841110689186125e-07,
+    "FR--R": 1.93644427567445e-06,
+    "FR--R--STL": 3.8728885513489e-06,
+    "S--FB--GVI": 0.0001624753520324701
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.0017567845096886753,
+    "beta": 6154.7797096026825,
+    "beta_star": 453.61091247430795,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0001624753520324701,
+      "FR--KL": 3.8728885513489e-06,
+      "FR--KL--STL": 4.841110689186125e-07,
+      "FR--R": 1.93644427567445e-06,
+      "FR--R--STL": 3.8728885513489e-06,
+      "S--FB--GVI": 0.0001624753520324701
+    },
+    "condition": 6154.7797096026825,
+    "exact": true,
+    "kappa_star": 258205.20955907882,
+    "lambda_0_star": 2.5367010084432082,
+    "lambda_0_star_max": 569.2217767660111,
+    "lambda_max_star": 569.2217767660148,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "R",
+  "grid": {
+    "dataset": "spambase",
+    "dimension": 58,
+    "figure": "4",
+    "observations": 3680
+  },
+  "id": "F4real_spambase_sq-ngvi",
+  "iterations": 3000,
+  "master_seed": 20260904,
+  "methods": [
+    {
+      "name": "Sq--NGVI",
+      "normalized_step_size": 0.00390625,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.00390625,
+      "tuning_censored": false,
+      "tuning_exponent": 8,
+      "tuning_oracle_pairs": 310
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 5,
+  "target": {
+    "dataset": "spambase",
+    "kind": "logistic_dataset",
+    "prior_precision": 1.0
+  },
+  "tier": "manuscript"
+}

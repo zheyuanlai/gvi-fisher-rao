@@ -27,6 +27,7 @@ from typing import Any, Iterable
 
 import numpy as np
 
+from fr_gvi.algorithms.core import Method
 from fr_gvi.diagnostics.curvature import (
     certified_step_sizes,
     curvature_constants,
@@ -34,6 +35,7 @@ from fr_gvi.diagnostics.curvature import (
 )
 from fr_gvi.experiments.factories import build_problem
 from fr_gvi.experiments.reference import solve_reference
+from fr_gvi.experiments.tuning import load_selected
 
 ROOT = Path(__file__).resolve().parents[3]
 CONFIG_ROOT = ROOT / "configs" / "manuscript"
@@ -256,6 +258,7 @@ def _frozen_methods(
     return [
         {
             "name": name,
+            "step_rule": "pilot_frozen",
             "step_size": float(scale * multipliers[name]),
             "normalized_step_size": float(multipliers[name]),
             "step_scale": scale,
@@ -310,6 +313,7 @@ def figure1_gaussian_burnin() -> list[dict[str, Any]]:
                 "methods": [
                     {
                         "name": name,
+                        "step_rule": "certified",
                         "step_size": step,
                         "normalized_step_size": step,
                         "certified_step_size": float(certified[name]),
@@ -360,6 +364,7 @@ def figure1_affine_equivariance() -> list[dict[str, Any]]:
                 "methods": [
                     {
                         "name": name,
+                        "step_rule": "certified",
                         "step_size": float(0.5 * certified[name]),
                         "normalized_step_size": 0.5,
                         "certified_step_size": float(certified[name]),
@@ -405,6 +410,7 @@ def figure1_anisotropic_gaussian() -> list[dict[str, Any]]:
             "methods": [
                 {
                     "name": name,
+                    "step_rule": "certified",
                     "step_size": float(certified[name]),
                     "normalized_step_size": 1.0,
                     "certified_step_size": float(certified[name]),
@@ -514,6 +520,7 @@ def figure2_logcosh_local() -> list[dict[str, Any]]:
                     "methods": [
                         {
                             "name": name,
+                            "step_rule": "certified",
                             "step_size": float(certified[name]),
                             "normalized_step_size": 1.0,
                             "certified_step_size": float(certified[name]),
@@ -576,7 +583,7 @@ def figure3_logistic() -> list[dict[str, Any]]:
             certified = constants["certified_step_sizes"]
             methods = [
                 *_frozen_methods(constants, multipliers),
-                {"name": "Laplace"},
+                {"name": "Laplace", "step_rule": "non-iterative"},
             ]
             for specification in methods:
                 slug = str(specification["name"]).lower().replace("--", "-")
@@ -617,6 +624,424 @@ def figure3_logistic() -> list[dict[str, Any]]:
     return configs
 
 
+# ---------------------------------------------------------------------------
+# Figure 3: stochastic mechanisms
+# ---------------------------------------------------------------------------
+
+STOCHASTIC_SEEDS = 30
+
+CANCELLATION_DIMENSION = 10
+CANCELLATION_CELL = {
+    "kind": "gaussian",
+    "dimension": CANCELLATION_DIMENSION,
+    "condition": 100.0,
+    "rotation": True,
+    "mean_scale": 0.3,
+    "initial_mean_scale": 1.0,
+    "initial_covariance": "target",
+}
+CANCELLATION_METHODS = (
+    "FR--R--STL",
+    "FR--KL--STL",
+    "BBVI--STL",
+    "S--FB--GVI",
+    "Price--BBVI",
+)
+# Long enough that the shape of each dispersion curve is legible, not just its
+# endpoint: the Fisher--Rao schemes sit at roundoff from the first step, the
+# gradient-only estimator decays as its mean arrives, and the raw Bonnet mean
+# estimators never decay at all.
+CANCELLATION_ITERATIONS = 300
+# Single-sample batches: the panel is about what the estimator does per draw, and
+# averaging would hide exactly the dispersion it measures.
+CANCELLATION_BATCH = 1
+
+
+def figure3_stochastic_cancellation() -> list[dict[str, Any]]:
+    """Panel 3(a): whose stochastic noise cancels, and why.
+
+    A Gaussian target is started with its covariance already matched and its mean
+    displaced.  Corollary~4.20 says the Fisher--Rao STL schemes then have no
+    randomness at all: the sampled Hessian of a Gaussian is constant pathwise and
+    the STL mean residual reduces to the deterministic ``Q (m - mu)``, so the
+    whole trajectory is a deterministic function of the initialization.
+
+    The two new comparators split the credit for that.  ``BBVI--STL`` shares the
+    estimator's score subtraction, so its mean residual is deterministic too --
+    but its covariance direction is the outer product ``r eps^T``, which stays
+    random until the mean also arrives.  ``Price--BBVI`` shares the second-order
+    covariance estimator with ``S--FB--GVI`` but keeps the raw Bonnet mean, and
+    stays ``O(1)`` throughout.  Reading the three groups off one panel is what
+    separates the estimator from the geometry.
+    """
+
+    dimension = CANCELLATION_DIMENSION
+    master_seed = 20261300 + dimension
+    target = dict(CANCELLATION_CELL)
+    constants = cell_constants(target, master_seed, "H")
+    base_scale = {
+        # The Fisher--Rao and square-root updates are affine equivariant, so their
+        # stepsize is dimensionless; the Euclidean ones are scaled by one expected
+        # Hessian at the initialization.  Neither reads the optimizer.
+        "dimensionless": 1.0,
+        "curvature": 1.0 / float(constants["beta"]),
+    }
+    selections = load_selected()
+    return [
+        {
+            "id": f"F3cancel_d{dimension}",
+            "experiment": "H",
+            "tier": TIER,
+            "master_seed": master_seed,
+            "grid": {"dimension": dimension, "figure": "3a"},
+            "target": target,
+            "iterations": CANCELLATION_ITERATIONS,
+            "record_every": 1,
+            "curvature": constants,
+            "certified_step_sizes": constants["certified_step_sizes"],
+            "methods": [
+                _implementable_specification(
+                    name,
+                    selections[f"cancellation:{name}"],
+                    base_scale,
+                    extra={"batch_size": CANCELLATION_BATCH, "seeds": STOCHASTIC_SEEDS},
+                )
+                for name in CANCELLATION_METHODS
+            ],
+        }
+    ]
+
+
+FLOOR_BATCHES = (1, 2, 4, 8, 16, 32, 64)
+FLOOR_CELL = {"dimension": 8, "condition": 10.0, "rho": 1.0}
+
+
+def figure3_stochastic_floor() -> list[dict[str, Any]]:
+    """Panel 3(b) and 3(d): the ``1/B`` stationary floor, and the rescue ablation.
+
+    The step is capped at ``0.02`` for the same reason the exploratory campaign
+    caps it: the certified step scales like ``1/kappa_star``, and at the certified
+    step the horizon needed to leave the deterministic transient is longer than
+    any affordable budget, so a measured floor would be flat in ``B`` for a reason
+    that has nothing to do with Theorem~4.16.
+
+    Each Fisher--Rao arm is run twice, with and without the quadratic rescue, so
+    the figure can answer whether the rescue is a proof device or does visible
+    work.
+    """
+
+    configs: list[dict[str, Any]] = []
+    for batch in FLOOR_BATCHES:
+        master_seed = 20261500 + batch
+        target = {
+            "kind": "logcosh",
+            "dimension": FLOOR_CELL["dimension"],
+            "condition": FLOOR_CELL["condition"],
+            "rho": FLOOR_CELL["rho"],
+            "affine_condition": 1.0,
+            "initial_covariance_scale": 0.7,
+        }
+        constants = cell_constants(target, master_seed, "J")
+        certified = constants["certified_step_sizes"]
+
+        def capped(name: str, certified: dict[str, float] = certified) -> float:
+            return float(min(0.02, 8.0 * certified[name]))
+
+        methods: list[dict[str, Any]] = []
+        for name in ("FR--R--STL", "FR--KL--STL"):
+            for rescue in (True, False):
+                methods.append(
+                    {
+                        "name": name,
+                        "step_rule": "capped_practical",
+                        "step_size": capped(name),
+                        "normalized_step_size": capped(name) / certified[name],
+                        "certified_step_size": certified[name],
+                        "batch_size": batch,
+                        "quadratic_rescue": rescue,
+                        "seeds": STOCHASTIC_SEEDS,
+                        **({} if rescue else {"tag": "noqr"}),
+                    }
+                )
+        methods.append(
+            {
+                "name": "S--FB--GVI",
+                "step_rule": "capped_practical",
+                "step_size": capped("S--FB--GVI"),
+                "normalized_step_size": capped("S--FB--GVI") / certified["S--FB--GVI"],
+                "certified_step_size": certified["S--FB--GVI"],
+                "batch_size": batch,
+                "seeds": STOCHASTIC_SEEDS,
+            }
+        )
+        configs.append(
+            {
+                "id": f"F3floor_d{FLOOR_CELL['dimension']}_B{batch}",
+                "experiment": "J",
+                "tier": TIER,
+                "master_seed": master_seed,
+                "grid": {**FLOOR_CELL, "batch_size": batch, "figure": "3b-3d"},
+                "target": target,
+                "iterations": 6000,
+                "record_every": 10,
+                "curvature": constants,
+                "certified_step_sizes": certified,
+                "methods": methods,
+            }
+        )
+    return configs
+
+
+def figure3_stochastic_decreasing() -> list[dict[str, Any]]:
+    """Panel 3(c): the ``O(1/N)`` decreasing-stepsize tail of Theorem~4.21.
+
+    The horizon has to be long enough that the asymptotic regime is reached and
+    its slope measurable; twenty thousand iterations is what the exploratory
+    campaign found sufficient at this conditioning.
+    """
+
+    configs: list[dict[str, Any]] = []
+    dimension, rho = 8, 1.0
+    for batch in (1, 8):
+        master_seed = 20261600 + dimension * 10 + int(rho * 10) + batch
+        target = {
+            "kind": "logcosh",
+            "dimension": dimension,
+            "condition": 1.0,
+            "rho": rho,
+            "affine_condition": 1.0,
+            "initial_covariance_scale": 0.8,
+        }
+        constants = cell_constants(target, master_seed, "K")
+        kappa_star = float(constants["kappa_star"])
+        n0 = int(np.ceil(64.0 * kappa_star * kappa_star))
+        configs.append(
+            {
+                "id": f"F3decreasing_d{dimension}_B{batch}",
+                "experiment": "K",
+                "tier": TIER,
+                "master_seed": master_seed,
+                "grid": {"dimension": dimension, "rho": rho, "batch_size": batch, "figure": "3c"},
+                "target": target,
+                "iterations": 20000,
+                "record_every": 20,
+                "curvature": constants,
+                "certified_step_sizes": constants["certified_step_sizes"],
+                "methods": [
+                    {
+                        "name": name,
+                        "step_rule": "certified_schedule",
+                        "schedule": "manuscript_decreasing",
+                        "kappa_star": kappa_star,
+                        "n0": n0,
+                        "batch_size": batch,
+                        "quadratic_rescue": True,
+                        "seeds": STOCHASTIC_SEEDS,
+                    }
+                    for name in ("FR--R--STL", "FR--KL--STL")
+                ],
+            }
+        )
+    return configs
+
+
+# ---------------------------------------------------------------------------
+# Figure 4: the practical benchmark on real datasets
+# ---------------------------------------------------------------------------
+
+def _implementable_specification(
+    name: str,
+    record: dict[str, Any],
+    base_scale: dict[str, float],
+    *,
+    extra: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """One method at its frozen multiple of the implementable base scale.
+
+    ``step_rule`` is carried into the config so the audit can tell the three
+    regimes apart mechanically: a panel that verifies a theorem must use the step
+    that theorem certifies, the earlier practical panels use the pilot-frozen
+    multiplier, and everything in the benchmark must come from the implementable
+    grid and nothing else.
+    """
+
+    scale = base_scale["dimensionless" if name.startswith(("FR--", "Sq--")) else "curvature"]
+    return {
+        "name": name,
+        "step_rule": "implementable_grid",
+        "step_size": float(record["multiplier"] * scale),
+        "normalized_step_size": float(record["multiplier"]),
+        "step_scale": float(scale),
+        "tuning_exponent": int(record["exponent"]),
+        "tuning_oracle_pairs": int(record["tuning_oracle_pairs"]),
+        "tuning_censored": bool(record["censored"]),
+        **(extra or {}),
+    }
+
+
+DETERMINISTIC_BENCHMARK = ("FR--R", "FR--KL", "FB--GVI", "Sq--NGVI")
+STOCHASTIC_BENCHMARK = ("FR--R--STL", "FR--KL--STL", "S--FB--GVI", "Price--BBVI", "BBVI--STL")
+BENCHMARK_BATCH = 16
+BENCHMARK_SEEDS = 5
+BENCHMARK_ITERATIONS = 3000
+BENCHMARK_PRIOR = 1.0
+
+
+def figure4_real_datasets() -> list[dict[str, Any]]:
+    """The practical benchmark: five real posteriors, implementable stepsizes.
+
+    Every stepsize here comes from :mod:`fr_gvi.experiments.tuning`, selected on
+    a disjoint subsample of the training rows and knowing nothing the theory
+    reserves for the analysis.  The frozen quantity is the dyadic multiplier; the
+    base scale is recomputed on the full training set, which is what a
+    practitioner transferring a tuned setting would do.
+
+    One config per (dataset, method) so the campaign parallelizes over the whole
+    benchmark rather than running fifty trajectories deep inside five files.
+    """
+
+    from fr_gvi.experiments.datasets import DATASET_KEYS
+
+    selections = load_selected()
+    configs: list[dict[str, Any]] = []
+    for index, dataset in enumerate(DATASET_KEYS):
+        target = {
+            "kind": "logistic_dataset",
+            "dataset": dataset,
+            "prior_precision": BENCHMARK_PRIOR,
+        }
+        master_seed = 20260900 + index
+        constants = cell_constants(target, master_seed, "R")
+        problem_metadata = build_problem(target, _seed_for(master_seed, 0, 0), "R").metadata
+        base_scale = _implementable_scales(target, master_seed)
+        specifications: list[dict[str, Any]] = [
+            _implementable_specification(
+                name,
+                selections[f"{dataset}:{name}"],
+                base_scale,
+                extra=(
+                    {"batch_size": BENCHMARK_BATCH, "seeds": BENCHMARK_SEEDS}
+                    if name in STOCHASTIC_BENCHMARK
+                    else {}
+                ),
+            )
+            for name in (*DETERMINISTIC_BENCHMARK, *STOCHASTIC_BENCHMARK)
+        ]
+        specifications.append({"name": "Laplace", "step_rule": "non-iterative"})
+        for specification in specifications:
+            slug = str(specification["name"]).lower().replace("--", "-")
+            configs.append(
+                {
+                    "id": f"F4real_{dataset}_{slug}",
+                    "experiment": "R",
+                    "tier": TIER,
+                    "master_seed": master_seed,
+                    "grid": {
+                        "dataset": dataset,
+                        "dimension": int(problem_metadata["dimension"]),
+                        "observations": int(problem_metadata["train_observations"]),
+                        "figure": "4",
+                    },
+                    "target": target,
+                    "quadrature_order": LOGISTIC_UPDATE_ORDER,
+                    "evaluation_quadrature_order": LOGISTIC_EVALUATION_ORDER,
+                    "iterations": BENCHMARK_ITERATIONS,
+                    "record_every": 5,
+                    "curvature": constants,
+                    "certified_step_sizes": constants["certified_step_sizes"],
+                    "methods": [specification],
+                }
+            )
+    return configs
+
+
+def _implementable_scales(
+    target: dict[str, Any], master_seed: int, experiment: str = "R"
+) -> dict[str, float]:
+    """Base stepsizes of the practical rule, recomputed on the full problem."""
+
+    from fr_gvi.expectations.core import LogisticExactExpectation
+    from fr_gvi.experiments.tuning import implementable_base_step
+
+    problem = build_problem(target, _seed_for(master_seed, 0, 0), experiment)
+    engine = LogisticExactExpectation(LOGISTIC_UPDATE_ORDER)
+    dimensionless, _ = implementable_base_step(
+        Method.FR_R, problem.target, problem.initial_state, engine
+    )
+    curvature, _ = implementable_base_step(
+        Method.FB_GVI, problem.target, problem.initial_state, engine
+    )
+    return {"dimensionless": dimensionless, "curvature": curvature}
+
+
+# ---------------------------------------------------------------------------
+# Appendix: dimensional scaling and oracle cost
+# ---------------------------------------------------------------------------
+
+SCALING_DIMENSIONS = (10, 25, 50, 100, 200)
+SCALING_SEEDS = 5
+SCALING_ITERATIONS = 300
+
+
+def appendix_scaling() -> list[dict[str, Any]]:
+    """Where the dense full-covariance cost actually goes as ``d`` grows.
+
+    The theory assumes full covariance, full Hessians and ``O(d^3)`` dense
+    algebra, so the reasonable question is at what ``d`` that stops being the
+    cheap part.  Each iteration's wall-clock is split into the target oracle,
+    which is model dependent and identical across methods, and the dense algebra,
+    which is where the matrix exponential, the resolvent solve and the Cholesky
+    update differ.  Reporting only the sum would hide the comparison.
+    """
+
+    configs: list[dict[str, Any]] = []
+    for dimension in SCALING_DIMENSIONS:
+        master_seed = 20261000 + dimension
+        target = {
+            "kind": "logistic",
+            "dimension": dimension,
+            "samples": 10 * dimension,
+            "test_samples": 10 * dimension,
+            "feature_condition": 100.0,
+            "prior_precision": 1.0,
+            "initial_covariance": "prior",
+        }
+        constants = cell_constants(target, master_seed, "S")
+        base_scale = _implementable_scales(target, master_seed, "S")
+        selections = load_selected()
+        configs.append(
+            {
+                "id": f"Ascale_d{dimension}",
+                "experiment": "S",
+                "tier": TIER,
+                "master_seed": master_seed,
+                "grid": {"dimension": dimension, "figure": "appendix-scaling"},
+                "target": target,
+                "quadrature_order": LOGISTIC_UPDATE_ORDER,
+                "evaluation_quadrature_order": LOGISTIC_EVALUATION_ORDER,
+                "iterations": SCALING_ITERATIONS,
+                # Timing is the measurement here, so the per-iteration
+                # diagnostics are recorded sparsely: they are not part of any
+                # method's cost and evaluating them every step would dominate.
+                "record_every": 25,
+                "instance_per_seed": True,
+                "seeds": SCALING_SEEDS,
+                "curvature": constants,
+                "certified_step_sizes": constants["certified_step_sizes"],
+                "methods": [
+                    _implementable_specification(
+                        name,
+                        selections[f"scaling_d{dimension}:{name}"],
+                        base_scale,
+                        extra={"seeds": SCALING_SEEDS},
+                    )
+                    for name in DETERMINISTIC_BENCHMARK
+                ],
+            }
+        )
+    return configs
+
+
 GROUPS: dict[str, Any] = {
     "figure1_gaussian_burnin": figure1_gaussian_burnin,
     "figure1_affine_equivariance": figure1_affine_equivariance,
@@ -624,6 +1049,11 @@ GROUPS: dict[str, Any] = {
     "figure2_logcosh_global": figure2_logcosh_global,
     "figure2_logcosh_local": figure2_logcosh_local,
     "figure3_logistic": figure3_logistic,
+    "figure3_stochastic_cancellation": figure3_stochastic_cancellation,
+    "figure3_stochastic_floor": figure3_stochastic_floor,
+    "figure3_stochastic_decreasing": figure3_stochastic_decreasing,
+    "figure4_real_datasets": figure4_real_datasets,
+    "appendix_scaling": appendix_scaling,
 }
 
 

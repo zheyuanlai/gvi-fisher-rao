@@ -11,7 +11,10 @@
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-07",
-      "verify": {"step_scale": "inverse_beta_star_times_initial_ceiling", "pilot_families": 2}
+      "verify": {
+        "step_scale": "inverse_beta_star_times_initial_ceiling",
+        "pilot_families": 2
+      }
     },
     {
       "id": "B",
@@ -23,7 +26,11 @@
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-07",
-      "verify": {"backend": "logistic_exact_foc_newton", "update_order": 48, "evaluation_order": 96}
+      "verify": {
+        "backend": "logistic_exact_foc_newton",
+        "update_order": 48,
+        "evaluation_order": 96
+      }
     },
     {
       "id": "C",
@@ -35,7 +42,10 @@
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-07",
-      "verify": {"branch": "fisher_rao_gradient_domination", "margin_decades_required": 2.0}
+      "verify": {
+        "branch": "fisher_rao_gradient_domination",
+        "margin_decades_required": 2.0
+      }
     },
     {
       "id": "D",
@@ -47,7 +57,87 @@
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-07",
-      "verify": {"display_name": "BW-FB", "identifier": "FB--GVI"}
+      "verify": {
+        "display_name": "BW-FB",
+        "identifier": "FB--GVI"
+      }
+    },
+    {
+      "id": "E",
+      "title": "Three external comparators added, each with its own published safeguard",
+      "requested": "A comparison restricted to FR--R, FR--KL and FB--GVI, with no method stabilised by covariance clipping.",
+      "implemented": "Sq--NGVI (Kumar et al. 2025, Algorithm 1), Price--BBVI (Kim et al. 2026, SPGD with the Bonnet--Price estimator) and BBVI--STL (Kim et al. 2024, projected SGD with the STL estimator) added, each implemented as published. Price--BBVI's closed-form entropy proximal step and BBVI--STL's projection onto Lambda_S are applied because they are part of the algorithms' definitions and of the domains their guarantees are stated on; every projection activation is counted and reported. Sq--NGVI has no safeguard and its factor breakdowns are recorded as failures.",
+      "reason": "Restricted to three methods the campaign can only say that Fisher--Rao differs from Bures--Wasserstein; it cannot say whether the difference is geometric. Price--BBVI shares its estimator with S--FB--GVI and its parameter space with BBVI--STL, which turns the comparison into a two-way one between geometry and estimator. Omitting a published safeguard would not be a fairer comparison, it would be a comparison against an algorithm nobody proposed.",
+      "cost": "Two of the three comparators cannot produce an invalid covariance, so their failure counts are not comparable with ours. The BBVI--STL projection radius needs the target's log-smoothness in the original coordinates; that is a closed-form property of the model rather than an optimizer-whitened constant, so it does not weaken the implementable-stepsize claim, but it is one more quantity the baseline needs and ours do not.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-08",
+      "verify": {
+        "added_methods": [
+          "Sq--NGVI",
+          "Price--BBVI",
+          "BBVI--STL"
+        ],
+        "safeguards_counted": true
+      }
+    },
+    {
+      "id": "F",
+      "title": "An implementable stepsize rule for the practical benchmark",
+      "requested": "The frozen practical multiplier of amendment A, applied to 1/(beta_star max(lambda_0_star_max, 1)).",
+      "implemented": "For the real-data benchmark and the scaling study only, a dyadic grid h_0 2^{-k} whose base scale is 1 for the affine-equivariant natural-gradient updates and 1/lambda_max(H(a_0)) for the Euclidean ones, screened on stability and selected by lowest training objective after a fixed pilot budget on a disjoint subsample of the training rows. The theorem-diagnostic panels keep their certified steps and the earlier practical panels keep the amendment A multipliers.",
+      "reason": "The amendment A scale is written in optimizer-whitened quantities, so computing it requires C_star. That is legitimate for a theorem diagnostic and indefensible for a benchmark: a comparison whose stepsizes were chosen with the optimizer in hand is easy to dismiss however carefully the rest was done.",
+      "cost": "Each method is now tuned per problem, so the benchmark carries a tuning cost that is charged and reported rather than assumed free. Selections that land on an endpoint of the candidate grid are bounds rather than choices and are reported as censored.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-08",
+      "verify": {
+        "grid_base": [
+          "dimensionless",
+          "inverse_initial_curvature"
+        ],
+        "pilot_subsample": 0.5
+      }
+    },
+    {
+      "id": "G",
+      "title": "Real datasets replace synthetic ones in the headline logistic comparison",
+      "requested": "Bayesian logistic regression on synthetic designs with controlled feature conditioning.",
+      "implemented": "Five real binary-classification posteriors (pima, wdbc, ionosphere, sonar, spambase) fetched from OpenML, pinned by SHA-256, cached locally, standardised with training-split statistics and given an intercept. The synthetic conditioning sweep is retained in the online appendix.",
+      "reason": "The synthetic cells control conditioning exactly, which makes them a good theorem diagnostic and no evidence at all that the methods work on data anyone has. A proper Gaussian prior keeps every real posterior strongly log-concave and smooth with constants in closed form, so nothing leaves the hypotheses.",
+      "cost": "Conditioning is no longer a swept variable but a property of each dataset, so the appendix retains the synthetic sweep for the controlled statement. The campaign now depends on an external source, mitigated by committed digests and a local cache that makes reruns network-free.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-08",
+      "verify": {
+        "datasets": [
+          "pima",
+          "wdbc",
+          "ionosphere",
+          "sonar",
+          "spambase"
+        ],
+        "hash_pinned": true
+      }
+    },
+    {
+      "id": "H",
+      "title": "The main text is compressed and an online appendix added",
+      "requested": "Three main-text figures covering the deterministic mechanisms.",
+      "implemented": "Four main-text figures and one accounting table: geometry and affine invariance, a compressed global-to-local figure, stochastic mechanisms, and the real-data practical benchmark. The full log-cosh grid, the synthetic logistic sweep, the elapsed-flow-time panel and the dimensional scaling move to an online appendix built from the same campaign.",
+      "reason": "The stochastic theory of Section 4 had no numerical demonstration at all, and the deterministic section carried corroboration the main text does not need. The paper is also long enough that adding material without removing any would work against it.",
+      "cost": "Two representative log-cosh trajectories and the elapsed-flow-time comparison are no longer in the main text, so the separation of stepsize from geometry now rests on an appendix panel that the main text points to.",
+      "status": "approved",
+      "decided_by": "author",
+      "decided_on": "2026-08-08",
+      "verify": {
+        "main_text_figures": 4,
+        "appendix_figures": [
+          "figure_a1",
+          "figure_a2",
+          "figure_3"
+        ]
+      }
     }
   ]
 }

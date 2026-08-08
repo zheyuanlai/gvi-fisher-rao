@@ -25,6 +25,10 @@ MANIFESTS = ROOT / "results" / "manifests"
 # Manuscript text width in inches (article class, 1in margins on US letter).
 TEXT_WIDTH = 6.5
 
+# Hue encodes geometry -- blues and greens for Fisher--Rao, oranges for
+# Bures--Wasserstein, purple and pink for parameter space -- so a reader can see
+# the two-way comparison in the legend before reading a single label.  Every
+# entry is from the Okabe--Ito palette or an equally separable extension of it.
 COLORS = {
     "FR--R": "#0072B2",
     "FR--KL": "#009E73",
@@ -32,6 +36,9 @@ COLORS = {
     "FR--KL--STL": "#66C2A5",
     "FB--GVI": "#D55E00",
     "S--FB--GVI": "#E69F00",
+    "Sq--NGVI": "#332288",
+    "Price--BBVI": "#CC79A7",
+    "BBVI--STL": "#882255",
     "Laplace": "#555555",
 }
 LINESTYLES = {
@@ -41,6 +48,9 @@ LINESTYLES = {
     "FR--KL--STL": "--",
     "FB--GVI": "-.",
     "S--FB--GVI": (0, (3, 1, 1, 1)),
+    "Sq--NGVI": (0, (5, 1)),
+    "Price--BBVI": (0, (1, 1)),
+    "BBVI--STL": (0, (4, 1, 1, 1, 1, 1)),
     "Laplace": ":",
 }
 MARKERS = {
@@ -50,6 +60,9 @@ MARKERS = {
     "FR--KL--STL": "v",
     "FB--GVI": "D",
     "S--FB--GVI": "P",
+    "Sq--NGVI": "*",
+    "Price--BBVI": "h",
+    "BBVI--STL": "<",
     "Laplace": "X",
 }
 METHOD_ORDER = [
@@ -59,6 +72,9 @@ METHOD_ORDER = [
     "FR--KL--STL",
     "FB--GVI",
     "S--FB--GVI",
+    "Sq--NGVI",
+    "Price--BBVI",
+    "BBVI--STL",
     "Laplace",
 ]
 

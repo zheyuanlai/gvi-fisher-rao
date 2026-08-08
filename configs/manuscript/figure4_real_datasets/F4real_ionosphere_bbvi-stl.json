@@ -1,0 +1,64 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0016006675387486321,
+    "FR--KL": 0.00029238813816312214,
+    "FR--KL--STL": 3.654851727039068e-05,
+    "FR--R": 0.00014619406908156107,
+    "FR--R--STL": 0.00029238813816312545,
+    "S--FB--GVI": 0.0016006675387486321
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.00844593538104311,
+    "beta": 624.7393514219566,
+    "beta_star": 28.886039748750214,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0016006675387486321,
+      "FR--KL": 0.00029238813816312214,
+      "FR--KL--STL": 3.654851727039068e-05,
+      "FR--R": 0.00014619406908156107,
+      "FR--R--STL": 0.00029238813816312545,
+      "S--FB--GVI": 0.0016006675387486321
+    },
+    "condition": 624.7393514219566,
+    "exact": true,
+    "kappa_star": 3420.1113844163297,
+    "lambda_0_star": 1.4799434804193936,
+    "lambda_0_star_max": 118.40014810491087,
+    "lambda_max_star": 118.40014810491087,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "R",
+  "grid": {
+    "dataset": "ionosphere",
+    "dimension": 34,
+    "figure": "4",
+    "observations": 281
+  },
+  "id": "F4real_ionosphere_bbvi-stl",
+  "iterations": 3000,
+  "master_seed": 20260902,
+  "methods": [
+    {
+      "batch_size": 16,
+      "name": "BBVI--STL",
+      "normalized_step_size": 1.0,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.005665605984876572,
+      "step_size": 0.005665605984876572,
+      "tuning_censored": false,
+      "tuning_exponent": 0,
+      "tuning_oracle_pairs": 1
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 5,
+  "target": {
+    "dataset": "ionosphere",
+    "kind": "logistic_dataset",
+    "prior_precision": 1.0
+  },
+  "tier": "manuscript"
+}

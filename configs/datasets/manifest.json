@@ -1,0 +1,86 @@
+{
+  "datasets": {
+    "ionosphere": {
+      "dimension": 34,
+      "dropped_constant_columns": [
+        "a02"
+      ],
+      "file_id": 59,
+      "note": "Johns Hopkins ionosphere radar",
+      "observations": 351,
+      "openml_id": 59,
+      "positive_fraction": 0.6410256410256411,
+      "positive_label": "g",
+      "raw_features": 33,
+      "sha256": "bcbf8c656fe9a44a87df76003b9b2b6b36bfc52c01f0e316014cebbce9ccb701",
+      "test_observations": 70,
+      "train_observations": 281,
+      "url": "https://openml.org/data/v1/download/59/ionosphere.arff"
+    },
+    "pima": {
+      "dimension": 9,
+      "dropped_constant_columns": [],
+      "file_id": 37,
+      "note": "Pima Indians diabetes",
+      "observations": 768,
+      "openml_id": 37,
+      "positive_fraction": 0.3489583333333333,
+      "positive_label": "tested_positive",
+      "raw_features": 8,
+      "sha256": "4eddd5b2b64679e8888348e306520a393d6a28e1ddc9643cfb76fc5d912d6d40",
+      "test_observations": 154,
+      "train_observations": 614,
+      "url": "https://openml.org/data/v1/download/37/diabetes.arff"
+    },
+    "sonar": {
+      "dimension": 61,
+      "dropped_constant_columns": [],
+      "file_id": 40,
+      "note": "Sonar mines versus rocks",
+      "observations": 208,
+      "openml_id": 40,
+      "positive_fraction": 0.5336538461538461,
+      "positive_label": "Mine",
+      "raw_features": 60,
+      "sha256": "bfd26fdabb55f092db0ad81642bd171b511b1cd48e3179a1c2262fb5dc87b944",
+      "test_observations": 41,
+      "train_observations": 167,
+      "url": "https://openml.org/data/v1/download/40/sonar.arff"
+    },
+    "spambase": {
+      "dimension": 58,
+      "dropped_constant_columns": [],
+      "file_id": 44,
+      "note": "Spambase email classification",
+      "observations": 4601,
+      "openml_id": 44,
+      "positive_fraction": 0.39404477287546186,
+      "positive_label": "1",
+      "raw_features": 57,
+      "sha256": "f0f6ccd8e8c6b1feeb09c0565ac691d7906cca5373959981512b9934ab4112a6",
+      "test_observations": 921,
+      "train_observations": 3680,
+      "url": "https://openml.org/data/v1/download/44/spambase.arff"
+    },
+    "wdbc": {
+      "dimension": 31,
+      "dropped_constant_columns": [],
+      "file_id": 1592318,
+      "note": "Wisconsin diagnostic breast cancer",
+      "observations": 569,
+      "openml_id": 1510,
+      "positive_fraction": 0.37258347978910367,
+      "positive_label": "2",
+      "raw_features": 30,
+      "sha256": "e850cb4cc32dacf29d3fa639d0029cb45582d4838a62322e7b3fbac1b8452f1d",
+      "test_observations": 113,
+      "train_observations": 456,
+      "url": "https://openml.org/data/v1/download/1592318/wdbc.arff"
+    }
+  },
+  "preprocessing": "constant columns dropped; features standardized with training-split statistics; a constant intercept column appended after standardization",
+  "schema_version": 1,
+  "source": "OpenML",
+  "split_seed": 20260801,
+  "test_fraction": 0.2
+}

@@ -42,7 +42,8 @@
   "master_seed": 20260724,
   "methods": [
     {
-      "name": "Laplace"
+      "name": "Laplace",
+      "step_rule": "non-iterative"
     }
   ],
   "quadrature_order": 48,

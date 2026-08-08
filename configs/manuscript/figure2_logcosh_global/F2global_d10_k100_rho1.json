@@ -44,6 +44,7 @@
       "certified_step_size": 0.004950495049504951,
       "name": "FR--R",
       "normalized_step_size": 2.0,
+      "step_rule": "pilot_frozen",
       "step_scale": 0.47963195270983233,
       "step_size": 0.9592639054196647
     },
@@ -51,6 +52,7 @@
       "certified_step_size": 0.009900990099009903,
       "name": "FR--KL",
       "normalized_step_size": 2.0,
+      "step_rule": "pilot_frozen",
       "step_scale": 0.47963195270983233,
       "step_size": 0.9592639054196647
     },
@@ -58,6 +60,7 @@
       "certified_step_size": 0.47963195270983233,
       "name": "FB--GVI",
       "normalized_step_size": 1.0,
+      "step_rule": "pilot_frozen",
       "step_scale": 0.47963195270983233,
       "step_size": 0.47963195270983233
     }

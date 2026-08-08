@@ -1,0 +1,64 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0018432211477164403,
+    "FR--KL": 0.00028137997459216473,
+    "FR--KL--STL": 3.5172496824020734e-05,
+    "FR--R": 0.00014068998729608237,
+    "FR--R--STL": 0.00028137997459216587,
+    "S--FB--GVI": 0.0018432211477164403
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.0064969817956252104,
+    "beta": 542.5284975917817,
+    "beta_star": 23.089709226969624,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0018432211477164403,
+      "FR--KL": 0.00028137997459216473,
+      "FR--KL--STL": 3.5172496824020734e-05,
+      "FR--R": 0.00014068998729608237,
+      "FR--R--STL": 0.00028137997459216587,
+      "S--FB--GVI": 0.0018432211477164403
+    },
+    "condition": 542.5284975917817,
+    "exact": true,
+    "kappa_star": 3553.9131789652306,
+    "lambda_0_star": 1.0346811204332567,
+    "lambda_0_star_max": 153.91762382239725,
+    "lambda_max_star": 153.91762382239725,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "R",
+  "grid": {
+    "dataset": "sonar",
+    "dimension": 61,
+    "figure": "4",
+    "observations": 167
+  },
+  "id": "F4real_sonar_bbvi-stl",
+  "iterations": 3000,
+  "master_seed": 20260903,
+  "methods": [
+    {
+      "batch_size": 16,
+      "name": "BBVI--STL",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.010324889838524599,
+      "step_size": 0.0051624449192622995,
+      "tuning_censored": false,
+      "tuning_exponent": 1,
+      "tuning_oracle_pairs": 1
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 5,
+  "target": {
+    "dataset": "sonar",
+    "kind": "logistic_dataset",
+    "prior_precision": 1.0
+  },
+  "tier": "manuscript"
+}

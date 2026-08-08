@@ -48,12 +48,14 @@
       "certified_step_size": 0.25000000000000006,
       "name": "FR--R",
       "normalized_step_size": 1.0,
+      "step_rule": "certified",
       "step_size": 0.25000000000000006
     },
     {
       "certified_step_size": 0.5000000000000001,
       "name": "FR--KL",
       "normalized_step_size": 1.0,
+      "step_rule": "certified",
       "step_size": 0.5000000000000001
     }
   ],

@@ -1,0 +1,100 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.007742641519965453,
+    "FR--KL": 0.006323897800888611,
+    "FR--KL--STL": 0.0007904872251110816,
+    "FR--R": 0.0031619489004443054,
+    "FR--R--STL": 0.0063238978008886525,
+    "S--FB--GVI": 0.007742641519965453
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.009459320863931408,
+    "beta": 129.1548882150057,
+    "beta_star": 1.4958054607717024,
+    "certified_step_sizes": {
+      "FB--GVI": 0.007742641519965453,
+      "FR--KL": 0.006323897800888611,
+      "FR--KL--STL": 0.0007904872251110816,
+      "FR--R": 0.0031619489004443054,
+      "FR--R--STL": 0.0063238978008886525,
+      "S--FB--GVI": 0.007742641519965453
+    },
+    "condition": 129.1548882150057,
+    "exact": true,
+    "kappa_star": 158.1303227037409,
+    "lambda_0_star": 1.9137969782201738,
+    "lambda_0_star_max": 105.71583461271814,
+    "lambda_max_star": 105.71583461271814,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "S",
+  "grid": {
+    "dimension": 50,
+    "figure": "appendix-scaling"
+  },
+  "id": "Ascale_d50",
+  "instance_per_seed": true,
+  "iterations": 300,
+  "master_seed": 20261050,
+  "methods": [
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.125,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.125,
+      "tuning_censored": false,
+      "tuning_exponent": 3,
+      "tuning_oracle_pairs": 1992
+    },
+    {
+      "name": "FR--KL",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.5,
+      "tuning_censored": false,
+      "tuning_exponent": 1,
+      "tuning_oracle_pairs": 2700
+    },
+    {
+      "name": "FB--GVI",
+      "normalized_step_size": 0.5,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 0.01857592809398273,
+      "step_size": 0.009287964046991365,
+      "tuning_censored": false,
+      "tuning_exponent": 1,
+      "tuning_oracle_pairs": 2703
+    },
+    {
+      "name": "Sq--NGVI",
+      "normalized_step_size": 0.03125,
+      "seeds": 5,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.03125,
+      "tuning_censored": false,
+      "tuning_exponent": 5,
+      "tuning_oracle_pairs": 1347
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 25,
+  "seeds": 5,
+  "target": {
+    "dimension": 50,
+    "feature_condition": 100.0,
+    "initial_covariance": "prior",
+    "kind": "logistic",
+    "prior_precision": 1.0,
+    "samples": 500,
+    "test_samples": 500
+  },
+  "tier": "manuscript"
+}

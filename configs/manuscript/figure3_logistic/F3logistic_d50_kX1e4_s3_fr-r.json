@@ -45,6 +45,7 @@
       "certified_step_size": 0.003748119735976527,
       "name": "FR--R",
       "normalized_step_size": 2.0,
+      "step_rule": "pilot_frozen",
       "step_scale": 0.007496239471953063,
       "step_size": 0.014992478943906125
     }

@@ -86,3 +86,8 @@ results/tables/*.tex
 results/raw/manuscript/
 !results/tables/manuscript_*.csv
 !results/tables/manuscript_*.tex
+
+# Cached raw dataset bytes.  They are regenerable from the committed digests in
+# configs/datasets/manifest.json and a network connection; the digests are what
+# make the results traceable, not the bytes.
+data/openml/

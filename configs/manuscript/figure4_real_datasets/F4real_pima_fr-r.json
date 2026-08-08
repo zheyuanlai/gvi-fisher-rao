@@ -1,0 +1,62 @@
+{
+  "certified_step_sizes": {
+    "FB--GVI": 0.0030707503579396646,
+    "FR--KL": 0.0015423218122672404,
+    "FR--KL--STL": 0.0001927902265334052,
+    "FR--R": 0.0007711609061336202,
+    "FR--R--STL": 0.0015423218122672417,
+    "S--FB--GVI": 0.0030707503579396646
+  },
+  "curvature": {
+    "alpha": 1.0,
+    "alpha_star": 0.005255463983616135,
+    "beta": 325.65330405788995,
+    "beta_star": 3.407501561487032,
+    "certified_step_sizes": {
+      "FB--GVI": 0.0030707503579396646,
+      "FR--KL": 0.0015423218122672404,
+      "FR--KL--STL": 0.0001927902265334052,
+      "FR--R": 0.0007711609061336202,
+      "FR--R--STL": 0.0015423218122672417,
+      "S--FB--GVI": 0.0030707503579396646
+    },
+    "condition": 325.65330405788995,
+    "exact": true,
+    "kappa_star": 648.3731164574411,
+    "lambda_0_star": 33.520867430023436,
+    "lambda_0_star_max": 190.27815681307922,
+    "lambda_max_star": 190.27815681307922,
+    "source": "logistic_interval_exact"
+  },
+  "evaluation_quadrature_order": 96,
+  "experiment": "R",
+  "grid": {
+    "dataset": "pima",
+    "dimension": 9,
+    "figure": "4",
+    "observations": 614
+  },
+  "id": "F4real_pima_fr-r",
+  "iterations": 3000,
+  "master_seed": 20260900,
+  "methods": [
+    {
+      "name": "FR--R",
+      "normalized_step_size": 0.03125,
+      "step_rule": "implementable_grid",
+      "step_scale": 1.0,
+      "step_size": 0.03125,
+      "tuning_censored": false,
+      "tuning_exponent": 5,
+      "tuning_oracle_pairs": 664
+    }
+  ],
+  "quadrature_order": 48,
+  "record_every": 5,
+  "target": {
+    "dataset": "pima",
+    "kind": "logistic_dataset",
+    "prior_precision": 1.0
+  },
+  "tier": "manuscript"
+}

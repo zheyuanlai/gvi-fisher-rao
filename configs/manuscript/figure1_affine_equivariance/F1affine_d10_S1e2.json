@@ -21,18 +21,21 @@
       "certified_step_size": 0.24038461538461503,
       "name": "FR--R",
       "normalized_step_size": 0.5,
+      "step_rule": "certified",
       "step_size": 0.12019230769230752
     },
     {
       "certified_step_size": 0.48076923076923006,
       "name": "FR--KL",
       "normalized_step_size": 0.5,
+      "step_rule": "certified",
       "step_size": 0.24038461538461503
     },
     {
       "certified_step_size": 0.9697884989231075,
       "name": "FB--GVI",
       "normalized_step_size": 0.5,
+      "step_rule": "certified",
       "step_size": 0.48489424946155374
     }
   ],

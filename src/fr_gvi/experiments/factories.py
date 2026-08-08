@@ -174,6 +174,60 @@ def _logistic(config: dict[str, Any], rng: np.random.Generator) -> BuiltProblem:
     )
 
 
+def _logistic_dataset(config: dict[str, Any]) -> BuiltProblem:
+    """Bayesian logistic regression on one of the pinned real datasets.
+
+    Unlike the synthetic cells there is nothing random about the problem: the
+    dataset, its split and its standardization are fixed, so a repeat varies only
+    the algorithm's own randomness.  That is what makes the seed dispersion in
+    the stochastic arms interpretable as estimator noise rather than as a change
+    of problem.
+    """
+
+    from fr_gvi.experiments.datasets import prepared
+
+    key = str(config["dataset"])
+    split = prepared(key, allow_download=bool(config.get("allow_download", False)))
+    prior_precision = float(config.get("prior_precision", 1.0))
+    features, labels = split.train_features, split.train_labels
+    fraction = float(config.get("subsample_fraction", 1.0))
+    if not 0.0 < fraction <= 1.0:
+        raise ValueError("subsample_fraction must lie in (0, 1]")
+    if fraction < 1.0:
+        # The stepsize pilot runs on a stratified subsample of the training rows,
+        # so no number the benchmark reports was used to choose a stepsize.  A
+        # practitioner can always subsample their own data, so the rule stays
+        # implementable.
+        subsample_rng = np.random.default_rng(int(config.get("subsample_seed", 20260802)))
+        keep = np.zeros(labels.size, dtype=bool)
+        for value in (0.0, 1.0):
+            members = np.flatnonzero(labels == value)
+            count = max(1, int(round(fraction * members.size)))
+            keep[subsample_rng.permutation(members)[:count]] = True
+        features, labels = features[keep], labels[keep]
+    target = LogisticRegressionTarget(features, labels, prior_precision)
+    dimension = target.dimension
+    # q_0 = N(0, lambda^{-1} I) is the exact posterior of the zero-observation
+    # problem, so it is the initialization a practitioner has without having
+    # looked at anything the benchmark is trying to measure.
+    initial = GaussianState(
+        np.zeros(dimension, dtype=np.float64),
+        (1.0 / prior_precision) * np.eye(dimension, dtype=np.float64),
+    )
+    return BuiltProblem(
+        target,
+        initial,
+        {
+            **split.metadata,
+            "prior_precision": prior_precision,
+            "real_data": True,
+            "subsample_fraction": fraction,
+            "fitted_observations": int(labels.size),
+        },
+        (split.test_features, split.test_labels),
+    )
+
+
 def _affine_equivariance(config: dict[str, Any], rng: np.random.Generator) -> BuiltProblem:
     dimension = int(config.get("dimension", 3))
     # ``affine_condition`` is the conditioning of the induced covariance map
@@ -225,5 +279,7 @@ def build_problem(config: dict[str, Any], seed: int, experiment: str) -> BuiltPr
         return _logcosh(config, rng)
     if kind == "logistic":
         return _logistic(config, rng)
+    if kind == "logistic_dataset":
+        return _logistic_dataset(config)
     raise ValueError(f"unknown target kind: {kind}")
 
