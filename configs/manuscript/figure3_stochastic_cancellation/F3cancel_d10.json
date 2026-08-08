@@ -47,7 +47,7 @@
       "step_size": 0.5,
       "tuning_censored": false,
       "tuning_exponent": 1,
-      "tuning_oracle_pairs": 2575
+      "tuning_oracle_pairs": 2574
     },
     {
       "batch_size": 1,
@@ -83,7 +83,7 @@
       "step_size": 0.12499999999999997,
       "tuning_censored": false,
       "tuning_exponent": 3,
-      "tuning_oracle_pairs": 2431
+      "tuning_oracle_pairs": 2397
     },
     {
       "batch_size": 1,
@@ -95,7 +95,7 @@
       "step_size": 0.12499999999999997,
       "tuning_censored": false,
       "tuning_exponent": 3,
-      "tuning_oracle_pairs": 2581
+      "tuning_oracle_pairs": 2531
     }
   ],
   "record_every": 1,

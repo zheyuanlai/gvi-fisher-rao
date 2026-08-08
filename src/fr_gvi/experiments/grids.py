@@ -564,7 +564,14 @@ def experiment_j() -> list[dict[str, Any]]:
 
 
 def experiment_k() -> list[dict[str, Any]]:
-    """Decreasing stepsize schedule h_n = 8 kappa_star / (n + n0)."""
+    """Decreasing stepsize schedule h_n = 8 kappa_star / (n + n0).
+
+    Exploratory only.  An earlier draft of the manuscript proved an ``O(1/N)``
+    floor-free rate for this schedule; the current draft is fixed-stepsize
+    throughout, so this experiment validates no claim the paper makes and is not
+    promoted to the manuscript tier.  It is retained because the schedule is a
+    natural question and the measurement is already paid for.
+    """
 
     configs: list[dict[str, Any]] = []
     for dimension in (4, 8):
@@ -591,7 +598,7 @@ def experiment_k() -> list[dict[str, Any]]:
                         "grid": {"dimension": dimension, "rho": rho, "batch_size": batch},
                         "target": target,
                         # Long horizon so the asymptotic O(1/N) regime of
-                        # Theorem 4.21 is actually reached and its slope measurable.
+                        # the asymptotic regime is actually reached and its slope measurable.
                         "iterations": 20000,
                         "record_every": 20,
                         "curvature": constants,

@@ -792,49 +792,69 @@ def figure3_stochastic_floor() -> list[dict[str, Any]]:
     return configs
 
 
-def figure3_stochastic_decreasing() -> list[dict[str, Any]]:
-    """Panel 3(c): the ``O(1/N)`` decreasing-stepsize tail of Theorem~4.21.
+# Theorems 4.16 and 4.17 predict a stationary floor proportional to
+# ``Delta t / B``.  Panel (b) sweeps ``B`` at a fixed step; this group sweeps the
+# step at a fixed ``B``, so the two halves of the same claim are each measured.
+#
+# The horizon is scaled so every multiplier runs for the same *elapsed flow time*
+# ``N Delta t`` rather than the same iteration count.  The deterministic transient
+# is governed by flow time, so a fixed iteration count would leave the smallest
+# step still inside its transient and report a floor that is not one.
+STEP_MULTIPLIERS = (2.0, 1.0, 0.5, 0.25)
+STEP_SWEEP_BATCH = 8
+STEP_SWEEP_FLOW_ITERATIONS = 6000
 
-    The horizon has to be long enough that the asymptotic regime is reached and
-    its slope measurable; twenty thousand iterations is what the exploratory
-    campaign found sufficient at this conditioning.
+
+def figure3_stochastic_step() -> list[dict[str, Any]]:
+    """Panel 3(c): the stationary floor against the stepsize at fixed batch size.
+
+    One config per multiplier, because the iteration count differs between them
+    and the campaign parallelizes over config files.  The recording interval is
+    scaled with the horizon so every cell contributes the same number of rows to
+    the tail average that the floor is read from.
     """
 
     configs: list[dict[str, Any]] = []
-    dimension, rho = 8, 1.0
-    for batch in (1, 8):
-        master_seed = 20261600 + dimension * 10 + int(rho * 10) + batch
+    for multiplier in STEP_MULTIPLIERS:
+        master_seed = 20261700 + int(round(100 * multiplier))
         target = {
             "kind": "logcosh",
-            "dimension": dimension,
-            "condition": 1.0,
-            "rho": rho,
+            "dimension": FLOOR_CELL["dimension"],
+            "condition": FLOOR_CELL["condition"],
+            "rho": FLOOR_CELL["rho"],
             "affine_condition": 1.0,
-            "initial_covariance_scale": 0.8,
+            "initial_covariance_scale": 0.7,
         }
-        constants = cell_constants(target, master_seed, "K")
-        kappa_star = float(constants["kappa_star"])
-        n0 = int(np.ceil(64.0 * kappa_star * kappa_star))
+        constants = cell_constants(target, master_seed, "T")
+        certified = constants["certified_step_sizes"]
+        iterations = int(round(STEP_SWEEP_FLOW_ITERATIONS / multiplier))
         configs.append(
             {
-                "id": f"F3decreasing_d{dimension}_B{batch}",
-                "experiment": "K",
+                "id": f"F3step_d{FLOOR_CELL['dimension']}_x{multiplier:g}".replace(".", "p"),
+                "experiment": "T",
                 "tier": TIER,
                 "master_seed": master_seed,
-                "grid": {"dimension": dimension, "rho": rho, "batch_size": batch, "figure": "3c"},
+                "grid": {
+                    **FLOOR_CELL,
+                    "batch_size": STEP_SWEEP_BATCH,
+                    "step_multiplier": multiplier,
+                    "figure": "3c",
+                },
                 "target": target,
-                "iterations": 20000,
-                "record_every": 20,
+                "iterations": iterations,
+                "record_every": max(1, int(round(10 / multiplier))),
                 "curvature": constants,
-                "certified_step_sizes": constants["certified_step_sizes"],
+                "certified_step_sizes": certified,
                 "methods": [
                     {
                         "name": name,
-                        "step_rule": "certified_schedule",
-                        "schedule": "manuscript_decreasing",
-                        "kappa_star": kappa_star,
-                        "n0": n0,
-                        "batch_size": batch,
+                        "step_rule": "capped_practical",
+                        "step_size": float(multiplier * min(0.02, 8.0 * certified[name])),
+                        "normalized_step_size": float(
+                            multiplier * min(0.02, 8.0 * certified[name]) / certified[name]
+                        ),
+                        "certified_step_size": float(certified[name]),
+                        "batch_size": STEP_SWEEP_BATCH,
                         "quadratic_rescue": True,
                         "seeds": STOCHASTIC_SEEDS,
                     }
@@ -1051,7 +1071,7 @@ GROUPS: dict[str, Any] = {
     "figure3_logistic": figure3_logistic,
     "figure3_stochastic_cancellation": figure3_stochastic_cancellation,
     "figure3_stochastic_floor": figure3_stochastic_floor,
-    "figure3_stochastic_decreasing": figure3_stochastic_decreasing,
+    "figure3_stochastic_step": figure3_stochastic_step,
     "figure4_real_datasets": figure4_real_datasets,
     "appendix_scaling": appendix_scaling,
 }

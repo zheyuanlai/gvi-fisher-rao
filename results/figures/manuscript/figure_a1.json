@@ -1,0 +1,59 @@
+{
+  "figure": "figure_a1",
+  "git": {
+    "code_hash": "24c5cc9e1b92f24238f669c305d80eacac2c3a5f9693f7a195ff796e882ff339",
+    "commit": "09fcc303d8307d67f42d3d648c3fd37dd4fc8541",
+    "dirty": true
+  },
+  "outputs": [
+    "results/figures/manuscript/figure_a1.pdf",
+    "results/figures/manuscript/figure_a1.png",
+    "results/figures/manuscript/figure_a1.md"
+  ],
+  "panels": [
+    {
+      "config_ids": [
+        "F2global_d10_k1_rho1"
+      ],
+      "panel": "a",
+      "processed_csv": "results/processed/manuscript/figure_a1_a.csv",
+      "rows": 1203,
+      "title": "$d=10$, $\\kappa_{\\rm base}=1$"
+    },
+    {
+      "config_ids": [
+        "F2global_d10_k10_rho1"
+      ],
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_a1_b.csv",
+      "rows": 1203,
+      "title": "$d=10$, $\\kappa_{\\rm base}=10$"
+    },
+    {
+      "config_ids": [
+        "F2global_d10_k100_rho0.1",
+        "F2global_d10_k100_rho1",
+        "F2global_d10_k10_rho0.1",
+        "F2global_d10_k10_rho1",
+        "F2global_d10_k1_rho0.1",
+        "F2global_d10_k1_rho1",
+        "F2global_d50_k100_rho0.1",
+        "F2global_d50_k100_rho1",
+        "F2global_d50_k10_rho0.1",
+        "F2global_d50_k10_rho1",
+        "F2global_d50_k1_rho0.1",
+        "F2global_d50_k1_rho1"
+      ],
+      "panel": "c",
+      "processed_csv": "results/processed/manuscript/figure_a1_c.csv",
+      "rows": 36,
+      "title": "Elapsed flow time"
+    }
+  ],
+  "stepsize_protocol": {
+    "FB--GVI": 1.0,
+    "FR--KL": 2.0,
+    "FR--R": 2.0
+  },
+  "tier": "manuscript"
+}

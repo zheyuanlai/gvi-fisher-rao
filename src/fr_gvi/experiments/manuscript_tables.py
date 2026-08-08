@@ -401,6 +401,14 @@ def scaling_table() -> pd.DataFrame:
                     (1000.0 * subset["algorithm_seconds"] / iterations).median()
                 ),
                 "terminal_gap_median": float(subset["objective_gap"].median()),
+                # The double-precision resolution of a gap formed as a difference
+                # of two objectives of this size.  A gap at or below it means
+                # the run converged, not that it stalled, and a log plot that
+                # simply drops the non-positive values would erase exactly the
+                # methods that did best.
+                "resolution_floor": float(
+                    np.finfo(np.float64).eps * subset["objective"].abs().median()
+                ),
             }
         )
     return pd.DataFrame(rows).sort_values(["dimension", "method"]).reset_index(drop=True)

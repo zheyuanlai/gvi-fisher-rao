@@ -34,7 +34,7 @@ EXPECTED_TRAJECTORIES = {
     "figure3_logistic": 60,
     "figure3_stochastic_cancellation": 150,
     "figure3_stochastic_floor": 1050,
-    "figure3_stochastic_decreasing": 120,
+    "figure3_stochastic_step": 240,
     "figure4_real_datasets": 150,
     "appendix_scaling": 100,
 }

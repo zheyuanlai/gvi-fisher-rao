@@ -1,9 +1,9 @@
 {
   "figure": "figure_2",
   "git": {
-    "code_hash": "456e06dcb573138cb2363734ef472181c150e046e6ad9f5b2dc5b685d4f094ef",
-    "commit": "a3bc7a2fe11494d90f29d739a0ab9996c12a2c9e",
-    "dirty": false
+    "code_hash": "24c5cc9e1b92f24238f669c305d80eacac2c3a5f9693f7a195ff796e882ff339",
+    "commit": "09fcc303d8307d67f42d3d648c3fd37dd4fc8541",
+    "dirty": true
   },
   "outputs": [
     "results/figures/manuscript/figure_2.pdf",
@@ -13,28 +13,10 @@
   "panels": [
     {
       "config_ids": [
-        "F2global_d10_k1_rho1"
+        "F2global_d50_k100_rho1"
       ],
       "panel": "a",
       "processed_csv": "results/processed/manuscript/figure_2_a.csv",
-      "rows": 1203,
-      "title": "$d=10$, $\\kappa_{\\rm base}=1$"
-    },
-    {
-      "config_ids": [
-        "F2global_d10_k10_rho1"
-      ],
-      "panel": "b",
-      "processed_csv": "results/processed/manuscript/figure_2_b.csv",
-      "rows": 1203,
-      "title": "$d=10$, $\\kappa_{\\rm base}=10$"
-    },
-    {
-      "config_ids": [
-        "F2global_d50_k100_rho1"
-      ],
-      "panel": "c",
-      "processed_csv": "results/processed/manuscript/figure_2_c.csv",
       "rows": 1203,
       "title": "$d=50$, $\\kappa_{\\rm base}=10^2$"
     },
@@ -53,30 +35,10 @@
         "F2global_d50_k1_rho0.1",
         "F2global_d50_k1_rho1"
       ],
-      "panel": "d",
-      "processed_csv": "results/processed/manuscript/figure_2_d.csv",
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_2_b.csv",
       "rows": 36,
       "title": "Grid summary"
-    },
-    {
-      "config_ids": [
-        "F2global_d10_k100_rho0.1",
-        "F2global_d10_k100_rho1",
-        "F2global_d10_k10_rho0.1",
-        "F2global_d10_k10_rho1",
-        "F2global_d10_k1_rho0.1",
-        "F2global_d10_k1_rho1",
-        "F2global_d50_k100_rho0.1",
-        "F2global_d50_k100_rho1",
-        "F2global_d50_k10_rho0.1",
-        "F2global_d50_k10_rho1",
-        "F2global_d50_k1_rho0.1",
-        "F2global_d50_k1_rho1"
-      ],
-      "panel": "e",
-      "processed_csv": "results/processed/manuscript/figure_2_e.csv",
-      "rows": 36,
-      "title": "Elapsed flow time"
     },
     {
       "config_ids": [
@@ -87,8 +49,8 @@
         "F2local_d10_k10_rho1_r0p05",
         "F2local_d10_k10_rho1_r0p1"
       ],
-      "panel": "f",
-      "processed_csv": "results/processed/manuscript/figure_2_f.csv",
+      "panel": "c",
+      "processed_csv": "results/processed/manuscript/figure_2_c.csv",
       "rows": 12,
       "title": "Local rate"
     }

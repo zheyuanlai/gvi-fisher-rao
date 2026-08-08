@@ -85,9 +85,9 @@
       "id": "F",
       "title": "An implementable stepsize rule for the practical benchmark",
       "requested": "The frozen practical multiplier of amendment A, applied to 1/(beta_star max(lambda_0_star_max, 1)).",
-      "implemented": "For the real-data benchmark and the scaling study only, a dyadic grid h_0 2^{-k} whose base scale is 1 for the affine-equivariant natural-gradient updates and 1/lambda_max(H(a_0)) for the Euclidean ones, screened on stability and selected by lowest training objective after a fixed pilot budget on a disjoint subsample of the training rows. The theorem-diagnostic panels keep their certified steps and the earlier practical panels keep the amendment A multipliers.",
-      "reason": "The amendment A scale is written in optimizer-whitened quantities, so computing it requires C_star. That is legitimate for a theorem diagnostic and indefensible for a benchmark: a comparison whose stepsizes were chosen with the optimizer in hand is easy to dismiss however carefully the rest was done.",
-      "cost": "Each method is now tuned per problem, so the benchmark carries a tuning cost that is charged and reported rather than assumed free. Selections that land on an endpoint of the candidate grid are bounds rather than choices and are reported as censored.",
+      "implemented": "For the real-data benchmark and the scaling study only, a dyadic grid h_0 2^{-k} whose base scale is 1 for the affine-equivariant natural-gradient updates and 1/lambda_max(H(a_0)) for the Euclidean ones, screened on stability and selected by lowest training objective after a fixed pilot budget on a disjoint subsample of the training rows. The theorem-diagnostic panels keep their certified steps and the earlier practical panels keep the amendment A multipliers. The admissibility screen acts on the whole pilot path rather than on its endpoint: a candidate is rejected if the covariance condition number ever exceeds 1e10. Calibration uses three independent problem instances where the problem is randomly generated, taking the most conservative choice, and the batch size the deployment will use.",
+      "reason": "The amendment A scale is written in optimizer-whitened quantities, so computing it requires C_star. That is legitimate for a theorem diagnostic and indefensible for a benchmark: a comparison whose stepsizes were chosen with the optimizer in hand is easy to dismiss however carefully the rest was done. Three weaknesses of the first version were each found by a check rather than by inspection. An endpoint-only screen accepted a step that drove the covariance condition number to 4.7e10 within a few iterations, needing a roundoff repair; a screen on the objective's excursion was tried first and rejected, because it also rejects the KL/Bregman scheme's benign first-step transient, which raises the objective twentyfold at a conditioning that never exceeds 62 and converges 30 times faster than any admissible alternative; a single-instance pilot selected a step that diverged on the next draw of the same family; and calibrating at the benchmark batch size selected a step that diverged at the batch size the panel actually used.",
+      "cost": "Each method is now tuned per problem, so the benchmark carries a tuning cost that is charged and reported rather than assumed free. Selections that land on an endpoint of the candidate grid are bounds rather than choices and are reported as censored. The conditioning screen is a property of the iterate rather than of the trajectory's shape, so a method with a large but well-conditioned transient keeps its fastest admissible step.",
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-08",
@@ -96,7 +96,9 @@
           "dimensionless",
           "inverse_initial_curvature"
         ],
-        "pilot_subsample": 0.5
+        "pilot_subsample": 0.5,
+        "conditioning_limit": 10000000000.0,
+        "pilot_instances": 3
       }
     },
     {
@@ -124,9 +126,9 @@
       "id": "H",
       "title": "The main text is compressed and an online appendix added",
       "requested": "Three main-text figures covering the deterministic mechanisms.",
-      "implemented": "Four main-text figures and one accounting table: geometry and affine invariance, a compressed global-to-local figure, stochastic mechanisms, and the real-data practical benchmark. The full log-cosh grid, the synthetic logistic sweep, the elapsed-flow-time panel and the dimensional scaling move to an online appendix built from the same campaign.",
+      "implemented": "Four main-text figures and one accounting table: geometry and affine invariance, a compressed global-to-local figure, stochastic mechanisms, and the real-data practical benchmark. The full log-cosh grid, the synthetic logistic sweep, the elapsed-flow-time panel and the dimensional scaling move to an online appendix built from the same campaign. The stochastic figure measures the cancellation, both factors of the Delta t / B floor, and the quadratic rescue.",
       "reason": "The stochastic theory of Section 4 had no numerical demonstration at all, and the deterministic section carried corroboration the main text does not need. The paper is also long enough that adding material without removing any would work against it.",
-      "cost": "Two representative log-cosh trajectories and the elapsed-flow-time comparison are no longer in the main text, so the separation of stepsize from geometry now rests on an appendix panel that the main text points to.",
+      "cost": "Two representative log-cosh trajectories and the elapsed-flow-time comparison are no longer in the main text, so the separation of stepsize from geometry now rests on an appendix panel that the main text points to. An earlier version of the stochastic figure measured the O(1/N) tail of a decreasing-stepsize schedule. That theorem is in an earlier draft of the manuscript and not in the current one, so the panel validated a result the paper does not state. It was replaced by a stepsize sweep of the stationary floor, which measures the Delta t factor of a floor the paper does state and which no other panel checked; the decreasing-step configs were removed rather than left unplotted.",
       "status": "approved",
       "decided_by": "author",
       "decided_on": "2026-08-08",

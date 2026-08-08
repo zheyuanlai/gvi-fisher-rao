@@ -48,7 +48,7 @@
       "step_size": 0.03125,
       "tuning_censored": false,
       "tuning_exponent": 5,
-      "tuning_oracle_pairs": 1815
+      "tuning_oracle_pairs": 1638
     },
     {
       "name": "FR--KL",
@@ -81,7 +81,7 @@
       "step_size": 0.015625,
       "tuning_censored": false,
       "tuning_exponent": 6,
-      "tuning_oracle_pairs": 1113
+      "tuning_oracle_pairs": 1111
     }
   ],
   "quadrature_order": 48,

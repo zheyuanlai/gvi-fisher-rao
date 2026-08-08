@@ -13,8 +13,9 @@ someone who has the model and the initialization and nothing else:
 * the base scale ``h_0`` comes from the geometry of the update and, where the
   update is not scale free, from one expected Hessian at the *initial* state;
 * the candidates are the dyadic grid ``h_0 2^{-k}``;
-* the screen is stability alone -- finite objective, positive definite
-  covariance, no repair, and a decrease over the pilot horizon;
+* the screen is stability along the whole pilot path -- finite objective, a
+  positive definite and numerically well-conditioned covariance at every iterate,
+  no repair, and a decrease overall;
 * among the survivors the choice is the lowest **training** objective after a
   fixed pilot oracle budget.
 
@@ -61,6 +62,20 @@ PILOT_SEED = 20260803
 # one instance; a synthetic cell is redrawn, and the frozen multiplier is the
 # most conservative choice across the draws.
 PILOT_INSTANCES = (20260805, 20260806, 20260807)
+# The covariance may not become numerically singular at any pilot iterate.  Well
+# below 1/eps: a covariance this ill-conditioned makes every solve downstream
+# meaningless long before it stops being representable.
+#
+# This screen replaced an earlier one on the objective's excursion above its
+# starting value, which was the wrong instrument.  Both were tried against the
+# two cases that motivated a path screen at all.  On one real posterior the
+# selected step drove the covariance conditioning to 4.7e10 within a few
+# iterations and needed a roundoff repair; on another, the KL/Bregman scheme's
+# first-step covariance contraction raises the objective more than twentyfold
+# while the conditioning never exceeds 62, and it converges to the same optimum
+# 30 times faster than any other step in the grid.  The excursion screen rejects
+# both; the conditioning screen separates them, which is what a screen is for.
+CONDITIONING_LIMIT = 1.0e10
 
 
 def implementable_base_step(
@@ -111,6 +126,7 @@ class Candidate:
     iterations: int
     oracle_pairs: int
     gradient_evaluations: int
+    worst_conditioning: float = 1.0
 
 
 @dataclass
@@ -154,6 +170,7 @@ def _pilot_trajectory(
     current = initial_objective
     reason = ""
     completed = 0
+    worst_conditioning = 1.0
     for _ in range(iterations):
         try:
             state, diagnostics = step(
@@ -181,6 +198,18 @@ def _pilot_trajectory(
         if not np.isfinite(current):
             reason = "non-finite objective"
             break
+        # A screen on the *path*, not just its endpoint.  Comparing the last
+        # iterate with the first accepts a candidate that passes through a state
+        # no downstream solve could use and then recovers, which is exactly what
+        # one real posterior did.  The conditioning of the current covariance is
+        # a property of the iterate a practitioner holds, so screening on it
+        # costs no information the rule is not allowed to have.
+        eigenvalues = np.linalg.eigvalsh(state.covariance)
+        conditioning = float(eigenvalues[-1] / max(float(eigenvalues[0]), np.finfo(np.float64).tiny))
+        worst_conditioning = max(worst_conditioning, conditioning)
+        if conditioning > CONDITIONING_LIMIT:
+            reason = f"covariance conditioning {conditioning:.3e} above {CONDITIONING_LIMIT:.3e}"
+            break
     admissible = (
         not reason
         and completed == iterations
@@ -200,6 +229,7 @@ def _pilot_trajectory(
         iterations=completed,
         oracle_pairs=int(counts.oracle_pairs),
         gradient_evaluations=int(counts.gradient_evaluations),
+        worst_conditioning=float(worst_conditioning),
     )
 
 
@@ -501,6 +531,7 @@ def write(selections: dict[str, Any], *, problems: tuple[str, ...], batch_size: 
                 "positive definite covariance for the whole pilot horizon",
                 "finite objective at every recorded iterate",
                 "no covariance repair logged",
+                f"covariance conditioning below {CONDITIONING_LIMIT:g} throughout",
                 "objective decrease over the pilot horizon",
             ],
             "selection": "lowest training objective after the fixed pilot budget",

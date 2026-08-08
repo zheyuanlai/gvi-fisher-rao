@@ -50,7 +50,7 @@
       "step_size": 0.005665605984876572,
       "tuning_censored": false,
       "tuning_exponent": 0,
-      "tuning_oracle_pairs": 14401
+      "tuning_oracle_pairs": 13457
     }
   ],
   "quadrature_order": 48,

@@ -75,6 +75,9 @@ RESIDUAL_MARGIN_DECADES = 2.0
 # difference of two objectives of the recorded magnitude.
 NEGATIVE_GAP_TOLERANCE = 1.0e-13
 FIGURE_NAMES = ("figure_1", "figure_2", "figure_3", "figure_4")
+# The online appendix figures, held to the same artifact and provenance
+# standard as the main text but not counted among its four.
+APPENDIX_FIGURE_NAMES = ("figure_a1", "figure_a2", "figure_a3")
 # The regimes a stepsize may come from.  Every method specification must declare
 # one, and each is checked by a different gate.
 #
@@ -483,7 +486,7 @@ def check_no_pilot_contamination() -> tuple[list[str], list[str], dict[str, obje
 
     errors: list[str] = []
     leaked: dict[str, list[str]] = {}
-    for experiment in ("A", "B", "C", "D", "G", "H", "J", "K", "L", "R", "S"):
+    for experiment in ("A", "B", "C", "D", "G", "H", "J", "L", "R", "S", "T"):
         frame = load_experiment(experiment, TIER)
         if frame.empty:
             continue
@@ -493,7 +496,7 @@ def check_no_pilot_contamination() -> tuple[list[str], list[str], dict[str, obje
         if pilots:
             leaked[experiment] = pilots
             errors.append(f"pilot trajectories in the {experiment} manuscript tier: {pilots}")
-    for name in FIGURE_NAMES:
+    for name in (*FIGURE_NAMES, *APPENDIX_FIGURE_NAMES):
         path = FIGURES / f"{name}.json"
         if not path.exists():
             continue
@@ -530,7 +533,13 @@ def check_configs_regenerate() -> tuple[list[str], list[str], dict[str, object]]
         manuscript_main(["--destination", str(destination)])
         manuscript_main(["--pilot", "--destination", str(destination)])
         for path in sorted(CONFIG_ROOT.rglob("*.json")):
-            if path.name in {"selected_steps.json", "protocol_amendments.json"}:
+            # Records, not generated configs: the pilot writes the first, the
+            # author the second, the implementable tuner the third.
+            if path.name in {
+                "selected_steps.json",
+                "protocol_amendments.json",
+                "practical_steps.json",
+            }:
                 continue
             rebuilt = destination / path.relative_to(CONFIG_ROOT)
             checked += 1
@@ -549,7 +558,7 @@ def check_captions() -> tuple[list[str], list[str], dict[str, object]]:
 
     errors: list[str] = []
     obsolete = ("Sobol", "4096", "O(Snd)", "quasi-Monte-Carlo design")
-    for name in FIGURE_NAMES:
+    for name in (*FIGURE_NAMES, *APPENDIX_FIGURE_NAMES):
         path = FIGURES / f"{name}.md"
         if not path.exists():
             continue
@@ -617,8 +626,15 @@ def check_amendments() -> tuple[list[str], list[str], dict[str, object]]:
         errors.append("amendment E was approved for a different comparator set than the code uses")
     if not added <= set(DETERMINISTIC_BENCHMARK) | set(STOCHASTIC_BENCHMARK):
         errors.append("amendment E lists a comparator the benchmark does not run")
-    if verify.get("F", {}).get("pilot_subsample") != PILOT_SUBSAMPLE:
-        errors.append("amendment F was approved for a different pilot subsample than the code uses")
+    from fr_gvi.experiments.tuning import CONDITIONING_LIMIT, PILOT_INSTANCES
+
+    expected_f = verify.get("F", {})
+    if (
+        expected_f.get("pilot_subsample") != PILOT_SUBSAMPLE
+        or expected_f.get("conditioning_limit") != CONDITIONING_LIMIT
+        or expected_f.get("pilot_instances") != len(PILOT_INSTANCES)
+    ):
+        errors.append("amendment F was approved for a different tuning screen than the code uses")
     if tuple(verify.get("G", {}).get("datasets", ())) != tuple(DATASET_KEYS):
         errors.append("amendment G was approved for a different dataset set than the code uses")
     if int(verify.get("H", {}).get("main_text_figures", 0)) != 4:
@@ -629,7 +645,7 @@ def check_amendments() -> tuple[list[str], list[str], dict[str, object]]:
 def check_artifacts() -> tuple[list[str], list[str], dict[str, object]]:
     errors: list[str] = []
     panels: dict[str, int] = {}
-    for name in FIGURE_NAMES:
+    for name in (*FIGURE_NAMES, *APPENDIX_FIGURE_NAMES):
         base = FIGURES / name
         for suffix in (".pdf", ".png", ".md", ".json"):
             if not base.with_suffix(suffix).exists():

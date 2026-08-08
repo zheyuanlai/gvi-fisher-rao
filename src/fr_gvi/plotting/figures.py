@@ -1213,7 +1213,7 @@ def figure_k(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
         representative = frame[frame["job_id"] == job]
     representative = representative[representative["iteration"] > 0]
 
-    # Theorem 4.21 is a statement about the expectation, so the sample mean with
+    # The decreasing-step rate is a statement about the expectation, so the sample mean with
     # a standard-error band is the faithful summary here, not the median.
     summary_rows = []
     for method in ordered_methods(representative):
@@ -1282,7 +1282,7 @@ def figure_k(frame: pd.DataFrame) -> tuple[plt.Figure, str, pd.DataFrame]:
     legend_below(figure, axes)
     caption = (
         "Decreasing-stepsize schedule $\\Delta t_n = 8\\kappa_\\star/(n+n_0)$ with "
-        "$n_0=\\lceil 64\\kappa_\\star^2\\rceil$, exactly as in Theorem 4.21, run for 20000 "
+        "$n_0=\\lceil 64\\kappa_\\star^2\\rceil$, run for 20000 "
         "iterations with 30 seeds on shifted log-cosh targets with $d\\in\\{4,8\\}$, "
         "$\\rho\\in\\{0.3,1\\}$ and $B\\in\\{1,8\\}$. Curves are sample means over seeds "
         "with standard-error bands. (a) The expected objective gap follows the predicted "

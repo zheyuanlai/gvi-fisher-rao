@@ -36,7 +36,7 @@ mkdir -p "${REPO_ROOT}/results/logs"
   "${CONFIGS}/figure3_logistic" \
   "${CONFIGS}/figure3_stochastic_cancellation" \
   "${CONFIGS}/figure3_stochastic_floor" \
-  "${CONFIGS}/figure3_stochastic_decreasing" \
+  "${CONFIGS}/figure3_stochastic_step" \
   "${CONFIGS}/figure4_real_datasets" \
   "${CONFIGS}/appendix_scaling" \
   --jobs "${JOBS}" \

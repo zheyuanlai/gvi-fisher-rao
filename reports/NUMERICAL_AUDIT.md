@@ -42,9 +42,14 @@ The suite must pass before any campaign runs. It contains:
 | Linearized local rate (Proposition 3.5, Theorem 3.7) | Experiment G, `rho` over three decades | per-step rate settles onto the exact one-step prediction; all measurements inside the spectral bracket |
 | Gaussian STL pathwise cancellation (Corollary 4.20) | Experiment H, 30 seeds | across-seed spread at floating-point scale versus `O(1)` for the native BW estimator |
 | STL variance bound (Lemma 4.7) | Experiment I, direct comparison | bound holds at every state and batch size |
-| Minibatch floor `O(Delta t * V / B)` (Theorems 4.16, 4.17) | Experiment J, 8 cells, `B` to 64, 30 seeds | fitted `1/B` exponent near `-1.00` in every cell; floor also proportional to `Delta t` |
-| Decreasing-step `O(1/N)` (Theorem 4.21) | Experiment K, 20000 iterations, 30 seeds | tail log--log slope near `-1`, no additive floor |
+| Minibatch floor `O(Delta t * V / B)` (Theorems 4.16, 4.17) | Experiment J, 8 cells, `B` to 64, 30 seeds; Experiment T, four stepsizes at fixed `B` | fitted `1/B` exponent near `-1.00` in every cell, and fitted `Delta t` exponent near `+1`, so both factors of the predicted floor are measured |
+| Decreasing-step `O(1/N)`, exploratory only | Experiment K, 20000 iterations, 30 seeds | tail log--log slope near `-1`, no additive floor. An earlier manuscript draft proved this; the current draft is fixed-stepsize throughout, so no figure reports it |
 | Section 5 classification and modal rates | Experiment M, `(omega, tau)` grid, step refinement | predicted rates attained; residual is the `O(Delta t)` retraction bias and vanishes under refinement |
+| Cancellation is a property of the estimator, not the geometry | Experiment H promoted to the manuscript tier, five stochastic methods, 30 paired seeds | three groups spanning fifteen decades: FR STL schemes at roundoff, `BBVI--STL` decaying, `Price--BBVI` and `S--FB--GVI` flat at `O(1)` |
+| Published baselines reproduce their own fixed points | unit suite | `Sq--NGVI`, `Price--BBVI` and `BBVI--STL` each leave the exact Gaussian optimizing covariance fixed pathwise; `Sq--NGVI` agrees with `FR--R` to `O(h^2)` |
+| The benchmark's stepsizes are computable without the optimizer | regression suite, source scan of the selection path | no optimizer-whitened constant and no reference solve on the path; every benchmark step reproduces from the recorded multiplier and base scale |
+| Real posteriors stay inside the hypotheses | closed-form curvature on all five datasets | `alpha = lambda` exactly and `beta = lambda + lambda_max(X'X)/4` finite; references certify at `1e-25` residual squared |
+| Dense cost is `O(d^3)` algebra over an `O(nQ)` oracle | Experiment S, `d` to 200 | the oracle dominates at small `d` and the algebra overtakes it as `d` grows; the schemes separate by their constants |
 
 ## Corrections made during the campaign
 
@@ -82,7 +87,23 @@ by accepting the first output.
    leaving four references with residuals between `1e5` and `1e7`. It is now
    damped by a residual-decrease condition with backtracking, and falls back to
    the directly minimized surrogate if it still stalls.
-6. **The stochastic logistic comparison used an unfair step rule.** Placing all
+6. **A benchmark stepsize passed a screen it should have failed.** The first
+   implementable-rule screen compared only the last pilot iterate with the first.
+   That accepted, on `sonar`, an `FR--R` step which drove the covariance
+   condition number to `4.7e10` within a few iterations before recovering; the
+   resulting final trajectory needed a roundoff-scale covariance repair, which
+   the manuscript audit correctly refused. A screen on the objective's excursion
+   above its starting value was tried first and rejected: it also rejects the
+   `FR--KL` step that is 30 times faster than any alternative on several
+   datasets, whose first-step covariance contraction raises the objective
+   twentyfold at a conditioning that never exceeds `62`. The screen now bounds
+   the covariance conditioning at every pilot iterate, which separates the two
+   cases. Two related defects were caught by an explicit transfer check before
+   the campaign was launched: a multiplier calibrated on one problem instance
+   diverged on the next draw of the same family, and one calibrated at the
+   benchmark batch size diverged at the batch size its own panel used.
+
+7. **The stochastic logistic comparison used an unfair step rule.** Placing all
    three methods at the same multiple of their own certified step put S--FB--GVI
    about 32 times beyond its stable range, because the Fisher--Rao certified steps
    are conservative by one to two orders of magnitude and FB--GVI's is not. It made

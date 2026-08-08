@@ -759,7 +759,7 @@ def figure_a1() -> dict[str, object]:
 
 
 # ---------------------------------------------------------------------------
-# Figure 3: deterministic Bayesian logistic regression
+# Online appendix: synthetic Bayesian logistic regression
 # ---------------------------------------------------------------------------
 
 # The logistic group is split one config per (conditioning, dataset, method), so a
@@ -986,7 +986,7 @@ def figure_3() -> dict[str, object]:
         ),
     ]
     return compose(
-        "figure_3",
+        "figure_a3",
         panels,
         shape=(1, 3),
         height=2.55,
@@ -1005,12 +1005,8 @@ def figure_3() -> dict[str, object]:
 
 
 # ---------------------------------------------------------------------------
-# Figure 4: stochastic mechanisms
+# Figure 3: stochastic mechanisms
 # ---------------------------------------------------------------------------
-#
-# Numbered 4 in this module and renumbered to 3 in the manuscript, where the
-# synthetic logistic figure moves to the online appendix.  The module keeps the
-# build order so a rerun of one figure does not silently rename another.
 
 
 def _star_distance(frame: pd.DataFrame) -> pd.Series:
@@ -1103,7 +1099,7 @@ def _cancellation_caption(data: pd.DataFrame) -> str:
 FLOOR_TAIL_FRACTION = 0.2
 
 
-def _floor_table() -> pd.DataFrame:
+def _floor_table(experiment: str = "J") -> pd.DataFrame:
     """Stationary objective gap of every ``(method, variant, batch)`` cell.
 
     The floor is the level the iterates settle at, so it is read off the tail of
@@ -1112,11 +1108,14 @@ def _floor_table() -> pd.DataFrame:
     fifth of the run averages the fluctuation the theorem is about.
     """
 
-    frame = require(load_experiment("J", TIER), "J")
+    frame = require(load_experiment(experiment, TIER), experiment)
+    keys = ["method", "variant", "batch_size", "seed"]
+    if "step_size" in frame:
+        keys.insert(2, "step_size")
     rows: list[dict[str, object]] = []
-    for (method, variant, batch, seed), group in frame.groupby(
-        ["method", "variant", "batch_size", "seed"]
-    ):
+    for key, group in frame.groupby(keys):
+        method, variant = key[0], key[1]
+        batch, seed = key[-2], key[-1]
         group = group.sort_values("iteration")
         horizon = int(group["iteration"].max())
         tail = group[group["iteration"] >= (1.0 - FLOOR_TAIL_FRACTION) * horizon]
@@ -1130,6 +1129,7 @@ def _floor_table() -> pd.DataFrame:
                 "variant": str(variant),
                 "rescue": "-qr" in str(variant),
                 "batch_size": int(batch),
+                "step_size": float(group["step_size"].iloc[-1]),
                 "seed": int(seed),
                 "floor": float(np.mean(gaps)),
             }
@@ -1138,7 +1138,17 @@ def _floor_table() -> pd.DataFrame:
 
 
 def _floor_summary(table: pd.DataFrame) -> pd.DataFrame:
-    grouped = table[table["rescue"]].groupby(["method", "batch_size"])["floor"]
+    """One curve per method, using the rescued arm where a method has one.
+
+    Selecting on ``rescue`` alone silently dropped ``S--FB--GVI``, which has no
+    rescued variant at all, so the panel showed two of the three methods and the
+    two it showed coincide to three significant figures.  The ablation between
+    the rescued and unrescued arms is panel (d)'s job; here each method appears
+    once, at its default configuration.
+    """
+
+    keep = table[~table["variant"].str.contains("noqr")]
+    grouped = keep.groupby(["method", "batch_size"])["floor"]
     summary = grouped.median().reset_index().rename(columns={"floor": "median_floor"})
     summary["lower"] = grouped.quantile(0.1).to_numpy()
     summary["upper"] = grouped.quantile(0.9).to_numpy()
@@ -1158,6 +1168,7 @@ def _fitted_batch_exponent(summary: pd.DataFrame, method: str) -> float:
 
 def panel_batch_floor(axis: plt.Axes) -> pd.DataFrame:
     summary = _floor_summary(_floor_table())
+    batches = np.sort(summary["batch_size"].unique().astype(np.float64))
     for index, method in enumerate(ordered_methods(summary)):
         subset = summary[summary["method"] == method].sort_values("batch_size")
         axis.plot(
@@ -1173,7 +1184,6 @@ def panel_batch_floor(axis: plt.Axes) -> pd.DataFrame:
             positive(subset["upper"]),
             method_style(method, index)["color"],
         )
-    batches = np.sort(summary["batch_size"].unique().astype(np.float64))
     anchor = float(summary.loc[summary["batch_size"] == batches[0], "median_floor"].max())
     axis.plot(
         batches,
@@ -1186,6 +1196,12 @@ def panel_batch_floor(axis: plt.Axes) -> pd.DataFrame:
     axis.set_xlabel("batch size $B$")
     axis.set_ylabel(r"stationary gap $\Delta$")
     axis.set_xscale("log", base=2)
+    # The default base-2 locator lands between the sampled batch sizes and the
+    # mathtext formatter then renders labels like "1.25 x 2^3"; the sampled sizes
+    # are the only meaningful ticks here.
+    axis.set_xticks(batches)
+    axis.set_xticklabels([f"{int(value)}" for value in batches])
+    axis.minorticks_off()
     axis.set_yscale("log")
     return summary
 
@@ -1212,85 +1228,89 @@ def _batch_floor_caption(data: pd.DataFrame) -> str:
     )
 
 
-def _decreasing_frame() -> pd.DataFrame:
-    return require(load_experiment("K", TIER), "K")
+def _step_summary() -> pd.DataFrame:
+    """Stationary floor against stepsize at a fixed batch size."""
+
+    table = _floor_table("T")
+    grouped = table.groupby(["method", "step_size"])["floor"]
+    summary = grouped.median().reset_index().rename(columns={"floor": "median_floor"})
+    summary["lower"] = grouped.quantile(0.1).to_numpy()
+    summary["upper"] = grouped.quantile(0.9).to_numpy()
+    summary["batch_size"] = int(table["batch_size"].iloc[0])
+    return summary
 
 
-def panel_decreasing_step(axis: plt.Axes) -> pd.DataFrame:
-    frame = _decreasing_frame()
-    rows: list[dict[str, object]] = []
-    for (method, batch), group in frame.groupby(["method", "batch_size"]):
-        summary = group.groupby("iteration")["objective_gap"].mean()
-        for iteration, value in summary.items():
-            rows.append(
-                {
-                    "method": str(method),
-                    "batch_size": int(batch),
-                    "iteration": int(iteration),
-                    "expected_gap": float(value),
-                }
-            )
-    table = pd.DataFrame(rows)
-    for index, method in enumerate(ordered_methods(table)):
-        for batch in sorted(table["batch_size"].unique()):
-            subset = table[
-                (table["method"] == method) & (table["batch_size"] == batch)
-            ].sort_values("iteration")
-            values = positive(subset["expected_gap"])
-            style = method_style(method, index)
-            axis.plot(
-                subset["iteration"],
-                values,
-                label=method if batch == table["batch_size"].min() else None,
-                alpha=1.0 if batch == table["batch_size"].min() else 0.55,
-                marker="none",
-                color=style["color"],
-                linestyle=style["linestyle"],
-            )
-    iterations = np.asarray(sorted(table["iteration"].unique()), dtype=np.float64)
-    iterations = iterations[iterations > 0]
-    anchor = float(table.loc[table["iteration"] == iterations[0], "expected_gap"].max())
+def _fitted_step_exponent(summary: pd.DataFrame, method: str) -> float:
+    subset = summary[summary["method"] == method]
+    values = positive(subset["median_floor"])
+    finite = np.isfinite(values)
+    if finite.sum() < 3:
+        return float("nan")
+    return float(
+        np.polyfit(np.log(subset["step_size"].to_numpy()[finite]), np.log(values[finite]), 1)[0]
+    )
+
+
+def panel_step_floor(axis: plt.Axes) -> pd.DataFrame:
+    summary = _step_summary()
+    for index, method in enumerate(ordered_methods(summary)):
+        subset = summary[summary["method"] == method].sort_values("step_size")
+        axis.plot(
+            subset["step_size"],
+            positive(subset["median_floor"]),
+            label=method,
+            **method_style(method, index),
+        )
+        band(
+            axis,
+            subset["step_size"],
+            positive(subset["lower"]),
+            positive(subset["upper"]),
+            method_style(method, index)["color"],
+        )
+    steps = np.sort(summary["step_size"].unique().astype(np.float64))
+    anchor = float(summary.loc[summary["step_size"] == steps[0], "median_floor"].max())
     axis.plot(
-        iterations,
-        anchor * iterations[0] / iterations,
+        steps,
+        anchor * steps / steps[0],
         color=REFERENCE_GREY,
         linestyle=":",
         linewidth=1.0,
-        label=r"$N^{-1}$",
+        marker="none",
+        label=r"slope $+1$",
     )
-    axis.set_xlabel("iteration $N$")
-    axis.set_ylabel(r"$\mathbb{E}\,\Delta_N$")
+    axis.set_xlabel(r"stepsize $\Delta t$")
+    axis.set_ylabel(r"stationary gap $\Delta$")
     axis.set_xscale("log")
     axis.set_yscale("log")
-    return table
+    return summary
 
 
-def _decreasing_caption(data: pd.DataFrame) -> str:
-    horizon = int(data["iteration"].max())
-    tail = data[data["iteration"] >= horizon // 2]
-    slopes = []
-    for (method, batch), group in tail.groupby(["method", "batch_size"]):
-        values = positive(group["expected_gap"])
-        finite = np.isfinite(values)
-        if finite.sum() < 3:
-            continue
-        slopes.append(
-            float(
-                np.polyfit(
-                    np.log(group["iteration"].to_numpy()[finite]), np.log(values[finite]), 1
-                )[0]
-            )
-        )
-    span = f"{min(slopes):.2f}$ to $ {max(slopes):.2f}" if slopes else "n/a"
-    batches = ", ".join(str(int(value)) for value in sorted(data["batch_size"].unique()))
+def _step_floor_caption(data: pd.DataFrame) -> str:
+    exponents = {
+        method: _fitted_step_exponent(data, method) for method in sorted(data["method"].unique())
+    }
+    worst = max(
+        (abs(value - 1.0) for value in exponents.values() if np.isfinite(value)),
+        default=float("nan"),
+    )
+    listed = ", ".join(
+        f"{figure_text(method)} ${value:.2f}$" for method, value in sorted(exponents.items())
+    )
+    batch = int(data["batch_size"].iloc[0])
+    span = float(data["step_size"].max() / data["step_size"].min())
     return (
-        "Expected objective gap under the decreasing schedule "
-        r"$\Delta t_n = 8\kappa_\star/(n+n_0)$, averaged over paired seeds, at batch "
-        f"sizes $B \\in \\{{{batches}\\}}$ (the fainter curve is the larger batch). Over "
-        f"the second half of the {horizon}-iteration horizon the measured log--log "
-        f"slopes are ${span}$, against the $N^{{-1}}$ reference of Theorem 4.21, and no "
-        "additive floor appears: the residual level of the fixed-step analysis is what "
-        "the decreasing schedule removes."
+        "The other half of the same prediction: stationary objective gap against the "
+        f"stepsize at a fixed batch size $B={batch}$, over a factor of {span:.0f} in "
+        "$\\Delta t$, median over paired seeds with a 10--90 per cent band. "
+        f"The fitted exponents are {listed}, all within ${worst:.2f}$ of $+1$. Panel (b) "
+        "measures the $1/B$ factor and this one the $\\Delta t$ factor, so together they "
+        "establish the $\\Delta t / B$ floor of Theorems~\\ref{thm:Riemannian-stochastic-global} "
+        "and~\\ref{thm:KL-stochastic-global} rather than half of it. Each cell runs for the "
+        "same elapsed flow time $N\\Delta t$ rather than the same iteration count: the "
+        "deterministic transient is governed by flow time, and a common iteration budget "
+        "would leave the smallest step still inside its transient and report a level that "
+        "is not a floor."
     )
 
 
@@ -1354,22 +1374,22 @@ def _rescue_caption(data: pd.DataFrame) -> str:
 def figure_4() -> dict[str, object]:
     cancellation = sorted(load_experiment("H", TIER)["job_id"].unique())
     floors = sorted(load_experiment("J", TIER)["job_id"].unique())
-    decreasing = sorted(load_experiment("K", TIER)["job_id"].unique())
+    steps = sorted(load_experiment("T", TIER)["job_id"].unique())
     panels = [
         Panel("a", "Gaussian cancellation", _cancellation_caption, panel_cancellation, cancellation),
         Panel("b", r"Floor against $B$", _batch_floor_caption, panel_batch_floor, floors),
-        Panel("c", "Decreasing stepsize", _decreasing_caption, panel_decreasing_step, decreasing),
+        Panel("c", r"Floor against $\Delta t$", _step_floor_caption, panel_step_floor, steps),
         Panel("d", "Quadratic rescue", _rescue_caption, panel_rescue_ablation, floors),
     ]
     return compose(
-        "figure_4",
+        "figure_3",
         panels,
         shape=(2, 2),
         height=4.6,
         lead=(
             "The mechanisms behind the stochastic theory of Section~\\ref{sec:stochastic}. "
             "All four panels use the joint gradient--Hessian oracle of "
-            "Section~\\ref{subsec:oracle-rescue} at a fixed stepsize, with paired seeds "
+            "Section~\\ref{subsec:oracle-rescue}, with paired seeds "
             "across methods so that a difference between curves is a difference between "
             "estimators rather than between random draws."
         ),
@@ -1378,7 +1398,7 @@ def figure_4() -> dict[str, object]:
 
 
 # ---------------------------------------------------------------------------
-# Figure 5: the practical benchmark on real posteriors
+# Figure 4: the practical benchmark on real posteriors
 # ---------------------------------------------------------------------------
 
 BENCHMARK_TOLERANCE = 1.0e-4
@@ -1601,7 +1621,7 @@ def figure_5() -> dict[str, object]:
         Panel("d", "Across datasets", _tolerance_caption, panel_time_to_tolerance, sources),
     ]
     return compose(
-        "figure_5",
+        "figure_4",
         panels,
         shape=(2, 2),
         height=4.9,
@@ -1676,48 +1696,87 @@ def panel_scaling_cost(axis: plt.Axes) -> pd.DataFrame:
 
 
 def _scaling_cost_caption(data: pd.DataFrame) -> str:
-    largest = int(data["dimension"].max())
-    smallest = int(data["dimension"].min())
-    tail = data[data["dimension"] == largest]
+    smallest, largest = int(data["dimension"].min()), int(data["dimension"].max())
+    ratio = data["oracle_ms_per_iteration"] / data["algebra_ms_per_iteration"]
     head = data[data["dimension"] == smallest]
-    crossings = tail[tail["algebra_ms_per_iteration"] > tail["oracle_ms_per_iteration"]]
-    crossed = (
-        ", ".join(sorted(figure_text(name) for name in crossings["method"]))
-        if not crossings.empty
-        else "none"
+    tail = data[data["dimension"] == largest]
+    cheapest = tail.loc[tail["algebra_ms_per_iteration"].idxmin(), "method"]
+    dearest = tail.loc[tail["algebra_ms_per_iteration"].idxmax(), "method"]
+    spread = float(
+        tail["algebra_ms_per_iteration"].max() / tail["algebra_ms_per_iteration"].min()
     )
     return (
         "Dense linear-algebra time per iteration against dimension, with the model "
-        "oracle drawn separately in grey and a $d^3$ reference. At $d="
-        f"{smallest}$ the oracle dominates every method's algebra by a factor of "
-        f"{float(head['oracle_ms_per_iteration'].median() / max(head['algebra_ms_per_iteration'].median(), 1e-12)):.0f}, "
-        "which is why the main-text wall-clock panels largely repeat the shape of their "
-        f"iteration-count panels. By $d={largest}$ the algebra has overtaken the oracle "
-        f"for {crossed}. This is where the full-covariance assumption starts to cost: "
-        "the storage is $O(d^2)$ and the per-iteration algebra is $O(d^3)$ for every "
-        "method here, and the schemes separate by their constants -- the matrix "
-        "exponential of the retraction against the resolvent solve of the Bregman scheme "
-        "against the single Cholesky update of the square-root method."
+        "oracle drawn separately in grey and a $d^3$ reference. The oracle dominates "
+        f"the algebra at every dimension measured, by a factor of {float(ratio.max()):.0f} "
+        f"at most and {float(ratio.min()):.0f} at least, and it does not stop doing so: "
+        f"with $n=10d$ the expectation costs $O(nQ + nd^2) = O(d^3)$ as well, so both "
+        "sides of the comparison have the same order and the crossover is a property of "
+        "the $n/d$ regime rather than of $d$ alone. That is worth knowing in itself --- "
+        "on a problem whose data grows with its dimension, the dense full-covariance "
+        "algebra is not what a method pays for, which is why the main-text wall-clock "
+        "panels largely repeat the shape of their iteration-count panels. Within the "
+        f"algebra the schemes separate by their constants: at $d={largest}$ "
+        f"{figure_text(dearest)} costs {spread:.1f} times {figure_text(cheapest)}, the "
+        "matrix exponential of the retraction against the single Cholesky update of the "
+        f"square-root method. At $d={smallest}$ that spread is only "
+        f"{float(head['algebra_ms_per_iteration'].max() / head['algebra_ms_per_iteration'].min()):.1f}."
     )
 
 
 def panel_scaling_accuracy(axis: plt.Axes) -> pd.DataFrame:
-    """Whether better iteration counts survive the cost of getting them."""
+    """Whether better iteration counts survive the cost of getting them.
+
+    Gaps at or below the double-precision resolution of the objective are drawn
+    *on* the floor rather than dropped.  Clamping is normally the wrong instinct,
+    but here the values below the floor are exact zeros produced by runs that
+    converged, and simply omitting them would erase from the panel precisely the
+    methods that did best.
+    """
 
     table = _scaling_table()
+    floor = float(table["resolution_floor"].max())
     for index, method in enumerate(ordered_methods(table)):
         subset = table[table["method"] == method].sort_values("dimension")
-        axis.plot(
-            subset["dimension"],
-            positive(subset["terminal_gap_median"]),
-            label=method,
-            **method_style(method, index),
-        )
+        values = np.maximum(subset["terminal_gap_median"].to_numpy(dtype=np.float64), floor)
+        axis.plot(subset["dimension"], values, label=method, **method_style(method, index))
+    axis.axhline(
+        floor,
+        color=REFERENCE_GREY,
+        linestyle=":",
+        linewidth=1.0,
+        label="objective resolution",
+    )
     axis.set_xlabel("dimension $d$")
     axis.set_ylabel("objective gap at a fixed budget")
     axis.set_xscale("log")
     axis.set_yscale("log")
     return table
+
+
+def _scaling_accuracy_caption(data: pd.DataFrame) -> str:
+    floor = float(data["resolution_floor"].max())
+    largest = int(data["dimension"].max())
+    tail = data[data["dimension"] == largest].set_index("method")["terminal_gap_median"]
+    converged = sorted(
+        figure_text(name) for name, value in tail.items() if value <= floor
+    )
+    worst = tail.idxmax()
+    return (
+        "Objective gap after a common iteration budget, median over problem instances, "
+        "with the double-precision resolution of the objective drawn as a floor; a curve "
+        "on the floor converged rather than stalled. Read with (a), this is what decides "
+        "whether a method's iteration count survives the cost of producing it, and here "
+        "the two panels point the same way: the per-iteration costs differ by a small "
+        f"constant while the accuracy at a fixed budget differs by decades. At $d={largest}$ "
+        + (
+            f"{', '.join(converged)} still reach the resolution floor while "
+            f"{figure_text(str(worst))} is left at ${float(tail.max()):.2g}$"
+            if converged
+            else f"no method reaches the floor and the worst gap is ${float(tail.max()):.2g}$"
+        )
+        + ". The dimension enters through the admissible stepsize, not through the cost."
+    )
 
 
 def figure_a2() -> dict[str, object]:
@@ -1727,11 +1786,7 @@ def figure_a2() -> dict[str, object]:
         Panel(
             "b",
             "Accuracy at a fixed budget",
-            "Objective gap after a common iteration budget, median over problem "
-            "instances. Read with (a) this answers whether a method's iteration count "
-            "survives the cost of producing it: a scheme that needs fewer iterations but "
-            "pays more per iteration only wins where the gap between the curves in (a) is "
-            "smaller than the gap between the curves here.",
+            _scaling_accuracy_caption,
             panel_scaling_accuracy,
             sources,
         ),
@@ -1753,15 +1808,16 @@ def figure_a2() -> dict[str, object]:
     )
 
 
+# CLI index to builder.  Main-text figures are 1--4; the online appendix figures
+# are 101 and above and write ``figure_a*`` files.
 BUILDERS = {
     1: figure_1,
     2: figure_2,
-    3: figure_3,
-    4: figure_4,
-    5: figure_5,
-    # The online appendix figures, built from the same campaign.
+    3: figure_4,
+    4: figure_5,
     101: figure_a1,
     102: figure_a2,
+    103: figure_3,
 }
 
 

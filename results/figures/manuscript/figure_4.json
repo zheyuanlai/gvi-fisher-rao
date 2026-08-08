@@ -1,0 +1,133 @@
+{
+  "figure": "figure_4",
+  "git": {
+    "code_hash": "24c5cc9e1b92f24238f669c305d80eacac2c3a5f9693f7a195ff796e882ff339",
+    "commit": "09fcc303d8307d67f42d3d648c3fd37dd4fc8541",
+    "dirty": true
+  },
+  "outputs": [
+    "results/figures/manuscript/figure_4.pdf",
+    "results/figures/manuscript/figure_4.png",
+    "results/figures/manuscript/figure_4.md"
+  ],
+  "panels": [
+    {
+      "config_ids": [
+        "F4real_ionosphere_bbvi-stl",
+        "F4real_ionosphere_fb-gvi",
+        "F4real_ionosphere_fr-kl",
+        "F4real_ionosphere_fr-kl-stl",
+        "F4real_ionosphere_fr-r",
+        "F4real_ionosphere_fr-r-stl",
+        "F4real_ionosphere_laplace",
+        "F4real_ionosphere_price-bbvi",
+        "F4real_ionosphere_s-fb-gvi",
+        "F4real_ionosphere_sq-ngvi"
+      ],
+      "panel": "a",
+      "processed_csv": "results/processed/manuscript/figure_4_a.csv",
+      "rows": 2405,
+      "title": "Deterministic, objective"
+    },
+    {
+      "config_ids": [
+        "F4real_ionosphere_bbvi-stl",
+        "F4real_ionosphere_fb-gvi",
+        "F4real_ionosphere_fr-kl",
+        "F4real_ionosphere_fr-kl-stl",
+        "F4real_ionosphere_fr-r",
+        "F4real_ionosphere_fr-r-stl",
+        "F4real_ionosphere_laplace",
+        "F4real_ionosphere_price-bbvi",
+        "F4real_ionosphere_s-fb-gvi",
+        "F4real_ionosphere_sq-ngvi"
+      ],
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_4_b.csv",
+      "rows": 3006,
+      "title": "Stochastic, objective"
+    },
+    {
+      "config_ids": [
+        "F4real_ionosphere_bbvi-stl",
+        "F4real_ionosphere_fb-gvi",
+        "F4real_ionosphere_fr-kl",
+        "F4real_ionosphere_fr-kl-stl",
+        "F4real_ionosphere_fr-r",
+        "F4real_ionosphere_fr-r-stl",
+        "F4real_ionosphere_laplace",
+        "F4real_ionosphere_price-bbvi",
+        "F4real_ionosphere_s-fb-gvi",
+        "F4real_ionosphere_sq-ngvi"
+      ],
+      "panel": "c",
+      "processed_csv": "results/processed/manuscript/figure_4_c.csv",
+      "rows": 5410,
+      "title": "Held-out predictive"
+    },
+    {
+      "config_ids": [
+        "F4real_ionosphere_bbvi-stl",
+        "F4real_ionosphere_fb-gvi",
+        "F4real_ionosphere_fr-kl",
+        "F4real_ionosphere_fr-kl-stl",
+        "F4real_ionosphere_fr-r",
+        "F4real_ionosphere_fr-r-stl",
+        "F4real_ionosphere_laplace",
+        "F4real_ionosphere_price-bbvi",
+        "F4real_ionosphere_s-fb-gvi",
+        "F4real_ionosphere_sq-ngvi",
+        "F4real_pima_bbvi-stl",
+        "F4real_pima_fb-gvi",
+        "F4real_pima_fr-kl",
+        "F4real_pima_fr-kl-stl",
+        "F4real_pima_fr-r",
+        "F4real_pima_fr-r-stl",
+        "F4real_pima_laplace",
+        "F4real_pima_price-bbvi",
+        "F4real_pima_s-fb-gvi",
+        "F4real_pima_sq-ngvi",
+        "F4real_sonar_bbvi-stl",
+        "F4real_sonar_fb-gvi",
+        "F4real_sonar_fr-kl",
+        "F4real_sonar_fr-kl-stl",
+        "F4real_sonar_fr-r",
+        "F4real_sonar_fr-r-stl",
+        "F4real_sonar_laplace",
+        "F4real_sonar_price-bbvi",
+        "F4real_sonar_s-fb-gvi",
+        "F4real_sonar_sq-ngvi",
+        "F4real_spambase_bbvi-stl",
+        "F4real_spambase_fb-gvi",
+        "F4real_spambase_fr-kl",
+        "F4real_spambase_fr-kl-stl",
+        "F4real_spambase_fr-r",
+        "F4real_spambase_fr-r-stl",
+        "F4real_spambase_laplace",
+        "F4real_spambase_price-bbvi",
+        "F4real_spambase_s-fb-gvi",
+        "F4real_spambase_sq-ngvi",
+        "F4real_wdbc_bbvi-stl",
+        "F4real_wdbc_fb-gvi",
+        "F4real_wdbc_fr-kl",
+        "F4real_wdbc_fr-kl-stl",
+        "F4real_wdbc_fr-r",
+        "F4real_wdbc_fr-r-stl",
+        "F4real_wdbc_laplace",
+        "F4real_wdbc_price-bbvi",
+        "F4real_wdbc_s-fb-gvi",
+        "F4real_wdbc_sq-ngvi"
+      ],
+      "panel": "d",
+      "processed_csv": "results/processed/manuscript/figure_4_d.csv",
+      "rows": 145,
+      "title": "Across datasets"
+    }
+  ],
+  "stepsize_protocol": {
+    "FB--GVI": 1.0,
+    "FR--KL": 2.0,
+    "FR--R": 2.0
+  },
+  "tier": "manuscript"
+}

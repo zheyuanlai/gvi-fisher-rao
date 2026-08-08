@@ -10,20 +10,36 @@ publication-ready figures.
 
 ## The manuscript campaign
 
-The figures of the paper come from a reduced, preregistered campaign of 131
-deterministic trajectories, separate from the exploratory grids. Three experiment
-groups produce three figures: Gaussian structure and affine invariance, global-to-local
-convergence on non-Gaussian targets, and deterministic Bayesian logistic regression.
-Only `FR--R`, `FR--KL` and `FB--GVI` iterate, with `Laplace` as a non-iterative
-reference. The Bures-Wasserstein baseline is drawn as `BW-FB` in the figures, so
-that all three labels name their geometry before their discretization; the stored
-identifier stays `FB--GVI`.
+The figures of the paper come from a reduced, preregistered campaign of 1821
+trajectories over eleven config groups, separate from the exploratory grids. Four
+main-text figures and one table: Gaussian structure and affine invariance,
+global-to-local convergence on non-Gaussian targets, the stochastic mechanisms of
+Section 4, and a practical benchmark on five real posteriors; three further
+figures go to the online appendix.
+
+Two things about the campaign are worth stating up front, because they are what
+make its comparisons hard to dismiss.
+
+**Geometry and estimator vary independently.** Restricted to Fisher-Rao against
+Bures-Wasserstein, a campaign can only report that the two differ. Adding
+`Sq--NGVI`, `Price--BBVI` and `BBVI--STL` puts a second axis on the comparison:
+`Price--BBVI` shares its estimator with `S--FB--GVI` and its parameter space with
+`BBVI--STL`, so the pattern of agreement says which axis the behaviour follows.
+
+**Benchmark stepsizes never read the optimizer.** The theorem-diagnostic panels
+use certified steps and the earlier practical panels use an optimizer-whitened
+scale, both legitimate where they are used. Everything that is a benchmark
+instead uses a rule computable from the model and the initialization alone --
+see [the tuning module](src/fr_gvi/experiments/tuning.py) -- with a regression
+test asserting structurally that no optimizer-whitened constant is on that path.
 
 ```bash
-make manuscript-pilot     # sweep the two pilot cells, freeze the stepsizes
-make manuscript-configs   # instantiate the 87 configs
-make manuscript-runs      # 131 trajectories
-make manuscript-figures   # figures 1-3 plus the width and font audit
+make manuscript-datasets  # fetch and hash-pin the five real datasets, once
+make manuscript-pilot     # sweep the two pilot cells, freeze the practical steps
+make manuscript-tuning    # select the implementable steps for the benchmark
+make manuscript-configs   # instantiate the 154 configs
+make manuscript-runs      # 1821 trajectories
+make manuscript-figures   # figures 1-4, the appendix figures, and the plot audit
 make manuscript-tables
 make manuscript-audit
 ```
@@ -50,12 +66,19 @@ and the commit; every panel carries its processed CSV.
 | FR-R, FR-KL | Deterministic Fisher-Rao Riemannian-retraction and KL/Bregman schemes |
 | FR-R-STL, FR-KL-STL | Stochastic Price/Hessian sticking-the-landing variants |
 | FB-GVI, S-FB-GVI | Deterministic and minibatch Bures-Wasserstein baselines from [Diao et al.](https://arxiv.org/abs/2304.05398) |
+| Sq-NGVI | Square-root variational Newton, [Kumar et al.](https://arxiv.org/abs/2507.07853) Algorithm 1 |
+| Price-BBVI | Parameter-space SPGD with the Bonnet-Price estimator, [Kim et al.](https://arxiv.org/abs/2602.18718) |
+| BBVI-STL | Projected SGD with the sticking-the-landing estimator, [Kim et al.](https://arxiv.org/abs/2307.14642) |
 | Laplace | Non-iterative logistic-regression approximation baseline |
 | Affine-invariant metric family | Section 5 classification-verification tool, excluded from the main comparison |
 
 The Bures-Wasserstein comparison is deliberately restricted to FB-GVI and
-S-FB-GVI. Invalid covariance updates are recorded as failures; algorithms are
+S-FB-GVI. Invalid covariance updates are recorded as failures; our algorithms are
 never stabilized by covariance eigenvalue clipping or silent stepsize reduction.
+The three external comparators are implemented as published, including their own
+safeguards -- Price-BBVI's entropy proximal step and BBVI-STL's projection --
+because those are part of the algorithms rather than repairs added here; every
+activation is counted and reported.
 
 ## Experiments
 
@@ -70,14 +93,19 @@ never stabilized by covariance eigenvalue clipping or silent stepsize reduction.
 | H | Gaussian STL pathwise cancellation |
 | I | Raw-score versus STL estimator variance |
 | J | Minibatch residual floors versus batch size |
-| K | Decreasing-stepsize schedule |
-| L | Bayesian logistic regression |
+| T | Minibatch residual floors versus stepsize |
+| L | Bayesian logistic regression, synthetic, controlled conditioning |
 | M | Modal rates of the affine-invariant metric family |
+| R | Bayesian logistic regression on five real, hash-pinned posteriors |
+| S | Dimensional scaling and the oracle/algebra cost split |
 
 ## Quick start
 
 Requirements: Linux or macOS, Python 3.11-3.13, and approximately 8 GB of RAM
-for the full campaign. No GPU is required.
+for the full campaign. No GPU is required. The real datasets are fetched once
+from OpenML and cached under `data/`; after that the campaign runs offline, and
+`configs/datasets/manifest.json` pins each file by SHA-256 so a silent upstream
+edit is an error rather than a new result.
 
 From the repository root:
 
@@ -115,9 +143,10 @@ scripts already restrict BLAS libraries to one thread per worker.
 
 ## Results and reproducibility
 
-The three manuscript figures are `results/figures/manuscript/figure_1.{pdf,png}`
-through `figure_3.{pdf,png}`, each with a caption draft, a provenance JSON and one
-processed CSV per panel under `results/processed/manuscript/`. The exploratory
+The four manuscript figures are `results/figures/manuscript/figure_1.{pdf,png}`
+through `figure_4.{pdf,png}`, with `figure_a1` through `figure_a3` for the online
+appendix; each carries a caption draft, a provenance JSON and one processed CSV
+per panel under `results/processed/manuscript/`. The exploratory
 campaign additionally produces the older `main_figure_*` composites and one figure
 per experiment.
 

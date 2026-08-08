@@ -42,13 +42,13 @@
   "methods": [
     {
       "name": "FR--R",
-      "normalized_step_size": 0.5,
+      "normalized_step_size": 0.25,
       "step_rule": "implementable_grid",
       "step_scale": 1.0,
-      "step_size": 0.5,
+      "step_size": 0.25,
       "tuning_censored": false,
-      "tuning_exponent": 1,
-      "tuning_oracle_pairs": 664
+      "tuning_exponent": 2,
+      "tuning_oracle_pairs": 605
     }
   ],
   "quadrature_order": 48,

@@ -3,42 +3,124 @@
 The exploratory campaign in `configs/full` sweeps stepsizes and replicates; it
 exists to locate stable operating points and to check the implementation against
 the theory. The manuscript needs far less. This note records the reduced,
-preregistered protocol behind the three figures of the numerical section, the
-decisions it rests on, and the places where the executed protocol differs from the
-plan it was written against.
+preregistered protocol behind the numerical section, the decisions it rests on,
+and the places where the executed protocol differs from the plan it was written
+against.
 
 ## Scope
 
-Three deterministic experiment groups, three figures, 87 config files, 131
-trajectories.  The config count exceeds the cell count because the logistic group
-is split one file per (conditioning, dataset, method) so the campaign, which
-parallelizes over config files, can run those trajectories independently.
+Eleven experiment groups, four main-text figures, three appendix figures, one
+accounting table, 154 config files, 1821 trajectories.  The config count exceeds
+the cell count because the logistic and benchmark groups are split one file per
+(cell, method) so the campaign, which parallelizes over config files, can run
+those trajectories independently.
 
 | Group | Figure | Trajectories | Purpose |
 |---|---|---|---|
 | Gaussian structure and affine invariance | 1 | 8 + 12 + 3 = 23 | the central geometric motivation |
 | Global-to-local deterministic convergence | 2 | 36 + 12 = 48 | the global and local theorems on non-Gaussian targets |
-| Bayesian logistic regression | 3 | 60 | the deterministic algorithms on a genuine VI problem |
+| Stochastic mechanisms | 3 | 150 + 1050 + 240 = 1440 | Section 4: cancellation, and the two factors of the `Delta t / B` floor, and the rescue |
+| Practical benchmark on real posteriors | 4 | 150 | the methods on data someone actually has |
+| Synthetic logistic conditioning sweep | A3 | 60 | the controlled version of the benchmark |
+| Dimensional scaling and oracle cost | A2 | 100 | where the dense full-covariance cost goes |
 
-The numerical section is deterministic throughout. The stochastic results of the
-manuscript are non-asymptotic guarantees rather than a benchmarking contribution,
-and are not studied systematically here; the exploratory campaign retains the
-stochastic experiments (H, I, J, K) if an appendix figure is later wanted.
+The stochastic experiments were previously left outside the manuscript, on the
+grounds that Section 4 is a set of guarantees rather than a benchmarking
+contribution.  That was the wrong call.  An entire section of algorithmic theory
+with no numerical demonstration is a gap, and the mechanisms it predicts --
+pathwise cancellation and a stationary floor proportional to `Delta t / B` -- are
+exactly the kind a measurement can falsify.  They are now Figure 3.
+
+An earlier version of this campaign also measured the `O(1/N)` tail of a
+decreasing-stepsize schedule.  That theorem was in an earlier draft of the
+manuscript and is not in the current one, so the panel validated a result the
+paper does not state; it was replaced by the stepsize sweep, which measures the
+`Delta t` factor of a floor the paper does state and which nothing else in the
+campaign checked.
 
 ## Methods
 
-Only `FR--R`, `FR--KL` and `FB--GVI` iterate, with `Laplace` as a non-iterative
-reference on the logistic problem. There is no Wasserstein warm start, no
-Wasserstein--Fisher--Rao hybrid, no covariance rescue in a deterministic
-comparison, no BWGD or BW--SGD, no projected method, no decreasing-stepsize
-schedule and no affine-metric family. `make manuscript-audit` fails if any run
-outside this set appears.
+Nine iterating methods plus `Laplace`, on two axes:
+
+| | Fisher--Rao | Bures--Wasserstein | Parameter space |
+|---|---|---|---|
+| Deterministic | `FR--R`, `FR--KL` | `FB--GVI` | `Sq--NGVI` |
+| Price/Hessian estimator | `FR--R--STL`, `FR--KL--STL` | `S--FB--GVI` | `Price--BBVI` |
+| Gradient-only estimator | -- | -- | `BBVI--STL` |
+
+`Price--BBVI` shares its estimator with `S--FB--GVI` and its parameter space with
+`BBVI--STL`, which is what turns a one-way geometry comparison into a two-way
+one.  Still excluded: no Wasserstein warm start, no Wasserstein--Fisher--Rao
+hybrid, no BWGD or BW--SGD, no projected Fisher--Rao variant, no Euclidean or
+quasi-Newton optimizer, no diagonal or low-rank family.  `make manuscript-audit`
+fails if any run outside the admitted set appears.
+
+The three external comparators are implemented from the papers' own algorithm
+statements: `Sq--NGVI` is Kumar et al. Algorithm 1 and Equation (14),
+`Price--BBVI` is Kim et al.'s SPGD in the parameterization of their Assumption
+2.2 with the Bonnet--Price estimator and the closed-form entropy prox, and
+`BBVI--STL` is Kim et al.'s projected SGD with the Definition 5 estimator and the
+Proposition 1 projection.  Their safeguards are applied because they are part of
+the algorithms and of the domains their guarantees are stated on; omitting one
+would not be a fairer comparison, it would be a comparison against an algorithm
+nobody proposed.  Every activation is counted and reported.  None of our methods
+has a safeguard, and `Sq--NGVI` has none either, so its factor breakdowns are
+recorded as failures.
 
 ## Stepsize protocol
 
-The final figures show no stepsize sweep. Panels that verify a theorem use the
-step that theorem certifies. Everything else uses one frozen practical multiplier
-per method, selected once on a designated pilot cell.
+The final figures show no stepsize sweep.  Three regimes coexist and every
+method specification declares in its config which one it is in, so each is
+checked by a different gate.
+
+| Rule | Where | What it reads |
+|---|---|---|
+| `certified` | panels that verify a theorem | the step that theorem admits |
+| `capped_practical` | the `1/B` floor panel | deliberately above the certified step, see below |
+| `pilot_frozen` | the deterministic non-Gaussian comparisons | an optimizer-whitened scale, see below |
+| `implementable_grid` | the whole benchmark, the cancellation panel, the scaling study | nothing the theory reserves for the analysis |
+
+The `capped_practical` departure is deliberate and is the only place a panel runs
+above its certified step: the certified step scales like `1/kappa_star`, and at
+that step the horizon needed to leave the deterministic transient exceeds any
+affordable budget, so a measured floor would be flat in `B` for a reason that has
+nothing to do with the theorem being tested.
+
+### The implementable rule
+
+`pilot_frozen` is written in `beta_star` and `lambda_{0,star}^max`, which require
+`C_star`.  That is fine for a diagnostic, whose job is to place every method at a
+comparable point of its own stable range, and indefensible for a benchmark.  The
+benchmark instead uses:
+
+- **base scale** `h_0 = 1` for the affine-equivariant natural-gradient updates,
+  whose stepsize is dimensionless, and `h_0 = 1/lambda_max(H(a_0))` for the
+  Euclidean ones -- one expected Hessian at the initialization;
+- **candidates** `h_0 2^{-k}`, `k = -3 .. 11`;
+- **admissibility** positive definite covariance, finite objectives, no repair
+  logged, objective decrease over a fixed pilot horizon;
+- **selection** the lowest *training* objective among the admissible.
+
+Selection runs on a disjoint 50% subsample of the training rows, so no number a
+figure reports was used to choose a stepsize, and the base scale is recomputed on
+the full problem.  The tuning cost is counted in oracle pairs and reported.
+
+Two refinements were forced by the data, not added for symmetry.
+
+1. **Three problem instances, most conservative choice.**  A multiplier selected
+   on one draw of a randomly generated cell diverged on the next: on the Gaussian
+   cancellation cell the stability boundary moves by a full grid factor between
+   draws.  Fixed datasets have one instance and are unaffected.
+2. **Calibrate at the deployment batch size.**  A stochastic step admissible at
+   `B = 16` is not admissible at `B = 1`; the noise the update absorbs scales like
+   `1/B`.  Tuning the cancellation panel at the benchmark's batch size selected a
+   step that diverged at the panel's own.
+
+Both were caught by an explicit transfer check -- every selected step rerun at the
+full horizon on the instance the campaign will use -- before the campaign was
+launched.  That check is the reason the campaign has no failed trajectories.
+
+### The frozen practical multipliers
 
 **Pilots.** Two cells, one per target family, because a single cell cannot
 calibrate both regimes: the whitened log-cosh cell starts with its covariance
@@ -104,6 +186,9 @@ at exactly its own certified step everywhere.
 | Global non-Gaussian | `m_0 = 2 e_1`, `C_0 = I`, in optimizer-whitened coordinates |
 | Local rate | `a_0 = a_star + r v_min` along the slowest eigenmode of `L_star` |
 | Logistic regression | `m_0 = 0`, `C_0 = lambda_prior^{-1} I` |
+| Stochastic cancellation | `C_0 = C_star` matched, `m_0` displaced |
+| Floor and stepsize sweep | quadratic rescue, then the stochastic iteration |
+| Real-data benchmark | `m_0 = 0`, `C_0 = lambda_prior^{-1} I` |
 
 The non-Gaussian targets are constructed so that `C_star = I` exactly: the
 separable optimizer `diag(sigma^2)` does not depend on the affine map, so
@@ -122,6 +207,7 @@ to the minimizer of a sampled surrogate.
 | Gaussian | closed form |
 | log-cosh | panelled Gauss--Legendre per coordinate, order 32 for updates and 64 for evaluation |
 | logistic | panelled Gauss--Legendre per linear predictor, order 48 for updates and 96 for evaluation and the reference |
+| real-data logistic | the same rule; the reduction to one-dimensional integrals is a property of the likelihood, not of the design |
 
 The logistic reduction is what makes this possible: `V` depends on `theta` only
 through the linear predictors `z_i = x_i . theta`, and `z_i` is a scalar Gaussian
@@ -170,10 +256,12 @@ numerical plateau is never drawn as if it were convergence.
 
 ```bash
 make test
+make manuscript-datasets  # fetch and hash-pin the five real datasets, once
 make manuscript-pilot     # sweeps the pilot and writes selected_steps.json
-make manuscript-configs   # instantiates the 87 configs from the frozen steps
-make manuscript-runs      # 131 trajectories
-make manuscript-figures   # figures 1-3, plus the width and font audit
+make manuscript-tuning    # implementable steps for the benchmark and scaling study
+make manuscript-configs   # instantiates the 152 configs from both step records
+make manuscript-runs      # 1821 trajectories
+make manuscript-figures   # figures 1-4 and a1-a3, plus the width and font audit
 make manuscript-tables
 make manuscript-audit
 ```
@@ -184,14 +272,27 @@ commit they were produced from; every panel carries its processed CSV.
 
 ## Deviations from the plan this protocol was written against
 
-All four are recorded in `configs/manuscript/protocol_amendments.json` with what
+All eight are recorded in `configs/manuscript/protocol_amendments.json` with what
 was requested, what was implemented, the reason, the cost, and the author's
-decision. All four were approved on 2026-08-07. `make manuscript-audit` fails if
+decision.  A--D were approved on 2026-08-07 and E--H on 2026-08-08. `make manuscript-audit` fails if
 an amendment is undecided, records no decision maker, omits its cost, or if the
 implementation drifts from the fingerprint that was approved, so a deviation
 cannot pass merely because no gate mentions it.
 
-Three, each forced by something the data showed.
+The first four were each forced by something the data showed; E--H are the
+scope changes that turned a deterministic theorem-diagnostic section into one
+that also demonstrates Section 4 and benchmarks against current methods.  Their
+full statements are in the JSON; in brief:
+
+- **E** adds `Sq--NGVI`, `Price--BBVI` and `BBVI--STL`, each with its own
+  published safeguard, counted.
+- **F** replaces the optimizer-whitened practical scale with the implementable
+  rule, for the benchmark and the scaling study only.
+- **G** replaces synthetic logistic designs with five hash-pinned real posteriors
+  in the headline comparison, retaining the synthetic sweep in the appendix.
+- **H** compresses the main text to four figures and one table and moves the rest
+  to an online appendix.
+
 
 ### 1. The frozen multiplier applies to a different scale, on two pilot cells
 

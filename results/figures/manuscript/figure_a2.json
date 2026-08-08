@@ -1,0 +1,47 @@
+{
+  "figure": "figure_a2",
+  "git": {
+    "code_hash": "24c5cc9e1b92f24238f669c305d80eacac2c3a5f9693f7a195ff796e882ff339",
+    "commit": "09fcc303d8307d67f42d3d648c3fd37dd4fc8541",
+    "dirty": true
+  },
+  "outputs": [
+    "results/figures/manuscript/figure_a2.pdf",
+    "results/figures/manuscript/figure_a2.png",
+    "results/figures/manuscript/figure_a2.md"
+  ],
+  "panels": [
+    {
+      "config_ids": [
+        "Ascale_d10",
+        "Ascale_d100",
+        "Ascale_d200",
+        "Ascale_d25",
+        "Ascale_d50"
+      ],
+      "panel": "a",
+      "processed_csv": "results/processed/manuscript/figure_a2_a.csv",
+      "rows": 20,
+      "title": "Cost per iteration"
+    },
+    {
+      "config_ids": [
+        "Ascale_d10",
+        "Ascale_d100",
+        "Ascale_d200",
+        "Ascale_d25",
+        "Ascale_d50"
+      ],
+      "panel": "b",
+      "processed_csv": "results/processed/manuscript/figure_a2_b.csv",
+      "rows": 20,
+      "title": "Accuracy at a fixed budget"
+    }
+  ],
+  "stepsize_protocol": {
+    "FB--GVI": 1.0,
+    "FR--KL": 2.0,
+    "FR--R": 2.0
+  },
+  "tier": "manuscript"
+}
