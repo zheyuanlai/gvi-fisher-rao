@@ -34,16 +34,16 @@ python -m pytest -q
 
 ## Methods
 
-| Method | Description |
-| --- | --- |
-| FR-R | Fisher-Rao Riemannian gradient update |
-| FR-KL | Fisher-Rao Bregman/KL update |
-| FR-R-STL, FR-KL-STL | Sticking-the-landing stochastic updates |
-| BW-FB, S-BW-FB | Bures-Wasserstein baselines |
-| Sq-NGVI | Square-root natural-gradient variational inference |
-| Price-BBVI | Bonnet-Price black-box variational inference |
-| BBVI-STL | Projected black-box variational inference with STL |
-| Laplace | Logistic-regression Laplace approximation |
+| Method | Description | Reference |
+| --- | --- | --- |
+| [FR-R](https://github.com/zheyuanlai/gvi-fisher-rao) | Fisher-Rao Riemannian gradient update | This paper |
+| [FR-KL](https://github.com/zheyuanlai/gvi-fisher-rao) | Fisher-Rao Bregman/KL update | This paper |
+| [FR-R-STL](https://proceedings.neurips.cc/paper/2017/hash/e91068fff3d7fa1594dfdf3b4308433a-Abstract.html), [FR-KL-STL](https://proceedings.neurips.cc/paper/2017/hash/e91068fff3d7fa1594dfdf3b4308433a-Abstract.html) | Sticking-the-landing stochastic updates | Roeder et al. (2017) |
+| [BW-FB](https://proceedings.mlr.press/v202/diao23a.html), [S-BW-FB](https://proceedings.mlr.press/v202/diao23a.html) | Bures-Wasserstein baselines | Diao et al. (2023) |
+| [Sq-NGVI](https://openreview.net/forum?id=OMOFmb6ve7) | Square-root natural-gradient variational inference | Kumar et al. (2025) |
+| [Price-BBVI](https://arxiv.org/abs/2602.18718) | Bonnet-Price black-box variational inference | Kim et al. (2026) |
+| [BBVI-STL](https://proceedings.mlr.press/v238/kim24a.html) | Projected black-box variational inference with STL | Kim et al. (2024) |
+| [Laplace](https://doi.org/10.1080/01621459.1986.10478240) | Logistic-regression Laplace approximation | Tierney and Kadane (1986) |
 
 ## Experiments in the paper
 
