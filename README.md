@@ -1,188 +1,105 @@
-# Gaussian Variational Inference via Fisher-Rao Gradient Flows
+# Affine-invariant Fisher-Rao convergence
 
-A reproducible NumPy/SciPy reference implementation for the numerical experiments
-in the manuscript *Gaussian variational inference via Fisher-Rao gradient flows*.
-The repository includes deterministic and stochastic Gaussian variational-inference
-algorithms, resumable experiment campaigns, numerical validation, and
-publication-ready figures.
+NumPy and SciPy code for *Affine Invariant Convergence of Fisher-Rao Gradient
+Flows and Their Discretizations for Gaussian Variational Inference* by Zheyuan
+Lai and Yifan Chen.
 
-![Global-to-local convergence](results/figures/manuscript/figure_2.png)
+The repository contains the Gaussian variational inference algorithms,
+numerical checks, experiment configurations, and figures used in the paper.
 
-## The manuscript campaign
+## Installation
 
-The figures of the paper come from a reduced, preregistered campaign of 1821
-trajectories over eleven config groups, separate from the exploratory grids. Four
-main-text figures and one table: Gaussian structure and affine invariance,
-global-to-local convergence on non-Gaussian targets, the stochastic mechanisms of
-Section 4, and a practical benchmark on five real posteriors; three further
-figures go to the online appendix.
-
-Two things about the campaign are worth stating up front, because they are what
-make its comparisons hard to dismiss.
-
-**Geometry and estimator vary independently.** Restricted to Fisher-Rao against
-Bures-Wasserstein, a campaign can only report that the two differ. Adding
-`Sq--NGVI`, `Price--BBVI` and `BBVI--STL` puts a second axis on the comparison:
-`Price--BBVI` shares its estimator with `S--FB--GVI` and its parameter space with
-`BBVI--STL`, so the pattern of agreement says which axis the behaviour follows.
-
-**Benchmark stepsizes never read the optimizer.** The theorem-diagnostic panels
-use certified steps and the earlier practical panels use an optimizer-whitened
-scale, both legitimate where they are used. Everything that is a benchmark
-instead uses a rule computable from the model and the initialization alone --
-see [the tuning module](src/fr_gvi/experiments/tuning.py) -- with a regression
-test asserting structurally that no optimizer-whitened constant is on that path.
+The project requires Python 3.11 or newer.
 
 ```bash
-make manuscript-datasets  # fetch and hash-pin the five real datasets, once
-make manuscript-pilot     # sweep the two pilot cells, freeze the practical steps
-make manuscript-tuning    # select the implementable steps for the benchmark
-make manuscript-configs   # instantiate the 154 configs
-make manuscript-runs      # 1821 trajectories
-make manuscript-figures   # figures 1-4, the appendix figures, and the plot audit
-make manuscript-tables
-make manuscript-audit
+git clone https://github.com/zheyuanlai/gvi-fisher-rao.git
+cd gvi-fisher-rao
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -e ".[dev]"
+python -m pip check
 ```
 
-The protocol, the frozen stepsizes and the deviations from the plan it was written
-against are documented in [the protocol note](reports/MANUSCRIPT_PROTOCOL.md).
-Every figure carries a provenance JSON naming its panels, their config identifiers
-and the commit; every panel carries its processed CSV.
+## Quick validation
 
-## Highlights
-
-- Float64 numerical implementation with symmetric eigendecompositions for SPD
-  matrix functions.
-- Resumable, hash-validated campaigns that retain completed and failed seeds.
-- Per-method stepsize sweeps based on optimizer-whitened curvature constants.
-- Matching PDF and PNG figures on exact 6.5-inch manuscript-width canvases, with
-  embedded fonts and colorblind-safe method encodings.
-- Unit, integration, regression, numerical-results, and plot-audit gates.
-
-## Implemented methods
-
-| Method | Role |
-|---|---|
-| FR-R, FR-KL | Deterministic Fisher-Rao Riemannian-retraction and KL/Bregman schemes |
-| FR-R-STL, FR-KL-STL | Stochastic Price/Hessian sticking-the-landing variants |
-| FB-GVI, S-FB-GVI | Deterministic and minibatch Bures-Wasserstein baselines from [Diao et al.](https://arxiv.org/abs/2304.05398) |
-| Sq-NGVI | Square-root variational Newton, [Kumar et al.](https://arxiv.org/abs/2507.07853) Algorithm 1 |
-| Price-BBVI | Parameter-space SPGD with the Bonnet-Price estimator, [Kim et al.](https://arxiv.org/abs/2602.18718) |
-| BBVI-STL | Projected SGD with the sticking-the-landing estimator, [Kim et al.](https://arxiv.org/abs/2307.14642) |
-| Laplace | Non-iterative logistic-regression approximation baseline |
-| Affine-invariant metric family | Section 5 classification-verification tool, excluded from the main comparison |
-
-The Bures-Wasserstein comparison is deliberately restricted to FB-GVI and
-S-FB-GVI. Invalid covariance updates are recorded as failures; our algorithms are
-never stabilized by covariance eigenvalue clipping or silent stepsize reduction.
-The three external comparators are implemented as published, including their own
-safeguards -- Price-BBVI's entropy proximal step and BBVI-STL's projection --
-because those are part of the algorithms rather than repairs added here; every
-activation is counted and reported.
-
-## Experiments
-
-| Experiment | Mechanism |
-|---|---|
-| A | Covariance burn-in in whitened coordinates |
-| B | Affine equivariance of the iterates |
-| C | Anisotropic Gaussian benchmark with `kappa = 1e9` and `kappa_star = 1` |
-| D | Strongly log-concave non-Gaussian grid |
-| F | Exact Gaussian local region and sharp threshold |
-| G | Near-Gaussian local spectral rate |
-| H | Gaussian STL pathwise cancellation |
-| I | Raw-score versus STL estimator variance |
-| J | Minibatch residual floors versus batch size |
-| T | Minibatch residual floors versus stepsize |
-| L | Bayesian logistic regression, synthetic, controlled conditioning |
-| M | Modal rates of the affine-invariant metric family |
-| R | Bayesian logistic regression on five real, hash-pinned posteriors |
-| S | Dimensional scaling and the oracle/algebra cost split |
-
-## Quick start
-
-Requirements: Linux or macOS, Python 3.11-3.13, and approximately 8 GB of RAM
-for the full campaign. No GPU is required. The real datasets are fetched once
-from OpenML and cached under `data/`; after that the campaign runs offline, and
-`configs/datasets/manifest.json` pins each file by SHA-256 so a silent upstream
-edit is an error rather than a new result.
-
-From the repository root:
+From the repository root, run:
 
 ```bash
-./scripts/bootstrap_env.sh
-make test
-make smoke
+source .venv/bin/activate
+python -m fr_gvi.experiments.datasets --fetch --write-manifest
+python -m pytest -q
+./scripts/run_smoke.sh
 ```
 
-The bootstrap script creates `.venv`, installs the package and development
-dependencies, and checks the environment. The smoke tier exercises the experiment,
-plotting, table, and audit paths end to end.
+## Methods
 
-## Running the campaign
+| Method | Description |
+| --- | --- |
+| FR-R | Fisher-Rao Riemannian gradient update |
+| FR-KL | Fisher-Rao Bregman/KL update |
+| FR-R-STL, FR-KL-STL | Sticking-the-landing stochastic updates |
+| BW-FB, S-BW-FB | Bures-Wasserstein baselines |
+| Sq-NGVI | Square-root natural-gradient variational inference |
+| Price-BBVI | Bonnet-Price black-box variational inference |
+| BBVI-STL | Projected black-box variational inference with STL |
+| Laplace | Logistic-regression Laplace approximation |
+
+## Experiments in the paper
+
+### Figure 1: covariance recovery and affine invariance
+
+Gaussian targets test covariance recovery, affine equivariance, and coordinate
+anisotropy. The Fisher-Rao methods are compared with BW-FB after non-orthogonal
+coordinate changes and on an anisotropic Gaussian with condition number `10^9`.
+
+### Figure 2: local rates on shifted log-cosh targets
+
+Shifted log-cosh targets test global contraction, iteration counts across
+dimensions and curvature, and agreement with the linearized local rate.
+
+### Figure 3: Monte Carlo scaling and initialization
+
+The stochastic experiments measure Gaussian pathwise cancellation, the stationary
+gap as batch size and step size vary, and inverse-Hessian covariance
+initialization with a Newton mean correction.
+
+### Figure 4: Bayesian logistic regression
+
+The benchmark uses pima, wdbc, ionosphere, sonar, and spambase. It reports
+objective gaps, held-out predictive negative log-likelihood, and update time to
+a relative objective gap of `10^-4`.
+
+## Running the manuscript experiments
+
+Activate the virtual environment, then run the following commands from the
+repository root:
 
 ```bash
-make configs
-CAMPAIGN_JOBS=64 OVERNIGHT_BUDGET_HOURS=8 make full
-CAMPAIGN_JOBS=64 make resume
-make figures
-./scripts/audit_results.sh --allow-failed
+source .venv/bin/activate
+python -m fr_gvi.experiments.datasets --fetch --write-manifest
+python -m fr_gvi.experiments.manuscript --pilot
+python -m fr_gvi.experiments.campaign configs/manuscript/pilot --budget-hours 0.5
+python -m fr_gvi.experiments.pilot --write
+python -m fr_gvi.experiments.tuning --batch-size 16
+python -m fr_gvi.experiments.manuscript
+./scripts/run_manuscript.sh
+python -m fr_gvi.plotting.manuscript_figures
+python -m fr_gvi.plotting.audit --figures results/figures/manuscript
+python -m fr_gvi.experiments.manuscript_tables
+python -m fr_gvi.experiments.manuscript_audit
 ```
 
-- `make configs` regenerates the committed full-tier grids.
-- `make full` runs the campaign with config-level parallelism.
-- `make resume` skips jobs whose config and numerical-source hashes still match.
-- `make figures` regenerates figures and tables from locally saved results without
-  rerunning experiments.
-- The retained-failure audit mode accepts deliberately unstable sweep points while
-  continuing to check covariance positivity, method exclusions, provenance, and
-  pathwise covariance bands.
-
-Set `CAMPAIGN_JOBS` to a suitable value for the available CPU and memory. The run
-scripts already restrict BLAS libraries to one thread per worker.
-
-## Results and reproducibility
-
-The four manuscript figures are `results/figures/manuscript/figure_1.{pdf,png}`
-through `figure_4.{pdf,png}`, with `figure_a1` through `figure_a3` for the online
-appendix; each carries a caption draft, a provenance JSON and one processed CSV
-per panel under `results/processed/manuscript/`. The exploratory
-campaign additionally produces the older `main_figure_*` composites and one figure
-per experiment.
-
-Every run manifest records the configuration and source hashes, git state,
-platform and package versions, BLAS configuration, seeds, curvature constants,
-operation accounting, status, failure reason, and output paths. Raw trajectories
-retain individual seeds. Large full-tier trajectories and manifests are ignored by
-git because they are resumable and regenerable.
-
-## Numerical safeguards
-
-- Numerical work is performed in float64.
-- SPD matrix functions use symmetric eigendecompositions; linear solves use
-  Cholesky factors where appropriate.
-- Deterministic expectations are computed exactly where the target admits it:
-  closed form for Gaussians, and panelled one-dimensional quadrature for the
-  log-cosh and logistic families, whose potentials depend on the parameter only
-  through scalar projections.
-- Unstable steps are retained as failed runs rather than repaired by algorithmic
-  clipping.
-- The validation suite must pass before an expensive campaign is launched.
+`run_manuscript.sh` can be resumed. Set `MANUSCRIPT_JOBS`,
+`MANUSCRIPT_THREADS`, and `MANUSCRIPT_BUDGET_HOURS` for the machine.
 
 ## Repository layout
 
 ```text
-src/fr_gvi/       algorithms, targets, diagnostics, experiments, and plotting
-configs/          smoke, generated full-tier, and manuscript experiment configurations
-scripts/          environment, campaign, resume, figure, and audit entry points
-tests/            unit, integration, and regression validation
-results/          tracked headline artifacts and local campaign outputs
-reports/          protocol, implementation, audit, campaign, and reproduction notes
+src/fr_gvi/       algorithms, targets, diagnostics, experiments, plotting
+configs/          smoke and manuscript experiment configurations
+scripts/          setup, campaign, plotting, and audit entry points
+results/          figures, tables, manifests, and processed experiment data
+reports/          numerical audit, protocol, implementation, and reproduction notes
+tests/            unit, integration, and regression tests
 ```
-
-## Documentation
-
-- [Manuscript numerical protocol](reports/MANUSCRIPT_PROTOCOL.md)
-- [Reproduction guide](reports/REPRODUCIBILITY.md)
-- [Implementation notes](reports/IMPLEMENTATION_NOTES.md)
-- [Numerical audit](reports/NUMERICAL_AUDIT.md)
